@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "PipelineResult",
+  "description": "Aggregated complete packet emitted by P4 end-to-end pipeline orchestrator",
+  "type": "object",
+  "required": [
+    "image_id",
+    "timestamp",
+    "latency_ms",
+    "quality_gate",
+    "classification",
+    "triage"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string"
+    },
+    "latency_ms": {
+      "type": "number",
+      "minimum": 0.0
+    },
+    "quality_gate": {
+      "$ref": "quality_gate.schema.json"
+    },
+    "viewhead": {
+      "$ref": "viewhead.schema.json"
+    },
+    "segmentation": {
+      "$ref": "segmentation.schema.json"
+    },
+    "classification": {
+      "$ref": "classification.schema.json"
+    },
+    "detection": {
+      "$ref": "detection.schema.json"
+    },
+    "xai": {
+      "$ref": "xai_attribution.schema.json"
+    },
+    "triage": {
+      "$ref": "conformal_triage.schema.json"
+    }
+  }
+}

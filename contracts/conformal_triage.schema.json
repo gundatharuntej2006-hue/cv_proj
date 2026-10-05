@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ConformalTriageResult",
+  "description": "Output schema from P4 Conformal Risk Control triage engine",
+  "type": "object",
+  "required": [
+    "image_id",
+    "triage_category",
+    "calibrated_tb_prob",
+    "alpha_target",
+    "risk_bound_satisfied"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string"
+    },
+    "triage_category": {
+      "type": "string",
+      "enum": [
+        "TB",
+        "REFER",
+        "NOT_TB"
+      ]
+    },
+    "calibrated_tb_prob": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tau_low": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "tau_high": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "alpha_target": {
+      "type": "number",
+      "default": 0.1
+    },
+    "risk_bound_satisfied": {
+      "type": "boolean"
+    },
+    "clinical_recommendation": {
+      "type": "string"
+    }
+  }
+}

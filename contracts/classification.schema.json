@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ClassificationResult",
+  "description": "Output schema from P2 RAD-DINO 3-class classifier",
+  "type": "object",
+  "required": [
+    "image_id",
+    "probabilities",
+    "predicted_class",
+    "tb_probability_raw"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string"
+    },
+    "probabilities": {
+      "type": "object",
+      "required": [
+        "healthy",
+        "sick_non_tb",
+        "tb"
+      ],
+      "properties": {
+        "healthy": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "sick_non_tb": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        },
+        "tb": {
+          "type": "number",
+          "minimum": 0.0,
+          "maximum": 1.0
+        }
+      }
+    },
+    "predicted_class": {
+      "type": "string",
+      "enum": [
+        "HEALTHY",
+        "SICK_NON_TB",
+        "TB"
+      ]
+    },
+    "tb_probability_raw": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    }
+  }
+}

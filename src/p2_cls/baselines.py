@@ -1,0 +1,2 @@
+class BaselineCheXNet:
+    pass

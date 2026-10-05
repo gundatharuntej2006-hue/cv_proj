@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DetectionResult",
+  "description": "Output schema from P3 D-FINE lesion bounding-box detector",
+  "type": "object",
+  "required": [
+    "image_id",
+    "boxes",
+    "total_lesions_found"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string"
+    },
+    "boxes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "bbox_normalized",
+          "confidence",
+          "lesion_type"
+        ],
+        "properties": {
+          "bbox_normalized": {
+            "type": "array",
+            "items": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 1.0
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "[x_min, y_min, x_max, y_max]"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0.0,
+            "maximum": 1.0
+          },
+          "lesion_type": {
+            "type": "string",
+            "enum": [
+              "CONSOLIDATION",
+              "CAVITY",
+              "NODULE",
+              "FIBROSIS",
+              "EFFUSION",
+              "SUSPICIOUS_TB"
+            ]
+          }
+        }
+      }
+    },
+    "total_lesions_found": {
+      "type": "integer",
+      "minimum": 0
+    }
+  }
+}

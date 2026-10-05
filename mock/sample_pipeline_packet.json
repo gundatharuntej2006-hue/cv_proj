@@ -1,0 +1,77 @@
+{
+  "image_id": "CXR_SYNTH_001",
+  "timestamp": "2026-10-05T20:00:00Z",
+  "latency_ms": 420.5,
+  "quality_gate": {
+    "image_id": "CXR_SYNTH_001",
+    "status": "PASS",
+    "blur_score": 48.6,
+    "contrast_score": 0.18,
+    "ood_score": 0.11,
+    "is_ood": false,
+    "rejection_reasons": []
+  },
+  "viewhead": {
+    "image_id": "CXR_SYNTH_001",
+    "predicted_orientation": "PA",
+    "confidence": 0.98,
+    "is_valid_pa": true
+  },
+  "segmentation": {
+    "image_id": "CXR_SYNTH_001",
+    "crop_box_normalized": [
+      0.1,
+      0.1,
+      0.9,
+      0.9
+    ],
+    "lung_area_ratio": 0.64,
+    "mask_path": null
+  },
+  "classification": {
+    "image_id": "CXR_SYNTH_001",
+    "probabilities": {
+      "healthy": 0.1,
+      "sick_non_tb": 0.15,
+      "tb": 0.75
+    },
+    "predicted_class": "TB",
+    "tb_probability_raw": 0.75
+  },
+  "detection": {
+    "image_id": "CXR_SYNTH_001",
+    "boxes": [
+      {
+        "bbox_normalized": [
+          0.25,
+          0.2,
+          0.45,
+          0.4
+        ],
+        "confidence": 0.88,
+        "lesion_type": "CAVITY"
+      }
+    ],
+    "total_lesions_found": 1
+  },
+  "xai": {
+    "image_id": "CXR_SYNTH_001",
+    "heatmap_path": "artifacts/sample_heatmap.png",
+    "max_activation_coords": [
+      0.32,
+      0.28
+    ],
+    "pointing_hit": true,
+    "iou_with_detector_boxes": 0.62
+  },
+  "triage": {
+    "image_id": "CXR_SYNTH_001",
+    "triage_category": "TB",
+    "calibrated_tb_prob": 0.74,
+    "tau_low": 0.15,
+    "tau_high": 0.65,
+    "alpha_target": 0.1,
+    "risk_bound_satisfied": true,
+    "clinical_recommendation": "Prioritize for urgent clinician review and GeneXpert confirmation."
+  }
+}

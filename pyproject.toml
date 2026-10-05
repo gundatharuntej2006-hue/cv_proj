@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cv_proj"
+version = "0.1.0"
+description = "Explainable Tuberculosis Screening from Chest X-Rays with Lesion Localisation for Triage in Resource-Limited Settings"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "Gunda Tharun Tej (P1 Lead)", email = "gundatharuntej2006@gmail.com"},
+    {name = "Atul Dhull (P2)", email = "atul.dhull@bmsit.in"},
+    {name = "Ritika Girish Kulkarni (P3)", email = "ritika.kulkarni@bmsit.in"},
+    {name = "Kunal (P4)", email = "kunal@bmsit.in"}
+]
+dependencies = [
+    "numpy>=1.23.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0",
+    "pillow>=9.5.0",
+    "pydicom>=2.4.0",
+    "pytest>=7.4.0",
+    "requests>=2.31.0"
+]
+
+[project.optional-dependencies]
+p1 = [
+    "opencv-python-headless>=4.8.0",
+    "albumentations>=1.3.0",
+    "streamlit>=1.30.0"
+]
+p2 = [
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "timm>=0.9.0",
+    "scikit-learn>=1.2.0",
+    "scipy>=1.9.0"
+]
+p3 = [
+    "torch>=2.0.0",
+    "torchvision>=0.15.0",
+    "reportlab>=4.0.0",
+    "matplotlib>=3.7.0",
+    "opencv-python-headless>=4.8.0"
+]
+p4 = [
+    "scipy>=1.9.0",
+    "scikit-learn>=1.2.0",
+    "statsmodels>=0.14.0",
+    "pandas>=2.0.0"
+]
+all = [
+    "cv_proj[p1,p2,p3,p4]"
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --strict-markers"
+
+[tool.black]
+line-length = 100
+target-version = ['py310']

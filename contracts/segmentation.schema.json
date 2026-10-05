@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "LungSegmentationResult",
+  "description": "Output schema from P1 lung field segmentation and crop extraction",
+  "type": "object",
+  "required": [
+    "image_id",
+    "crop_box_normalized",
+    "lung_area_ratio"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string"
+    },
+    "crop_box_normalized": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0.0,
+        "maximum": 1.0
+      },
+      "minItems": 4,
+      "maxItems": 4,
+      "description": "[x_min, y_min, x_max, y_max]"
+    },
+    "lung_area_ratio": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0
+    },
+    "mask_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}

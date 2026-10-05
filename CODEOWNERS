@@ -1,0 +1,43 @@
+# CODEOWNERS for Explainable TB Screening CAD System (cv_proj)
+# Autonomous Department of AI & ML, BMSIT&M (BAI506)
+# Each team member owns their functional slice.
+
+# Fallback: project repository lead
+* @gundatharuntej2006-hue
+
+# Shared Governance, Contracts, and Architecture (All-Team Review)
+/README.md @gundatharuntej2006-hue
+/contracts/ @gundatharuntej2006-hue
+/decisions/ @gundatharuntej2006-hue
+/pyproject.toml @gundatharuntej2006-hue
+/environment.yml @gundatharuntej2006-hue
+/Makefile @gundatharuntej2006-hue
+/src/tbcore/ @gundatharuntej2006-hue
+/.github/ @gundatharuntej2006-hue
+
+# P1 — Tharun (USN: 1BY24AI048): Data, Preprocessing, Lung Crop, Viewhead, Web Dashboard
+/src/p1_data/ @gundatharuntej2006-hue
+/src/p1_app/ @gundatharuntej2006-hue
+/src/p1_viewhead/ @gundatharuntej2006-hue
+/requirements/p1.txt @gundatharuntej2006-hue
+/tests/test_p1_data.py @gundatharuntej2006-hue
+
+# P2 — Atul (USN: 1TD24AI036): RAD-DINO Classification, Quality/OOD Gate, Baselines
+/src/p2_cls/ @gundatharuntej2006-hue
+/src/p2_gate/ @gundatharuntej2006-hue
+/requirements/p2.txt @gundatharuntej2006-hue
+/tests/test_p2_gate_cls.py @gundatharuntej2006-hue
+
+# P3 — Ritika (USN: 1TD24AI150): D-FINE Lesion Detection, Grad-CAM, PDF Export, Ops & Latency
+/src/p3_det/ @gundatharuntej2006-hue
+/src/p3_xai/ @gundatharuntej2006-hue
+/src/p3_ops/ @gundatharuntej2006-hue
+/requirements/p3.txt @gundatharuntej2006-hue
+/tests/test_p3_det_xai.py @gundatharuntej2006-hue
+
+# P4 — Kunal (USN: 1TD24AI094): Calibration, Conformal Triage, Pipeline Orchestrator, Evaluation & Governance
+/src/p4_stats/ @gundatharuntej2006-hue
+/src/p4_pipeline/ @gundatharuntej2006-hue
+/src/p4_eval/ @gundatharuntej2006-hue
+/requirements/p4.txt @gundatharuntej2006-hue
+/tests/test_p4_pipeline_triage.py @gundatharuntej2006-hue

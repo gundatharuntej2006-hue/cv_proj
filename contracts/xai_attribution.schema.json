@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "XAIAttributionResult",
+  "description": "Output schema from P3 Grad-CAM visual explanation generator",
+  "type": "object",
+  "required": [
+    "image_id",
+    "heatmap_path",
+    "max_activation_coords",
+    "pointing_hit"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string"
+    },
+    "heatmap_path": {
+      "type": "string"
+    },
+    "max_activation_coords": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 0.0,
+        "maximum": 1.0
+      },
+      "minItems": 2,
+      "maxItems": 2,
+      "description": "[norm_x, norm_y]"
+    },
+    "pointing_hit": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
+    "iou_with_detector_boxes": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0.0,
+      "maximum": 1.0
+    }
+  }
+}

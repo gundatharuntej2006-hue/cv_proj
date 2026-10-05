@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "QualityGateResult",
+  "description": "Output schema from P2 input image quality gate and OOD filter",
+  "type": "object",
+  "required": [
+    "image_id",
+    "status",
+    "blur_score",
+    "contrast_score",
+    "ood_score",
+    "rejection_reasons"
+  ],
+  "properties": {
+    "image_id": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "REJECT"
+      ]
+    },
+    "blur_score": {
+      "type": "number"
+    },
+    "contrast_score": {
+      "type": "number"
+    },
+    "ood_score": {
+      "type": "number"
+    },
+    "is_ood": {
+      "type": "boolean"
+    },
+    "rejection_reasons": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}

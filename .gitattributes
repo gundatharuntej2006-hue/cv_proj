@@ -1,0 +1,21 @@
+# Auto-detect text files and normalize line endings to LF
+* text=auto eol=lf
+
+# Force specific extensions
+*.py text eol=lf
+*.sh text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.md text eol=lf
+Makefile text eol=lf
+
+# Binary medical imaging and weights files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.dcm binary
+*.pt binary
+*.pth binary
+*.onnx binary
+*.pdf binary
