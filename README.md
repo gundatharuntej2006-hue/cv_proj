@@ -64,7 +64,7 @@ The repository enforces strict module ownership to ensure four team members deve
 
 | Person | Role | Core Modules & Scope | Assigned Branch |
 | :--- | :--- | :--- | :--- |
-| **Tharun** *(Lead)* | **P1** | Data ingestion, preprocessing, lung segmentation, viewhead classifier, Streamlit clinician dashboard | `p1` |
+| **Tharun** ** | **P1** | Data ingestion, preprocessing, lung segmentation, viewhead classifier, Streamlit clinician dashboard | `p1` |
 | **Atul** | **P2** | RAD-DINO 3-class classification (Healthy / Sick Non-TB / TB), Quality Gate, OOD detection, baseline wrappers | `p2` |
 | **Ritika** | **P3** | D-FINE TB lesion detector, Grad-CAM attribution, pointing-game evaluation, PDF report export, runtime profiling | `p3` |
 | **Kunal** | **P4** | Probability calibration (Temperature/Platt), Conformal Risk Control triage, end-to-end pipeline orchestration, bootstrap statistical CI evaluation, governance | `p4` |
