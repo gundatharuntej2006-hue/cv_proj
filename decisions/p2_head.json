@@ -1,0 +1,16 @@
+{
+  "decision_id": "D11",
+  "owner": "p2",
+  "title": "Primary Classification Head Selection",
+  "criterion_preregistered": "Three-class vs binary head compared by sensitivity at 70% specificity on development split",
+  "preregistered_at": "2026-10-05",
+  "candidates": ["binary", "three_class"],
+  "value": {"primary_head": "binary", "retain_auxiliary_3class": true},
+  "evidence": ["artifacts/p2/cls/head_selection_dev.csv"],
+  "data_used": ["train", "development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-24",
+  "git_sha": "c0ffee1"
+}

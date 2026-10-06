@@ -1,0 +1,36 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "C01SplitsSchema",
+  "description": "C01 — Schema definition for data/splits/tbx11k_splits_v1.csv rows.",
+  "type": "object",
+  "required": [
+    "image_id",
+    "rel_path",
+    "official_split",
+    "split",
+    "category",
+    "tb_label",
+    "split_version",
+    "seed"
+  ],
+  "properties": {
+    "image_id": {"type": "string"},
+    "rel_path": {"type": "string"},
+    "official_split": {"type": "string", "enum": ["train", "val", "test"]},
+    "split": {
+      "type": "string",
+      "enum": ["train", "development", "calibration", "internal_test", "challenge_test", "excluded_duplicate"]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["healthy", "sick_non_tb", "active_tb", "latent_tb", "active_latent_tb", "uncertain_tb", "unknown"]
+    },
+    "tb_label": {"type": "integer", "enum": [0, 1, -1]},
+    "active_tb_label": {"type": ["integer", "null"], "enum": [0, 1, null]},
+    "has_boxes": {"type": "boolean"},
+    "n_boxes": {"type": "integer", "minimum": 0},
+    "dup_of": {"type": ["string", "null"]},
+    "split_version": {"type": "string"},
+    "seed": {"type": "integer"}
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "schema_version": "1.0",
+  "case_id": "c_unreadable_006",
+  "status": "UNREADABLE",
+  "input": {
+    "format": "dicom",
+    "phi_tags_removed": 0,
+    "error": "Invalid DICOM header: EOF while reading PixelData"
+  },
+  "gate": null,
+  "segmentation": null,
+  "classifier": null,
+  "detector": null,
+  "triage": null,
+  "explainability": null,
+  "versions": {
+    "model_version": "reg-v1-3b9c",
+    "split_version": "v1",
+    "decisions_hash": "sha256:5e1d4b2",
+    "git_sha": "c0ffee1"
+  },
+  "timing_ms": {
+    "standardise": 15,
+    "gate": 0,
+    "segment": 0,
+    "classify": 0,
+    "detect": 0,
+    "explain": 0,
+    "total": 15
+  },
+  "disclaimer": "Decision support for TB triage only, not a diagnosis. Validated only on public research datasets; not prospectively clinically validated."
+}

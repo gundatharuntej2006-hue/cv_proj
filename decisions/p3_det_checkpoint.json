@@ -1,0 +1,16 @@
+{
+  "decision_id": "D17",
+  "owner": "p3",
+  "title": "D-FINE Training Checkpoint",
+  "criterion_preregistered": "Best development AP@0.50 checkpoint with recorded SHA-256 hash",
+  "preregistered_at": "2026-10-15",
+  "candidates": ["dfine_hgnetv2_s_512"],
+  "value": {"checkpoint_sha256": "df1e94a8c12b7703", "epochs": 36, "dev_ap50": 0.421},
+  "evidence": ["artifacts/p3/det/dfine_train_log.csv"],
+  "data_used": ["train", "development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-11-05",
+  "git_sha": "c0ffee1"
+}

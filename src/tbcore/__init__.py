@@ -1,7 +1,27 @@
-# tbcore - Core shared primitives, schemas, IO, and utilities for cv_proj.
+"""tbcore - Core shared primitives, schemas, IO, guard, paths, seed, validators, and utilities."""
 
-from tbcore.enums import CXRClass, QualityStatus, TriageCategory, ViewOrientation
+from tbcore.enums import (
+    CaseStatus,
+    CIMethod,
+    CXRClass,
+    OperatingPoint,
+    QualityStatus,
+    SplitName,
+    TriageCategory,
+    ViewOrientation,
+)
 from tbcore.schemas import (
+    CaseResult,
+    DecisionRecord,
+    InputBlock,
+    GateBlock,
+    SegmentationBlock,
+    ClassifierBlock,
+    DetectorBlock,
+    TriageBlock,
+    ExplainabilityBlock,
+    VersionsBlock,
+    TimingBlock,
     ClassificationResult,
     ConformalTriageResult,
     DetectionResult,
@@ -12,12 +32,32 @@ from tbcore.schemas import (
     ViewheadResult,
     XAIAttributionResult,
 )
+from tbcore.disclaimer import DISCLAIMER_TEXT, SCOPE_HONESTY_TEXT, WHO_TARGET_INFO
+from tbcore.seed import set_all
+from tbcore.paths import get_repo_root, resolve_path, is_mock_mode
+from tbcore.version import get_version_info, compute_decisions_hash, get_git_sha
+from tbcore.guard import check_split_access, SealedSplitAccessError
 
 __all__ = [
+    "CaseStatus",
+    "CIMethod",
     "CXRClass",
+    "OperatingPoint",
     "QualityStatus",
+    "SplitName",
     "TriageCategory",
     "ViewOrientation",
+    "CaseResult",
+    "DecisionRecord",
+    "InputBlock",
+    "GateBlock",
+    "SegmentationBlock",
+    "ClassifierBlock",
+    "DetectorBlock",
+    "TriageBlock",
+    "ExplainabilityBlock",
+    "VersionsBlock",
+    "TimingBlock",
     "InputCXR",
     "QualityGateResult",
     "ViewheadResult",
@@ -27,4 +67,16 @@ __all__ = [
     "XAIAttributionResult",
     "ConformalTriageResult",
     "PipelineResult",
+    "DISCLAIMER_TEXT",
+    "SCOPE_HONESTY_TEXT",
+    "WHO_TARGET_INFO",
+    "set_all",
+    "get_repo_root",
+    "resolve_path",
+    "is_mock_mode",
+    "get_version_info",
+    "compute_decisions_hash",
+    "get_git_sha",
+    "check_split_access",
+    "SealedSplitAccessError",
 ]

@@ -1,0 +1,16 @@
+{
+  "decision_id": "D16",
+  "owner": "p3",
+  "title": "Detector Input Resolution",
+  "criterion_preregistered": "512x512 vs 640x640 compared by development AP@0.50 on locked D08/D09 preprocessing",
+  "preregistered_at": "2026-10-10",
+  "candidates": [512, 640],
+  "value": {"input_size": 512, "dev_ap50": 0.421},
+  "evidence": ["artifacts/p3/det/input_size_eval.csv"],
+  "data_used": ["train", "development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-31",
+  "git_sha": "c0ffee1"
+}

@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "case_id": "c_fallback_full_007",
+  "status": "ANALYSED",
+  "input": {
+    "format": "png",
+    "phi_tags_removed": 0,
+    "error": null
+  },
+  "gate": {
+    "quality_pass": true,
+    "quality_reasons": [],
+    "ood_score": 0.17,
+    "ood_threshold": 0.241,
+    "gate_pass": true,
+    "view": null
+  },
+  "segmentation": {
+    "sanity_pass": false,
+    "fail_reasons": [
+      "lung_area_too_small",
+      "single_lung_component"
+    ],
+    "crop_box": [
+      0,
+      0,
+      512,
+      512
+    ],
+    "fallback_full": true
+  },
+  "classifier": {
+    "model_id": "radino_full_clahe0_bin",
+    "head": "binary",
+    "p_tb_raw": 0.68,
+    "p_tb_cal": 0.62,
+    "temperature": 1.37,
+    "three_class": {
+      "healthy": 0.15,
+      "sick_non_tb": 0.25,
+      "tb": 0.6
+    }
+  },
+  "detector": {
+    "model_id": "dfine_512",
+    "conf_threshold": 0.42,
+    "n_lesions": 0,
+    "boxes": []
+  },
+  "triage": {
+    "t_lower": 0.18,
+    "t_upper": 0.83,
+    "category_pre_link": "REFER",
+    "link_fired": false,
+    "category_final": "REFER",
+    "screen_positive": true,
+    "operating_point": "locked_default"
+  },
+  "explainability": {
+    "heatmap_path": "runs/r001/c_fallback_full_007_cam.npy",
+    "overlay_path": "runs/r001/c_fallback_full_007_overlay.png"
+  },
+  "versions": {
+    "model_version": "reg-v1-3b9c",
+    "split_version": "v1",
+    "decisions_hash": "sha256:5e1d4b2",
+    "git_sha": "c0ffee1"
+  },
+  "timing_ms": {
+    "standardise": 35,
+    "gate": 180,
+    "segment": 90,
+    "classify": 160,
+    "detect": 240,
+    "explain": 380,
+    "total": 1085
+  },
+  "disclaimer": "Decision support for TB triage only, not a diagnosis. Validated only on public research datasets; not prospectively clinically validated."
+}

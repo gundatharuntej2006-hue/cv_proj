@@ -1,4 +1,11 @@
-from p4_pipeline.triage_orchestrator import TriagePipelineOrchestrator
-from p4_pipeline.conformal_triage import ConformalTriageEngine
+"""p4_pipeline - End-to-end pipeline execution and R4 runtime API."""
 
-__all__ = ["TriagePipelineOrchestrator", "ConformalTriageEngine"]
+from p4_pipeline.api import run_batch, run_case, triage
+from p4_pipeline.orchestrator import TriagePipelineOrchestrator
+
+__all__ = [
+    "run_case",
+    "run_batch",
+    "triage",
+    "TriagePipelineOrchestrator",
+]

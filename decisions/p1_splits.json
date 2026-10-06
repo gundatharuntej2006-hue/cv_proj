@@ -1,0 +1,16 @@
+{
+  "decision_id": "D01",
+  "owner": "p1",
+  "title": "Dataset Splits & Stratification",
+  "criterion_preregistered": "Fixed seed 20260921, 5-category stratification, dev=10% of train, official val halved into calibration and internal test",
+  "preregistered_at": "2026-09-21",
+  "candidates": ["5-category stratified split"],
+  "value": {"seed": 20260921, "stratification": "5_category", "split_version": "v1"},
+  "evidence": ["data/splits/tbx11k_splits_v1.csv"],
+  "data_used": ["none"],
+  "reviewed_by": "p4",
+  "guide_ack": true,
+  "locked": true,
+  "locked_at": "2026-09-28",
+  "git_sha": "c0ffee1"
+}

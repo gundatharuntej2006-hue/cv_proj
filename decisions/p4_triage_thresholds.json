@@ -1,0 +1,31 @@
+{
+  "decision_id": "D23",
+  "owner": "p4",
+  "title": "Triage Decision Thresholds",
+  "criterion_preregistered": "Conformal lower threshold (alpha=0.10) guaranteeing E[FN] <= 0.10 and precision-constrained upper threshold (target=80% PPV) set exclusively on calibration split",
+  "preregistered_at": "2026-10-05",
+  "candidates": [
+    "ROC Youden index heuristic",
+    "Conformal risk control (lower) + Precision-constrained (upper)"
+  ],
+  "value": {
+    "t_lower": 0.18,
+    "t_upper": 0.83,
+    "alpha_target": 0.10,
+    "target_precision": 0.80,
+    "conformal_method": "inductive_split_conformal",
+    "link_rule_enabled": true
+  },
+  "evidence": [
+    "artifacts/p4/triage/operating_curve_calibration_v1.parquet",
+    "artifacts/p4/triage/calibration_split_metrics.json"
+  ],
+  "data_used": [
+    "calibration"
+  ],
+  "reviewed_by": "p1",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-24",
+  "git_sha": "c0ffee1"
+}

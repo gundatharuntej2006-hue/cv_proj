@@ -1,0 +1,38 @@
+{
+  "decision_id": "D21",
+  "owner": "p4",
+  "title": "Statistical Analysis Protocol and Governance Plan",
+  "criterion_preregistered": "Pre-registered analysis parameters: alpha=0.10, target precision=80%, Wilson CI for binomial proportions, stratified bootstrap (B=2000, fixed seed=42) for ROC-AUC/ECE, 10 equal-width ECE bins, RAD-DINO fixed as primary backbone, challenge submission mapping per Section 4.6, detector fallback rule if AP50 < 0.05",
+  "preregistered_at": "2026-09-21",
+  "candidates": [
+    "Primary backbone: RAD-DINO (frozen)",
+    "Alpha risk bound: 0.10 (>=90% sensitivity target)",
+    "Target precision: 0.80 (>=80% PPV for TB triage)",
+    "Bootstrap: B=2000, stratified, seed=42",
+    "Challenge mapping: Section 4.6 ActiveTuberculosis only",
+    "Detector contingency: if AP50 < 0.05, link rule disabled and reported as honest negative result"
+  ],
+  "value": {
+    "alpha": 0.10,
+    "target_precision": 0.80,
+    "bootstrap_replicates": 2000,
+    "seed": 42,
+    "ece_bins": 10,
+    "primary_backbone": "RAD-DINO",
+    "detection_eval_coords": "full512",
+    "challenge_box_category": 1,
+    "detector_contingency_min_ap50": 0.05
+  },
+  "evidence": [
+    "docs/methodology.md#section-9",
+    "docs/methodology.md#section-12"
+  ],
+  "data_used": [
+    "none"
+  ],
+  "reviewed_by": "p1",
+  "guide_ack": true,
+  "locked": true,
+  "locked_at": "2026-09-28",
+  "git_sha": "c0ffee1"
+}

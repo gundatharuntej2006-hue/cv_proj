@@ -1,0 +1,16 @@
+{
+  "decision_id": "D09",
+  "owner": "p2",
+  "title": "Lung Box Crop Margin Selection",
+  "criterion_preregistered": "TB sensitivity at 70% specificity on development over margins {0.0, 0.05, 0.10, 0.15}",
+  "preregistered_at": "2026-10-05",
+  "candidates": [0.0, 0.05, 0.10, 0.15],
+  "value": {"margin": 0.10},
+  "evidence": ["artifacts/p2/select/clahe_margin_dev.csv"],
+  "data_used": ["train", "development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-24",
+  "git_sha": "c0ffee1"
+}

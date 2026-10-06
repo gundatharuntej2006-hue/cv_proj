@@ -1,0 +1,28 @@
+{
+  "decision_id": "D22",
+  "owner": "p4",
+  "title": "Temperature Scaling Parameter",
+  "criterion_preregistered": "Minimise negative log-likelihood (NLL) on development split after D08-D13 model choices",
+  "preregistered_at": "2026-10-05",
+  "candidates": [
+    "Uncalibrated (T=1.00)",
+    "Fitted temperature scaling (bounded grid optimization)"
+  ],
+  "value": {
+    "temperature": 1.37,
+    "method": "platt_temperature_scaling",
+    "opt_loss": "binary_cross_entropy"
+  },
+  "evidence": [
+    "artifacts/p4/calibration/dev_temperature_fit.json",
+    "artifacts/p4/calibration/reliability_dev.csv"
+  ],
+  "data_used": [
+    "development"
+  ],
+  "reviewed_by": "p2",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-24",
+  "git_sha": "c0ffee1"
+}

@@ -1,0 +1,16 @@
+{
+  "decision_id": "D19",
+  "owner": "p3",
+  "title": "Grad-CAM ViT Configuration",
+  "criterion_preregistered": "Target layer = last RAD-DINO transformer block, drop CLS/register tokens with patch-grid reshape, crop-to-512 mapping",
+  "preregistered_at": "2026-10-15",
+  "candidates": ["Last block attention reshape"],
+  "value": {"target_layer": "blocks.-1.norm1", "reshape_transform": "vit_patch_grid", "crop_mapping": "offset_and_scale"},
+  "evidence": ["docs/p3_gradcam_review.md"],
+  "data_used": ["development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-11-05",
+  "git_sha": "c0ffee1"
+}

@@ -1,0 +1,16 @@
+{
+  "decision_id": "D04",
+  "owner": "p1",
+  "title": "External Cohort Data Sources",
+  "criterion_preregistered": "NLM Shenzhen + Montgomery datasets, resampled to 512x512",
+  "preregistered_at": "2026-09-21",
+  "candidates": ["NLM Shenzhen and Montgomery"],
+  "value": {"primary_external": "shenzhen", "secondary_external": "montgomery"},
+  "evidence": ["data/splits/external_v1.csv"],
+  "data_used": ["none"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-15",
+  "git_sha": "c0ffee1"
+}

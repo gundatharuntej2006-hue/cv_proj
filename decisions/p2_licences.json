@@ -1,0 +1,16 @@
+{
+  "decision_id": "D15",
+  "owner": "p2",
+  "title": "Model and OOD Data Licences",
+  "criterion_preregistered": "Verify RAD-DINO academic non-commercial research licence, timm weights terms, and CheXpert Stanford RUA terms",
+  "preregistered_at": "2026-09-21",
+  "candidates": ["Academic research compliance"],
+  "value": {"rad_dino_licence": "Research-NonCommercial", "chexpert_licence": "Stanford-RUA"},
+  "evidence": ["docs/p2_vram_feasibility.md"],
+  "data_used": ["none"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-09-28",
+  "git_sha": "c0ffee1"
+}
