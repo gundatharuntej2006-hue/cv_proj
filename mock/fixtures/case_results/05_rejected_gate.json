@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "case_id": "c_gate_rejected_005",
+  "status": "REJECTED_GATE",
+  "input": {
+    "format": "png",
+    "phi_tags_removed": 0,
+    "error": null
+  },
+  "gate": {
+    "quality_pass": false,
+    "quality_reasons": [
+      "over_exposed",
+      "heavily_cropped"
+    ],
+    "ood_score": 0.412,
+    "ood_threshold": 0.241,
+    "gate_pass": false,
+    "view": "lateral_or_other"
+  },
+  "segmentation": null,
+  "classifier": null,
+  "detector": null,
+  "triage": null,
+  "explainability": null,
+  "versions": {
+    "model_version": "reg-v1-3b9c",
+    "split_version": "v1",
+    "decisions_hash": "sha256:5e1d4b2",
+    "git_sha": "c0ffee1"
+  },
+  "timing_ms": {
+    "standardise": 30,
+    "gate": 190,
+    "segment": 0,
+    "classify": 0,
+    "detect": 0,
+    "explain": 0,
+    "total": 220
+  },
+  "disclaimer": "Decision support for TB triage only, not a diagnosis. Validated only on public research datasets; not prospectively clinically validated."
+}

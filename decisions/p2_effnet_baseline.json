@@ -1,0 +1,16 @@
+{
+  "decision_id": "D12",
+  "owner": "p2",
+  "title": "EfficientNet-B3 Baseline Weights",
+  "criterion_preregistered": "Best development AUC checkpoint; recorded SHA-256 hash",
+  "preregistered_at": "2026-10-10",
+  "candidates": ["effnet_b3_pretrained"],
+  "value": {"checkpoint_sha256": "3b9c04a7e91d8f2b", "dev_auc": 0.912},
+  "evidence": ["artifacts/p2/cls/effnet_b3_train_log.csv"],
+  "data_used": ["train", "development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-11-05",
+  "git_sha": "c0ffee1"
+}

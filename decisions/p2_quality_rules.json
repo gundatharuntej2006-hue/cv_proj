@@ -1,0 +1,16 @@
+{
+  "decision_id": "D07",
+  "owner": "p2",
+  "title": "Image Quality Gate Rules",
+  "criterion_preregistered": "Blank, under/over-exposure, and crop rules derived from synthetic degradations; <= 1% development rejected",
+  "preregistered_at": "2026-09-21",
+  "candidates": ["Heuristic quality thresholds"],
+  "value": {"min_std": 5.0, "max_clip_frac": 0.35, "max_crop_frac": 0.50},
+  "evidence": ["artifacts/p2/gate/synthetic_eval.csv"],
+  "data_used": ["development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-08",
+  "git_sha": "c0ffee1"
+}

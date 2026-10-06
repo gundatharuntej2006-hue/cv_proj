@@ -1,0 +1,16 @@
+{
+  "decision_id": "D06",
+  "owner": "p2",
+  "title": "Near-Duplicate Cosine Threshold",
+  "criterion_preregistered": "Cosine distance threshold tau on L2-normalised full-image RAD-DINO embeddings (proposed 0.98)",
+  "preregistered_at": "2026-09-21",
+  "candidates": [0.95, 0.98, 0.99],
+  "value": {"tau": 0.98},
+  "evidence": ["artifacts/p2/dedup/near_dup_candidates_v1.csv"],
+  "data_used": ["images_only_all_splits"],
+  "reviewed_by": "p1",
+  "guide_ack": true,
+  "locked": true,
+  "locked_at": "2026-09-28",
+  "git_sha": "c0ffee1"
+}

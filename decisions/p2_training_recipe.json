@@ -1,0 +1,16 @@
+{
+  "decision_id": "D10",
+  "owner": "p2",
+  "title": "Imbalance Mitigation Recipe",
+  "criterion_preregistered": "Weighted sampler vs logit-adjusted loss evaluated by development AUC with early stopping",
+  "preregistered_at": "2026-10-05",
+  "candidates": ["weighted_sampler", "logit_adjusted_loss"],
+  "value": {"imbalance_method": "weighted_sampler", "epochs": 25},
+  "evidence": ["artifacts/p2/cls/imbalance_eval.csv"],
+  "data_used": ["train", "development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-24",
+  "git_sha": "c0ffee1"
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "DecisionRecord",
+  "description": "C16 — Formal schema for all locked decision JSON files D01-D23.",
+  "type": "object",
+  "required": [
+    "decision_id",
+    "owner",
+    "title",
+    "criterion_preregistered",
+    "preregistered_at",
+    "candidates",
+    "value",
+    "evidence",
+    "data_used",
+    "reviewed_by",
+    "guide_ack",
+    "locked"
+  ],
+  "properties": {
+    "decision_id": {
+      "type": "string",
+      "pattern": "^D[0-2][0-9]$"
+    },
+    "owner": {
+      "type": "string",
+      "enum": ["p1", "p2", "p3", "p4"]
+    },
+    "title": {
+      "type": "string"
+    },
+    "criterion_preregistered": {
+      "type": "string"
+    },
+    "preregistered_at": {
+      "type": "string",
+      "format": "date"
+    },
+    "candidates": {
+      "type": "array"
+    },
+    "value": {
+      "type": "object"
+    },
+    "evidence": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "data_used": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["none", "train", "development", "calibration", "images_only_all_splits"]
+      }
+    },
+    "reviewed_by": {
+      "type": "string"
+    },
+    "guide_ack": {
+      "type": "boolean"
+    },
+    "locked": {
+      "type": "boolean"
+    },
+    "locked_at": {
+      "type": ["string", "null"]
+    },
+    "git_sha": {
+      "type": ["string", "null"]
+    }
+  }
+}

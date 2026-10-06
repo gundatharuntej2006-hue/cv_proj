@@ -1,0 +1,20 @@
+{
+  "decision_id": "D14",
+  "owner": "p2",
+  "title": "Frozen Model Registry Weights",
+  "criterion_preregistered": "Immutable SHA-256 hashes of all models entering sealed internal and external test evaluation",
+  "preregistered_at": "2026-10-15",
+  "candidates": ["Pinned checkpoint SHA manifest"],
+  "value": {
+    "radino_crop_m0.10_clahe0_bin": "3b9c81f0a41d9e21",
+    "radino_full_clahe0_bin": "8a1e47d9c02b11f4",
+    "effb3_crop_m0.10_clahe0": "7e3b91a0c8d45129"
+  },
+  "evidence": ["artifacts/p2/model_registry_v1.json"],
+  "data_used": ["none"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-11-10",
+  "git_sha": "c0ffee1"
+}

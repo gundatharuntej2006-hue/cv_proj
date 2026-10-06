@@ -1,0 +1,16 @@
+{
+  "decision_id": "D03",
+  "owner": "p1",
+  "title": "Lung Segmentation Sanity Ranges",
+  "criterion_preregistered": "Area ratio and bounding box size within [1st, 99th] percentile of development split; exactly 2 components; not truncated",
+  "preregistered_at": "2026-09-21",
+  "candidates": ["[1st, 99th] percentile ranges"],
+  "value": {"area_min": 0.12, "area_max": 0.45, "min_components": 2, "max_components": 2},
+  "evidence": ["artifacts/p1/seg_review.csv"],
+  "data_used": ["development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-08",
+  "git_sha": "c0ffee1"
+}

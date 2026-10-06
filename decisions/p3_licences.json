@@ -1,0 +1,16 @@
+{
+  "decision_id": "D20",
+  "owner": "p3",
+  "title": "Detector and XAI Licences",
+  "criterion_preregistered": "Verify Apache-2.0 for D-FINE official codebase, MIT for pytorch-grad-cam, and RT-DETRv2 terms",
+  "preregistered_at": "2026-09-21",
+  "candidates": ["Apache-2.0 and MIT"],
+  "value": {"dfine_licence": "Apache-2.0", "gradcam_licence": "MIT"},
+  "evidence": ["docs/p3_dfine_feasibility.md"],
+  "data_used": ["none"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-09-28",
+  "git_sha": "c0ffee1"
+}

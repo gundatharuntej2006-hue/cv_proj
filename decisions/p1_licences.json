@@ -1,0 +1,16 @@
+{
+  "decision_id": "D05",
+  "owner": "p1",
+  "title": "Data and Ingest Licences",
+  "criterion_preregistered": "Verify CC BY 4.0 for TBX11K, NLM research open-access terms, and Apache-2.0 for TorchXRayVision",
+  "preregistered_at": "2026-09-21",
+  "candidates": ["CC BY 4.0, NLM Open, Apache-2.0"],
+  "value": {"tbx11k_licence": "CC BY 4.0", "txrv_licence": "Apache-2.0"},
+  "evidence": ["docs/p1_datasets.md"],
+  "data_used": ["none"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-09-28",
+  "git_sha": "c0ffee1"
+}

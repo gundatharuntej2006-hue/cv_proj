@@ -1,0 +1,16 @@
+{
+  "decision_id": "D18",
+  "owner": "p3",
+  "title": "Detector Confidence Threshold",
+  "criterion_preregistered": "Lowest threshold with <= 5% of development non-TB images containing any false-positive box",
+  "preregistered_at": "2026-10-15",
+  "candidates": [0.35, 0.42, 0.50],
+  "value": {"conf_threshold": 0.42, "dev_fp_rate": 0.048},
+  "evidence": ["artifacts/p3/det/threshold_tuning_dev.csv"],
+  "data_used": ["development"],
+  "reviewed_by": "p4",
+  "guide_ack": true,
+  "locked": true,
+  "locked_at": "2026-11-05",
+  "git_sha": "c0ffee1"
+}

@@ -1,0 +1,16 @@
+{
+  "decision_id": "D13",
+  "owner": "p2",
+  "title": "kNN OOD Gate Parameters",
+  "criterion_preregistered": "k=5 mean cosine distance on full-image RAD-DINO embeddings; threshold at 95% pass on development split",
+  "preregistered_at": "2026-10-10",
+  "candidates": ["k=5 mean cosine distance"],
+  "value": {"k": 5, "ood_threshold": 0.241, "dev_pass_rate": 0.950},
+  "evidence": ["artifacts/p2/gate/knn_ood_dev_eval.csv"],
+  "data_used": ["train", "development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-31",
+  "git_sha": "c0ffee1"
+}

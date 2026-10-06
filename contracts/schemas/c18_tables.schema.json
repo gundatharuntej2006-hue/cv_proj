@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "C18EvaluationTablesSchema",
+  "description": "C18 — Formal schema for evaluation metric rows in artifacts/p4/tables/t*.csv.",
+  "type": "object",
+  "required": [
+    "table_id",
+    "metric",
+    "value",
+    "ci_low",
+    "ci_high",
+    "ci_method",
+    "n_tb",
+    "n_non_tb",
+    "dataset",
+    "split",
+    "model_id"
+  ],
+  "properties": {
+    "table_id": {"type": "string"},
+    "metric": {"type": "string"},
+    "value": {"type": "number"},
+    "ci_low": {"type": "number"},
+    "ci_high": {"type": "number"},
+    "ci_method": {"type": "string", "enum": ["wilson", "bootstrap_percentile"]},
+    "n_tb": {"type": "integer", "minimum": 0},
+    "n_non_tb": {"type": "integer", "minimum": 0},
+    "dataset": {"type": "string"},
+    "split": {"type": "string"},
+    "model_id": {"type": "string"},
+    "with_link_rule": {"type": ["boolean", "null"]},
+    "note": {"type": ["string", "null"]}
+  }
+}

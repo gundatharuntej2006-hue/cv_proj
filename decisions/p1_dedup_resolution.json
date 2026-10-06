@@ -1,0 +1,16 @@
+{
+  "decision_id": "D02",
+  "owner": "p1",
+  "title": "Cross-Split Near-Duplicate Resolution",
+  "criterion_preregistered": "Review every C17 pair >= 0.98 cosine; remove duplicate from the later split in order train -> dev -> cal -> test",
+  "preregistered_at": "2026-09-21",
+  "candidates": ["remove from later split"],
+  "value": {"dedup_rule": "remove_later_split", "n_duplicates_removed": 14},
+  "evidence": ["artifacts/p1/dedup_review.csv"],
+  "data_used": ["images_only_all_splits"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-02",
+  "git_sha": "c0ffee1"
+}

@@ -1,0 +1,16 @@
+{
+  "decision_id": "D08",
+  "owner": "p2",
+  "title": "CLAHE Preprocessing On/Off",
+  "criterion_preregistered": "TB sensitivity at 70% specificity on development; ROC-AUC breaks ties",
+  "preregistered_at": "2026-10-05",
+  "candidates": ["off", "on"],
+  "value": {"clahe": false},
+  "evidence": ["artifacts/p2/select/clahe_margin_dev.csv"],
+  "data_used": ["train", "development"],
+  "reviewed_by": "p4",
+  "guide_ack": false,
+  "locked": true,
+  "locked_at": "2026-10-24",
+  "git_sha": "c0ffee1"
+}

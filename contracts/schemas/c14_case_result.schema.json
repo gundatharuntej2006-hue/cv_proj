@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "CaseResult",
+  "description": "C14 — Primary runtime output contract representing end-to-end analysis of a single chest radiograph.",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "case_id",
+    "status",
+    "input",
+    "versions",
+    "timing_ms",
+    "disclaimer"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "enum": ["1.0"]
+    },
+    "case_id": {
+      "type": "string",
+      "description": "Salted hash representing case; never contains patient PHI"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ANALYSED", "REJECTED_GATE", "UNREADABLE"]
+    },
+    "input": {
+      "type": "object",
+      "required": ["format", "phi_tags_removed", "error"],
+      "properties": {
+        "format": {"type": "string", "enum": ["png", "dicom", "jpg"]},
+        "phi_tags_removed": {"type": "integer", "minimum": 0},
+        "error": {"type": ["string", "null"]}
+      }
+    },
+    "gate": {
+      "type": ["object", "null"],
+      "properties": {
+        "quality_pass": {"type": "boolean"},
+        "quality_reasons": {"type": "array", "items": {"type": "string"}},
+        "ood_score": {"type": "number"},
+        "ood_threshold": {"type": "number"},
+        "gate_pass": {"type": "boolean"},
+        "view": {"type": ["string", "null"]}
+      }
+    },
+    "segmentation": {
+      "type": ["object", "null"],
+      "properties": {
+        "sanity_pass": {"type": "boolean"},
+        "fail_reasons": {"type": "array", "items": {"type": "string"}},
+        "crop_box": {
+          "type": "array",
+          "items": {"type": "integer"},
+          "minItems": 4,
+          "maxItems": 4
+        },
+        "fallback_full": {"type": "boolean"}
+      }
+    },
+    "classifier": {
+      "type": ["object", "null"],
+      "properties": {
+        "model_id": {"type": "string"},
+        "head": {"type": "string", "enum": ["binary", "three_class"]},
+        "p_tb_raw": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "p_tb_cal": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "temperature": {"type": "number", "exclusiveMinimum": 0.0},
+        "three_class": {
+          "type": ["object", "null"],
+          "properties": {
+            "healthy": {"type": "number"},
+            "sick_non_tb": {"type": "number"},
+            "tb": {"type": "number"}
+          }
+        }
+      }
+    },
+    "detector": {
+      "type": ["object", "null"],
+      "properties": {
+        "model_id": {"type": "string"},
+        "conf_threshold": {"type": "number"},
+        "n_lesions": {"type": "integer", "minimum": 0},
+        "boxes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["xyxy", "score"],
+            "properties": {
+              "xyxy": {
+                "type": "array",
+                "items": {"type": "integer"},
+                "minItems": 4,
+                "maxItems": 4
+              },
+              "score": {"type": "number", "minimum": 0.0, "maximum": 1.0}
+            }
+          }
+        }
+      }
+    },
+    "triage": {
+      "type": ["object", "null"],
+      "properties": {
+        "t_lower": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "t_upper": {"type": "number", "minimum": 0.0, "maximum": 1.0},
+        "category_pre_link": {"type": "string", "enum": ["TB", "REFER", "NOT_TB"]},
+        "link_fired": {"type": "boolean"},
+        "category_final": {"type": "string", "enum": ["TB", "REFER", "NOT_TB"]},
+        "screen_positive": {"type": "boolean"},
+        "operating_point": {"type": "string", "enum": ["locked_default", "user_override"]}
+      }
+    },
+    "explainability": {
+      "type": ["object", "null"],
+      "properties": {
+        "heatmap_path": {"type": ["string", "null"]},
+        "overlay_path": {"type": ["string", "null"]}
+      }
+    },
+    "versions": {
+      "type": "object",
+      "required": ["model_version", "split_version", "decisions_hash", "git_sha"],
+      "properties": {
+        "model_version": {"type": "string"},
+        "split_version": {"type": "string"},
+        "decisions_hash": {"type": "string"},
+        "git_sha": {"type": "string"}
+      }
+    },
+    "timing_ms": {
+      "type": "object",
+      "required": ["standardise", "gate", "segment", "classify", "detect", "explain", "total"],
+      "properties": {
+        "standardise": {"type": "integer", "minimum": 0},
+        "gate": {"type": "integer", "minimum": 0},
+        "segment": {"type": "integer", "minimum": 0},
+        "classify": {"type": "integer", "minimum": 0},
+        "detect": {"type": "integer", "minimum": 0},
+        "explain": {"type": "integer", "minimum": 0},
+        "total": {"type": "integer", "minimum": 0}
+      }
+    },
+    "disclaimer": {
+      "type": "string"
+    }
+  }
+}
