@@ -36,7 +36,7 @@ from p3_ops.seed import set_seed
 from ..data import DataPaths, DetDataConfig, TBDetectionDataset
 from ..metrics import ImageGT, ap50
 from . import dfine_bridge as bridge
-from .config import DFINE_DIR, REPO, RunConfig, load_run_config
+from .config import DFINE_DIR, REPO, RunConfig, load_run_config, require_trainable
 
 TRAIN_SPLIT, EVAL_SPLIT = "train", "development"
 CSV_FIELDS = ["epoch", "train_loss", "lr", "steps", "dev_ap50", "dev_n_images", "dev_n_tb_images",
@@ -111,6 +111,7 @@ def train(config: str | Path, *, device: str | None = None, data_root: Path | No
           ckpt_root: Path | None = None, weights_cache: Path | None = None,
           max_epochs: int | None = None, decisions_dir: Path | None = None) -> Path:
     cfg = load_run_config(config)
+    require_trainable(cfg)                     # epochs / batch_size must be set (P3-01)
     s = cfg.schedule
     seed_util = set_seed(cfg.seed)
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")

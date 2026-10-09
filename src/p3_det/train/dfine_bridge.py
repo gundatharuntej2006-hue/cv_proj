@@ -58,7 +58,7 @@ def _yaml_config(cfg: RunConfig, amp: bool):
         # No ImageNet backbone download: with init=coco the COCO checkpoint supplies the backbone too;
         # init=none (smoke tests only) trains from scratch offline.
         "HGNetv2": {"pretrained": False},
-        "epochs": cfg.schedule["epochs"],
+        **({"epochs": cfg.schedule["epochs"]} if cfg.schedule.get("epochs") else {}),   # unset for inference-only builds
     }
     with tempfile.TemporaryDirectory(prefix="p3_dfine_cfg_") as work:
         cfg_file = Path(work) / "run.yml"
@@ -153,7 +153,8 @@ def make_train_collate(cfg: RunConfig):
     """D-FINE's own batch collate (multi-scale until multiscale_stop_epoch)."""
     _, BatchImageCollateFunction = import_dfine()
     s = cfg.schedule
-    stop = s["multiscale_stop_epoch"] if s["multiscale"] else 0
+    from .config import multiscale_stop_epoch
+    stop = multiscale_stop_epoch(cfg) if s["multiscale"] else 0
     return BatchImageCollateFunction(base_size=cfg.input_size, base_size_repeat=3 if s["multiscale"] else None,
                                      stop_epoch=stop)
 

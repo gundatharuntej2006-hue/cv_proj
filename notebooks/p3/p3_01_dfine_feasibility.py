@@ -24,7 +24,6 @@ import gc
 import json
 import os
 import platform
-import random
 import subprocess
 import sys
 import tempfile
@@ -51,18 +50,8 @@ def max_train_scale(base: int) -> int:
 
 
 def set_seed(seed: int) -> str:
-    try:
-        from tbcore.seed import set_all  # P4 utility, preferred
-        set_all(seed)
-        return "tbcore.seed.set_all"
-    except ImportError:
-        import numpy as np
-        import torch
-        random.seed(seed)
-        np.random.seed(seed)
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
-        return "fallback (tbcore.seed not available)"
+    from p3_ops.seed import set_seed as _set_seed       # tbcore via the adapter, else local fallback
+    return _set_seed(seed)
 
 
 def write_config(path: Path, dfine_dir: Path, model: str, size: int, data_dir: Path,

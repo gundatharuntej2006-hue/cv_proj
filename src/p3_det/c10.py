@@ -71,12 +71,9 @@ def validate_doc(doc: dict) -> None:
 def validate_c10(path: Path) -> None:
     path = Path(path)
     _check(bool(NAME_RE.match(path.name)), f"file name {path.name} does not follow detections_{{dataset}}_{{split}}_v1.json")
-    try:
-        from tbcore import validators  # P4 (P4-01)
-    except ImportError:
+    from p3_ops import _tbcore_adapter
+    if not _tbcore_adapter.validate("C10", path):      # tbcore absent: apply the C10 table ourselves
         validate_doc(json.loads(path.read_text()))
-        return
-    validators.validate("C10", path)   # API name to confirm with P4; a mismatch raises, never skips
 
 
 def write(path: Path, doc: dict) -> Path:

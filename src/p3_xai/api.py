@@ -5,7 +5,7 @@ Frozen signatures (README 4.3):
     render_overlay(img512, heatmap, boxes) -> png_path
 
 explain() runs Grad-CAM (p3_xai.gradcam, configuration D19) on P2's classifier from
-p2_cls.api.classifier_module() (R2), loaded once per process. TB_MOCK=1 serves the P3-03 stub
+p2_cls.api.classifier_module() (R2), loaded once per process. TB_MOCK=1 serves the P3-03 mock
 (deterministic Gaussian blobs) so consumers can test without RAD-DINO.
 
 Every overlay carries the caption "attention evidence, not a finding" (drawn on the image and
@@ -20,7 +20,7 @@ from typing import Callable
 
 import numpy as np
 
-from p3_det.api import _check_inputs, _stub_rng
+from p3_det.api import _check_inputs, _mock_rng
 
 from .overlay import CAPTION  # noqa: F401  ("Attention evidence, not a finding"; re-exported)
 
@@ -28,10 +28,10 @@ IS_STUB = False            # explain (P3-09) and render_overlay (P3-11) are real
 RENDER_IS_STUB = False
 
 
-def _explain_stub(img: np.ndarray, crop_box: list[int]) -> np.ndarray:
+def _explain_mock(img: np.ndarray, crop_box: list[int]) -> np.ndarray:
     """MOCK (P3-03): deterministic Gaussian blob(s) inside the crop, normalised to [0, 1]."""
     x0, y0, x1, y1 = crop_box
-    r = _stub_rng(img, [x0, y0, x1, y1], b"explain")
+    r = _mock_rng(img, [x0, y0, x1, y1], b"explain")
     yy, xx = np.mgrid[0:512, 0:512].astype(np.float32)
     h = np.zeros((512, 512), np.float32)
     for weight in (1.0, 0.6):
@@ -84,7 +84,7 @@ def explain(img_for_analysis, crop_box) -> np.ndarray:
     """Grad-CAM heatmap for the TB output: float16 [512, 512], [0, 1], zero outside crop_box."""
     img, box = _check_inputs(img_for_analysis, crop_box)
     if os.environ.get("TB_MOCK") == "1":
-        return _explain_stub(img, box)
+        return _explain_mock(img, box)
     e = explainer()
     with _lock:
         return e(img, box)

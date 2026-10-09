@@ -9,12 +9,10 @@ Simulated kill (what the tests do):
 from __future__ import annotations
 
 import argparse
-import random
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
 
-import numpy as np
 import torch
 from torch import nn
 
@@ -36,16 +34,8 @@ class DemoResult:
 
 
 def set_seed(seed: int) -> str:
-    try:
-        from tbcore.seed import set_all  # P4 utility
-        set_all(seed)
-        return "tbcore.seed.set_all"
-    except ImportError:
-        random.seed(seed)
-        np.random.seed(seed)
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed_all(seed)
-        return "fallback (tbcore.seed not available)"
+    from p3_ops.seed import set_seed as _set_seed       # one seeding path (tbcore via the adapter, else fallback)
+    return _set_seed(seed)
 
 
 def _toy_data(n: int = 256, seed: int = 1234):

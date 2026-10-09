@@ -12,14 +12,14 @@ model:
 
 schedule:
   seed: 0
-  epochs: 48                                   # TODO(P3-06): confirm; P3-07 (D17) picks the training length later
-  batch_size: 8                                # TODO(P3-01): min(chosen batch at 512, chosen batch at 640), so both sizes match
+  epochs: null                                 # set from the P3-01 T4 run (docs/p3_dfine_feasibility.md); training refuses while null
+  batch_size: null                             # min(chosen batch at 512, at 640) from docs/p3_dfine_feasibility.md
   eval_batch_size: 16
   num_workers: 2
   amp: true
   lr_scale: 1.0                                # multiplies every D-FINE learning rate (custom config defaults)
   multiscale: true                             # D-FINE batch multi-scale (0.75x..1.25x of input size)
-  multiscale_stop_epoch: 43                    # last ~10% of epochs at the native size, as D-FINE does
+  multiscale_stop_epoch: null                  # null = about the last 10% of epochs at the native size, as D-FINE does
 
 data:
   margin: null                                 # null -> locked D09, else PROVISIONAL 0.10

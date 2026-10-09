@@ -79,7 +79,7 @@ def test_detect_types_shapes_and_bounds(img512):
         assert (b[:, 1] >= CROP[1]).all() and (b[:, 3] <= CROP[3]).all()
         assert (b[:, 2] > b[:, 0]).all() and (b[:, 3] > b[:, 1]).all()
         assert isinstance(r.n_lesions_above_thr, int)
-        assert r.n_lesions_above_thr == int((r.scores >= det_api.STUB_CONF_THRESHOLD).sum())
+        assert r.n_lesions_above_thr == int((r.scores >= det_api.MOCK_CONF_THRESHOLD).sum())
         hits += len(b) > 0
     assert hits > 0
 

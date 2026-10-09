@@ -35,18 +35,12 @@ def check_split(split: str, dataset: str = "tbx11k") -> None:
     if split in OPEN_SPLITS:
         return
     if split in SEALED_SPLITS:
-        try:
-            from tbcore import guard  # P4 (P4-01, P4-09)
-        except ImportError:
-            raise SealedSplitError(
-                f"split '{split}' is sealed and tbcore.guard is not available; refusing") from None
-        # tbcore.guard raises if no single-use token exists for this split (README 4.1).
-        # The function name is a placeholder until P4 publishes the guard API; if it differs,
-        # this still refuses (fails closed) instead of loading sealed data.
-        require = getattr(guard, "require_unlocked", None)
-        if require is None:
-            raise SealedSplitError(f"tbcore.guard has no require_unlocked(); refusing sealed split '{split}'")
-        require(split=split, dataset=dataset, purpose="p3_det")
+        from p3_ops import _tbcore_adapter
+        try:                                   # tbcore.guard raises if no single-use token exists (README 4.1)
+            _tbcore_adapter.require_unlocked(split=split, dataset=dataset, purpose="p3_det")
+        except _tbcore_adapter.TbcoreUnavailable as e:   # guard unreachable: refuse (fail closed)
+            raise SealedSplitError(f"split '{split}' is sealed and the tbcore guard is not available ({e}); "
+                                   "refusing") from None
         return
     raise SealedSplitError(f"split '{split}' may not be loaded by the detector adapter")
 

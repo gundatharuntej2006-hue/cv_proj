@@ -67,6 +67,26 @@ def load_run_config(path: str | Path) -> RunConfig:
     if raw["model"]["init"] not in ("coco", "none"):
         raise ValueError(f"{p.name}: model.init must be 'coco' or 'none'")
     s = raw["schedule"]
-    if not 0 < s["multiscale_stop_epoch"] <= s["epochs"]:
+    if s.get("epochs") is not None and s.get("multiscale_stop_epoch") is not None \
+            and not 0 < s["multiscale_stop_epoch"] <= s["epochs"]:
         raise ValueError(f"{p.name}: multiscale_stop_epoch must be in (0, epochs]")
     return RunConfig(raw, p)
+
+
+FEASIBILITY_DOC = "docs/p3_dfine_feasibility.md"
+
+
+def require_trainable(cfg: RunConfig) -> None:
+    """Refuse to train while schedule values that need the P3-01 T4 feasibility numbers are still null."""
+    s = cfg.schedule
+    missing = [k for k in ("epochs", "batch_size") if s.get(k) is None]
+    if missing:
+        raise ValueError(f"{cfg.path.name}: schedule.{', schedule.'.join(missing)} not set. Fill them from the P3-01 "
+                         f"T4 run in {FEASIBILITY_DOC} (batch = min of the chosen batches at 512 and 640) before "
+                         "training.")
+
+
+def multiscale_stop_epoch(cfg: RunConfig) -> int:
+    """Configured value, else about the last 10% of epochs at the native size (as D-FINE does)."""
+    s = cfg.schedule
+    return int(s["multiscale_stop_epoch"]) if s.get("multiscale_stop_epoch") else max(1, int(0.9 * s["epochs"]))

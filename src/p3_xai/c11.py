@@ -62,12 +62,8 @@ def validate_table(path: Path):
     path = Path(path)
     m = TABLE_RE.match(path.name)
     _check(m is not None, f"file name {path.name} does not follow loc_{{model_id}}_{{split}}_v1.parquet")
-    try:
-        from tbcore import validators  # P4 (P4-01)
-    except ImportError:
-        validators = None
-    if validators is not None:
-        validators.validate("C11", path)   # API name to confirm with P4; a mismatch raises, never skips
+    from p3_ops import _tbcore_adapter
+    _tbcore_adapter.validate("C11", path)              # runs tbcore's validator when tbcore exists; ours always runs
     import pyarrow.parquet as pq
     t = pq.read_table(path)
     _check(tuple(t.schema.names) == COLUMNS, f"columns {t.schema.names} != {COLUMNS}")

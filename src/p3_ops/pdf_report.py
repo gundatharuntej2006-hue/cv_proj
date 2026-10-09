@@ -56,17 +56,13 @@ def redact(text) -> str:
 
 
 def tbcore_texts() -> tuple[str, str]:
-    """(DISCLAIMER, SCOPE_HONESTY) from tbcore, the single source (P4-01). Fails closed."""
+    """(DISCLAIMER, SCOPE_HONESTY) from tbcore, the single source (P4-01), via the adapter. Fails closed."""
+    from . import _tbcore_adapter
     try:
-        from tbcore import disclaimer as d
-    except ImportError as e:
-        raise RuntimeError("tbcore.disclaimer (P4) is not available: refusing to produce a PDF without the "
-                           "single-source disclaimer and scope statement") from e
-    try:
-        return str(d.DISCLAIMER), str(d.SCOPE_HONESTY)
-    except AttributeError as e:
-        raise RuntimeError("tbcore.disclaimer must provide DISCLAIMER and SCOPE_HONESTY (names to confirm "
-                           "with P4)") from e
+        return _tbcore_adapter.disclaimer_texts()
+    except _tbcore_adapter.TbcoreUnavailable as e:
+        raise RuntimeError(f"refusing to produce a PDF without the single-source disclaimer and scope statement "
+                           f"from tbcore ({e})") from e
 
 
 def _short(v, n: int) -> str:

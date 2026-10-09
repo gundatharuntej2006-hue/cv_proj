@@ -14,7 +14,7 @@ The checkpoint file's SHA-256 must equal D17's; its EMA weights are used. The mo
 per process and cached.
 
 Environment:
-    TB_MOCK=1                 deterministic fake detector (the P3-03 stub) for consumers' tests
+    TB_MOCK=1                 deterministic fake detector (the P3-03 mock) for consumers' tests
     TB_DET_CHECKPOINT         path to ckpt_best.pt (default artifacts/p3/det/checkpoints/<D17 run>/ckpt_best.pt)
     TB_DET_DEVICE             cuda / cpu (default: cuda if available)
     TB_DECISIONS_DIR, TB_DET_RUNS_DIR   alternative locations (tests)
@@ -32,10 +32,10 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from ._stub import STUB_CONF_THRESHOLD, STUB_MODEL_ID, detect_stub
-from ._stub import stub_rng as _stub_rng  # noqa: F401  (used by the p3_xai stub)
+from ._mock import MOCK_CONF_THRESHOLD, MOCK_MODEL_ID, detect_mock
+from ._mock import mock_rng as _mock_rng  # noqa: F401  (used by the p3_xai mock)
 from .result import DetResult, check_inputs
-from .result import check_inputs as _check_inputs  # noqa: F401  (used by the p3_xai stub)
+from .result import check_inputs as _check_inputs  # noqa: F401  (used by the p3_xai mock)
 
 IS_STUB = False
 MIN_SCORE = 0.01
@@ -160,7 +160,7 @@ def reset_cache() -> None:
 def detector_info() -> dict:
     """model_id, input_size, conf_threshold for CaseResult's detector block (C14)."""
     if _mock():
-        return {"model_id": STUB_MODEL_ID, "input_size": 512, "conf_threshold": STUB_CONF_THRESHOLD, "mock": True}
+        return {"model_id": MOCK_MODEL_ID, "input_size": 512, "conf_threshold": MOCK_CONF_THRESHOLD, "mock": True}
     s = _detector().s
     return {"model_id": s.model_id, "input_size": s.input_size, "conf_threshold": s.conf_threshold,
             "checkpoint_sha256": s.checkpoint_sha256, "locked": s.locked, "mock": False}
@@ -170,5 +170,5 @@ def detect(img_for_analysis, crop_box) -> DetResult:
     """Detect TB lesions. Boxes in full 512 coordinates inside crop_box; every box with score >= 0.01."""
     img, box = check_inputs(img_for_analysis, crop_box)
     if _mock():
-        return detect_stub(img, box)
+        return detect_mock(img, box)
     return _detector()(img, box)

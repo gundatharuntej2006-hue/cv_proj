@@ -160,5 +160,14 @@ def test_512_and_640_configs_identical_except_size():
 def test_schedule_hash_detects_changes():
     raw = load_run_config("dfine_512.yaml").raw
     changed = json.loads(json.dumps(raw))
-    changed["schedule"]["batch_size"] += 1
+    changed["schedule"]["batch_size"] = 4
     assert schedule_hash(raw) != schedule_hash(changed)
+
+
+def test_training_refused_while_feasibility_values_are_null():
+    from p3_det.train.config import require_trainable
+    cfg = load_run_config("dfine_512.yaml")
+    if cfg.schedule["epochs"] is not None and cfg.schedule["batch_size"] is not None:
+        pytest.skip("feasibility values already filled in")
+    with pytest.raises(ValueError, match="p3_dfine_feasibility.md"):
+        require_trainable(cfg)
