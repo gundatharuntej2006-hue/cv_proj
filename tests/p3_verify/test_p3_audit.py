@@ -58,10 +58,12 @@ def test_A1():
                owner="P1 (repo bootstrap P1-01) / you", command="git fetch origin && python .github/scripts/"
                "ownership_check.py --base origin/main --head HEAD --branch $(git branch --show-current)")
     rc, out = git("rev-parse", "--abbrev-ref", "HEAD")
-    p = __import__("subprocess").run([PY, ".github/scripts/ownership_check.py", "--base", "origin/main", "--head",
+    base = "origin/main" if git("rev-parse", "--verify", "-q", "origin/main")[0] == 0 else "main"
+    p = __import__("subprocess").run([PY, ".github/scripts/ownership_check.py", "--base", base, "--head",
                                       "HEAD", "--branch", out], cwd=REPO, capture_output=True, text=True)
     finish("A1", "Only my paths touched (ownership check)", "PASS" if p.returncode == 0 else "FAIL",
-           p.stdout + p.stderr, fix="revert edits outside P3 paths")
+           f"git diff {base}...HEAD on branch {out} ({'local repo, no team remote yet' if base == 'main' else 'team'}): "
+           f"{p.stdout + p.stderr}. Untracked outside the diff: {sim}", fix="revert edits outside P3 paths")
 
 
 def test_A2():
@@ -81,9 +83,15 @@ def test_A2():
         problems.append("ownership check / data guard missing")
     if not validators or any(str(s.get("if")).lower() == "false" for s in validators):
         problems.append("tbcore validator step is a disabled placeholder (if: false), so validators never run")
-    if "requirements/p3.txt" not in text:
-        problems.append("CI installs only requirements/base.txt: torch/pyarrow/D-FINE deps/grad-cam/reportlab are "
-                        "missing, so most P3 tests are importorskip-ed (silently skipped) in CI")
+    elif "SKIPPED: waiting on P4 tbcore" not in text or "GITHUB_STEP_SUMMARY" not in text \
+            or "if [ -d src/tbcore ]" not in text or "p3_ops.ci_validate" not in text:
+        problems.append("tbcore step must print an explicit SKIPPED notice to the job summary and become a hard "
+                        "step (p3_ops.ci_validate) once src/tbcore/ exists")
+    if "requirements/p3.txt" not in text or "download.pytorch.org/whl/cpu" not in text:
+        problems.append("CI must install CPU torch and requirements/p3.txt, otherwise most P3 tests are "
+                        "importorskip-ed (silently skipped) in CI")
+    if "could not import" not in text or "-rs" not in text:
+        problems.append("CI must show skip reasons (-rs) and fail when a P3 test is skipped for a missing package")
     ev = f"{ci.relative_to(REPO)}: python {sorted(pyver)}; " + ("; ".join(problems) if problems else "all present")
     finish("A2", "CI: Python 3.11, pytest, tbcore validators, ownership check, data guard",
            "FAIL" if problems else "PASS", ev,
@@ -173,9 +181,24 @@ def test_B3():
 def test_B4():
     from p3_det.decisions import verify_order
     reps = {k: verify_order(REPO / DECISIONS[k]) for k in ("D16", "D17", "D18", "D19")}
-    if any(ok for ok, _ in reps.values()) and not all(ok for ok, _ in reps.values()):
-        finish("B4", "Criterion committed before result (git log)", "FAIL",
-               "\n".join(f"{k}: {r}" for k, (ok, r) in reps.items()), fix="see per-decision verdicts")
+    if own_repo():
+        violations, pending = [], []
+        for k, (ok, r) in reps.items():
+            has_result = bool(load_json(DECISIONS[k])["value"])
+            if not ok and ("no git history" in r and not has_result):
+                pending.append(k)                      # criterion not committed, no result: nothing to violate yet
+            elif not ok:
+                violations.append(k)
+        ev = "\n".join(f"{k}:\n{r}" for k, (ok, r) in reps.items())
+        if violations:
+            finish("B4", "Criterion committed before result (git log)", "FAIL", ev,
+                   fix="a result exists without an earlier rule-only commit: re-register via P4 (CCR)")
+        if pending:
+            finish("B4", "Criterion committed before result (git log)", "NOT_YET",
+                   f"no violation; criterion not yet committed for {pending} (no result exists). " + ev,
+                   owner="you (D19: decide signed vs absolute Spearman, then commit the criterion)",
+                   command="git add decisions/p3_gradcam_config.json && git commit -m 'P3-09: pre-register D19 criterion'")
+        finish("B4", "Criterion committed before result (git log)", "PASS", ev)
     if not own_repo():
         finish("B4", "Criterion committed before result (git log)", "NOT_YET",
                f"{NO_REPO}; verify_order: " + "; ".join(f"{k}: {r.splitlines()[-1]}" for k, (ok, r) in reps.items()),
