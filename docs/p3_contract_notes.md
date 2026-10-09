@@ -1,0 +1,28 @@
+# P3 notes for the contracts-v1 freeze (C10, C11, C14, C15, R3)
+
+Raised while building the P3-03 mocks and R3 stubs (2026-10-07). `contracts/` was not in the repo,
+so the mocks and stubs follow the README §4.2–4.3 tables, with the choices below.
+**If contracts-v1 is already tagged, each item becomes a CCR (`contracts/ccr/CCR-NNN.md`) instead.**
+
+| # | Contract | Gap | Choice made in the mocks/stubs | Proposed wording for the freeze |
+|---|---|---|---|---|
+| 1 | C14 → C15 | C15 needs `run_id`, but CaseResult has no `run_id` field, and `log_case(case_result, operating_point)` has no run argument | `log_case` takes `TB_RUN_ID`, else parses `runs/<run_id>/` from `explainability` paths, else `"unknown"` | Add `run_id` (str) to the C14 top level |
+| 2 | C15 | Field nullability for `REJECTED_GATE` / `UNREADABLE` is unspecified (C14 nulls the triage/classifier blocks) | `category_final`, `link_fired`, `p_tb_cal`, `t_lower`, `t_upper` = null; `gate_pass` = false for REJECTED_GATE, null for UNREADABLE; `latency_ms` null if no timing | "Triage fields are null unless status = ANALYSED" |
+| 3 | C10 | `max_score` when an image has no boxes | `0.0` | "`max_score` = 0.0 when `boxes` is empty" |
+| 4 | C10 | `n_lesions_above_thr` comparison: ≥ or > threshold | `score >= conf_threshold` | "≥" (matches D18 wording) |
+| 5 | C10 / C14 | `crop_box` convention: x1/y1 inclusive or exclusive | exclusive, `0 ≤ x0 < x1 ≤ 512` | State it in C05 (P1) |
+| 6 | C11 | Rows for images without GT boxes (non-TB): `pointing_hit`, `energy_in_box`, `tb_subtype` undefined | one row per image; `n_gt_boxes=0`, `pointing_hit=false`, `energy_in_box=0.0`, `tb_subtype=null` | Either that, or "rows only for images with ≥ 1 GT box" (P4 to choose for §12.5) |
+| 7 | C11 | `tb_subtype` values per image | `active`, `latent`, `active+latent` (as in P3-05) | List the enum |
+| 8 | R3 | `render_overlay` and `make_pdf` take no output path, but C14 shows overlays under `runs/{run_id}/` | stubs write to `TB_OVERLAY_DIR` / `TB_PDF_DIR` (default: system temp) and return the path | Keep the env vars, or add `out_dir` as an optional keyword |
+| 9 | R3 / C14 | `DetResult` has no `model_id` / `conf_threshold`, which C14 `detector` needs | not added (signature frozen) | P4 reads them from D17/D18, or add both fields to `DetResult` |
+| 10 | README 4.1 | `mock/` is gitignored, which would also ignore the mock **generators** that live there | generators in `mock/make_c*.py`; outputs under `mock/artifacts/`, `mock/logs/` | `.gitignore` (P1): ignore `mock/*/` outputs but keep `mock/*.py` |
+| 11 | C06 / D21 | D21 evaluates detection "against all original boxes", but C06 drops boxes lying fully outside the lung crop (only counted in `outside_crop_v1.csv`), so no contract file carries them | `p3_det.metrics.ground_truth_from_coco` uses `orig_bbox_512` from C06 and documents the gap | P1 adds an uncropped box file, e.g. `data/boxes/v1/coco_{split}_full.json` (all boxes, 512 coords), or C06 keeps fully-outside boxes flagged `outside_crop: true` |
+| 12 | D21 | Field names for bootstrap settings in `decisions/p4_analysis_plan.json` | `p3_det.metrics.bootstrap_settings` reads `value.bootstrap.{B, seed}`, else B = 2000, seed = 0 with a warning | P4 confirms the key names |
+| 13 | R2 | `classifier_module() -> torch.nn.Module` does not say what the module expects or returns. Grad-CAM must prepare the crop exactly as P2's `classify()` does, and must know which output is TB | `p3_xai.gradcam` uses `module.preprocess(crop_uint8) -> tensor[1,3,H,W]` if present, else `module.input_size`, `image_mean`, `image_std`; TB output = `module.tb_index`, else 0 (one logit) or `class_names.index("tb")` / C08 order (3 outputs); forward may return a tensor, a dict with `logits` or an object with `.logits` | P2 exposes `preprocess()` (the same function `classify()` uses) and `tb_index` on the module returned by `classifier_module()` |
+| 14 | R2 / D14 | P3-10 needs Grad-CAM for TWO registered classifiers (primary lung-crop and full-image, methodology §14 "Does lung cropping help?"), but `classifier_module()` takes no argument and D14's layout is not specified | `p3_xai.export_c11` loads the primary with `classifier_module()` and the comparator with `classifier_module(model_id=...)`, failing clearly if unsupported; model ids must appear somewhere in D14's `value` | P2 adds `classifier_module(model_id: str \| None = None)` (None = D11 primary) and documents D14's layout |
+
+Item 6 decided in P3-10: C11 rows only for TB images with annotated boxes (n_gt_boxes > 0, tb_subtype in active / latent / active+latent).
+
+Item 8 (P3-11): `render_overlay(img512, heatmap, boxes, *, out_path=None, case_id=None)`. The three frozen positional parameters are unchanged; the two optional keyword-only parameters are an extension that needs P4/P1 sign-off (CCR if contracts-v1 is already tagged). Default path: `runs/<TB_RUN_ID>/<case_id>_overlay.png`.
+
+| 15 | R3 / C14 / tbcore | (a) `make_pdf(case_result)` must show the original image, but C14 has no image path (and a raw input path could carry PHI). (b) The disclaimer and scope-honesty text are single-sourced in tbcore, but the names are not published | (a) keyword-only `make_pdf(..., *, image=None, out_path=None)`; without `image` a labelled placeholder is shown; the overlay comes from `explainability.overlay_path` and is embedded only if its file name starts with the case_id. (b) `from tbcore import disclaimer` with `DISCLAIMER` and `SCOPE_HONESTY`; no PDF is produced without them | (a) P4 passes the img512 array to `make_pdf` (or C14 gains a non-PHI image path). (b) P4 confirms the module and constant names |

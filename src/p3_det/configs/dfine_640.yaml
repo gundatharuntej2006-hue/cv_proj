@@ -1,0 +1,35 @@
+# P3-06: D-FINE single-class TB-lesion detector, input 640.
+# dfine_512.yaml and dfine_640.yaml must be IDENTICAL except run_name and input_size
+# (checked by p3_det.train and by select_size before D16 is written).
+run_name: dfine_s_640
+input_size: 640
+
+model:
+  variant: s                                   # D-FINE-S; P3-01 measured s and m on T4
+  dfine_config: configs/dfine/custom/dfine_hgnetv2_s_custom.yml   # relative to third_party/D-FINE
+  init: coco                                   # COCO-pretrained D-FINE weights (shape-matched; class head re-initialised)
+  init_url: https://github.com/Peterande/storage/releases/download/dfinev1.0/dfine_s_coco.pth
+
+schedule:
+  seed: 0
+  epochs: 48                                   # TODO(P3-06): confirm; P3-07 (D17) picks the training length later
+  batch_size: 8                                # TODO(P3-01): min(chosen batch at 512, chosen batch at 640), so both sizes match
+  eval_batch_size: 16
+  num_workers: 2
+  amp: true
+  lr_scale: 1.0                                # multiplies every D-FINE learning rate (custom config defaults)
+  multiscale: true                             # D-FINE batch multi-scale (0.75x..1.25x of input size)
+  multiscale_stop_epoch: 43                    # last ~10% of epochs at the native size, as D-FINE does
+
+data:
+  margin: null                                 # null -> locked D09, else PROVISIONAL 0.10
+  clahe: null                                  # null -> locked D08, else PROVISIONAL off
+  augment:
+    scale: [0.9, 1.1]
+    translate: 0.05
+    brightness: 0.1
+    contrast: 0.1
+    hflip_p: 0.0                               # off: mirrored CXR is anatomically implausible
+
+eval:
+  min_score: 0.01                              # keep every box >= 0.01 (as C10), needed for AP

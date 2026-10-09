@@ -1,16 +1,54 @@
 {
   "decision_id": "D20",
   "owner": "p3",
-  "title": "Detector and XAI Licences",
-  "criterion_preregistered": "Verify Apache-2.0 for D-FINE official codebase, MIT for pytorch-grad-cam, and RT-DETRv2 terms",
-  "preregistered_at": "2026-09-21",
-  "candidates": ["Apache-2.0 and MIT"],
-  "value": {"dfine_licence": "Apache-2.0", "gradcam_licence": "MIT"},
-  "evidence": ["docs/p3_dfine_feasibility.md"],
+  "title": "Third-party licences: D-FINE, pytorch-grad-cam, RT-DETRv2 (extension)",
+  "criterion_preregistered": "Each component is accepted if the LICENSE file shipped at the pinned version (git commit or PyPI release) is an OSI-approved permissive licence (Apache-2.0, MIT or BSD) that allows academic use, modification and redistribution with attribution. The licence is read from the actual file, not from badges or metadata, and its SHA-256 is recorded. Terms of pretrained weights and datasets are recorded separately and do not change the code verdict.",
+  "preregistered_at": "2026-10-07",
+  "candidates": [
+    "D-FINE (primary detector)",
+    "pytorch-grad-cam (Grad-CAM)",
+    "RT-DETRv2 (comparison detector, extension)"
+  ],
+  "value": {
+    "dfine": {
+      "accepted": true,
+      "licence": "Apache-2.0",
+      "repo": "https://github.com/Peterande/D-FINE",
+      "commit": "956d1709314c2c6a4df6f34de232054578a7449f",
+      "licence_file": "third_party/D-FINE/LICENSE",
+      "licence_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6",
+      "notes": "Upstream README (commit 956d170) states that Objects365-trained checkpoints (*_obj365, *_obj2coco) may be subject to Objects365 dataset terms and are not cleared by the code licence. The default custom configs load ImageNet-pretrained PP-HGNetV2 backbone weights from github.com/Peterande/storage. Choice of initial weights is made in P3-06 and its terms are recorded there."
+    },
+    "pytorch_grad_cam": {
+      "accepted": true,
+      "licence": "MIT",
+      "repo": "https://github.com/jacobgil/pytorch-grad-cam",
+      "pypi": "grad-cam==1.5.7",
+      "licence_file": "grad_cam-1.5.7.tar.gz:grad_cam-1.5.7/LICENSE",
+      "licence_sha256": "daaa1016faf5179309e91ba6b7656e0c3c36cdd1695ca1c91f215e668abc7403",
+      "notes": "Copyright (c) 2021 Jacob Gildenblat. Text is identical to LICENSE on GitHub master @ 704393448a7b0c620ee2c2b9597723f1d7f17b3d (that copy has LF line endings, sha256 abbeae4bffb27ab9918e6b16207fe84de38577ac74c61a4a6f91dd20e9a6b7a3). PKG-INFO classifier: MIT License."
+    },
+    "rtdetrv2": {
+      "accepted": true,
+      "licence": "Apache-2.0",
+      "repo": "https://github.com/lyuwenyu/RT-DETR",
+      "subdir": "rtdetrv2_pytorch",
+      "commit": "29320b6fd828f8e0987a71426cf2d961b09dfed7",
+      "licence_file": "LICENSE (repository root; rtdetrv2_pytorch/ has no separate licence)",
+      "licence_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6",
+      "notes": "Extension only. Commit is the one inspected on 2026-10-07; re-pin when the RT-DETRv2 extension (P3-19) starts."
+    }
+  },
+  "evidence": [
+    "third_party/D-FINE/LICENSE",
+    "docs/p3_dfine_feasibility.md",
+    "https://github.com/jacobgil/pytorch-grad-cam/blob/704393448a7b0c620ee2c2b9597723f1d7f17b3d/LICENSE",
+    "https://github.com/lyuwenyu/RT-DETR/blob/29320b6fd828f8e0987a71426cf2d961b09dfed7/LICENSE"
+  ],
   "data_used": ["none"],
   "reviewed_by": "p4",
   "guide_ack": false,
-  "locked": true,
-  "locked_at": "2026-09-28",
-  "git_sha": "c0ffee1"
+  "locked": false,
+  "locked_at": null,
+  "git_sha": null
 }
