@@ -4,7 +4,7 @@
 
 Uses the test-only stand-ins (7 CaseResult scenarios, tbcore disclaimer placeholders) and a synthetic
 image, so the PDFs show PLACEHOLDER disclaimer/scope wording until P4's tbcore exists.
-Writes artifacts/p3/ops/pdf_preview/{scenario}.pdf, {scenario}.png and contact_sheet.png.
+Writes artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_{scenario}.pdf/.png and SYNTHETIC_contact_sheet.png.
 """
 from __future__ import annotations
 
@@ -23,7 +23,7 @@ for p in (REPO / "src", REPO / "tests" / "p3_mock"):
 import tbcore_standin  # noqa: E402
 from p3_case_results import P4_SCENARIOS  # noqa: E402
 
-OUT = REPO / "artifacts" / "p3" / "ops" / "pdf_preview"
+OUT = REPO / "artifacts" / "p3" / "_preview_synthetic" / "ops_pdf_preview"
 
 
 class _Patch:
@@ -52,10 +52,10 @@ def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     thumbs = []
     for kind, cr in P4_SCENARIOS.items():
-        pdf = Path(api.make_pdf(cr, image=img, out_path=OUT / f"{kind}.pdf"))
+        pdf = Path(api.make_pdf(cr, image=img, out_path=OUT / f"SYNTHETIC_{kind}.pdf"))
         page = pdfium.PdfDocument(str(pdf))[0]
         png = page.render(scale=1.6).to_pil()
-        png.save(OUT / f"{kind}.png")
+        png.save(OUT / f"SYNTHETIC_{kind}.png")
         thumbs.append(png)
         print(f"{kind:22s} {pdf.stat().st_size / 1024:6.0f} KB  -> {pdf}")
     w, h = thumbs[0].size
@@ -63,8 +63,8 @@ def main() -> int:
     sheet = Image.new("RGB", (cols * w // 2, 2 * h // 2), "white")
     for k, t in enumerate(thumbs):
         sheet.paste(t.resize((w // 2, h // 2), Image.Resampling.LANCZOS), ((k % cols) * w // 2, (k // cols) * h // 2))
-    sheet.save(OUT / "contact_sheet.png")
-    print(f"contact sheet -> {OUT / 'contact_sheet.png'}")
+    sheet.save(OUT / "SYNTHETIC_contact_sheet.png")
+    print(f"contact sheet -> {OUT / 'SYNTHETIC_contact_sheet.png'}")
     return 0
 
 

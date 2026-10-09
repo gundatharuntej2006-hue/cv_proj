@@ -3,9 +3,9 @@
     python notebooks/p3/p3_11_overlay_preview.py
 
 Synthetic X-ray, heatmap and boxes only (no real or patient data). Writes:
-    artifacts/p3/xai/overlay_preview/overlay_full.png            the overlay at native size (1024x1204)
-    artifacts/p3/xai/overlay_preview/dashboard_1366x768.png      overlay fitted into a 683x768 half panel
-Open dashboard_1366x768.png at 100% zoom on a 1366x768 screen (or the browser at that window size).
+    artifacts/p3/_preview_synthetic/xai_overlay_preview/SYNTHETIC_overlay_full.png        native size (1024x1204)
+    artifacts/p3/_preview_synthetic/xai_overlay_preview/SYNTHETIC_dashboard_1366x768.png  fitted into 683x768
+Open SYNTHETIC_dashboard_1366x768.png at 100% zoom on a 1366x768 screen (or the browser at that window size).
 """
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ sys.path.insert(0, str(REPO / "src"))
 from p3_det.data.fake_p1 import _image  # noqa: E402
 from p3_xai import api, overlay  # noqa: E402
 
-OUT = REPO / "artifacts" / "p3" / "xai" / "overlay_preview"
+OUT = REPO / "artifacts" / "p3" / "_preview_synthetic" / "xai_overlay_preview"
 
 
 def main() -> int:
@@ -39,7 +39,7 @@ def main() -> int:
              {"xyxy": [298, 378, 331, 407], "score": 0.44}]
 
     OUT.mkdir(parents=True, exist_ok=True)
-    full = Path(api.render_overlay(img, heat.astype(np.float16), boxes, out_path=OUT / "overlay_full.png",
+    full = Path(api.render_overlay(img, heat.astype(np.float16), boxes, out_path=OUT / "SYNTHETIC_overlay_full.png",
                                    case_id="c_0demo000"))
     panel_w, panel_h = 683, 768
     with Image.open(full) as im:
@@ -51,8 +51,8 @@ def main() -> int:
     d.text((panel_w + 30, 30), "dashboard right panel (P1): worklist / case details", font=overlay.font(22),
            fill=(60, 60, 60))
     d.text((panel_w + 30, 70), f"overlay scaled x{f:.2f} to fit 683x768", font=overlay.font(18), fill=(90, 90, 90))
-    dash.save(OUT / "dashboard_1366x768.png")
-    print(f"wrote {full}\nwrote {OUT / 'dashboard_1366x768.png'} (overlay scale {f:.2f})")
+    dash.save(OUT / "SYNTHETIC_dashboard_1366x768.png")
+    print(f"wrote {full}\nwrote {OUT / 'SYNTHETIC_dashboard_1366x768.png'} (overlay scale {f:.2f})")
     return 0
 
 

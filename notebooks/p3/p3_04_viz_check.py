@@ -3,7 +3,8 @@
     python notebooks/p3/p3_04_viz_check.py                 # real P1 data (or TB_MOCK=1 for P1 mocks)
     python notebooks/p3/p3_04_viz_check.py --fake          # FAKE P1 data (until P1's files exist)
 
-Writes artifacts/p3/det/viz_check/{NN}_{image_id}.png (+ index.csv). Each panel shows the
+--fake writes artifacts/p3/_preview_synthetic/det_viz_check/SYNTHETIC_{NN}_{image_id}.png (+ index);
+real data writes artifacts/p3/det/viz_check/{NN}_{image_id}.png, a folder that is never committed (.gitignore). Each panel shows the
 augmented detector input (left) and the un-augmented one (right), both with boxes, plus the
 original 512 image with the crop (yellow) and the boxes mapped back through det_to_full512 (green).
 Only train/development images are ever used. These PNGs are derived from images: do not commit
@@ -81,7 +82,7 @@ def main(argv=None) -> int:
     ap.add_argument("--input-size", type=int, default=512, choices=[512, 640])
     ap.add_argument("--seed", type=int, default=0)
     ap.add_argument("--fake", action="store_true", help="use FAKE P1 data in a temp dir")
-    ap.add_argument("--out", default=str(REPO / "artifacts" / "p3" / "det" / "viz_check"))
+    ap.add_argument("--out", default=None, help="default: _preview_synthetic/det_viz_check (--fake) or det/viz_check")
     a = ap.parse_args(argv)
 
     if a.fake:
@@ -94,9 +95,15 @@ def main(argv=None) -> int:
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         ds = TBDetectionDataset(DetDataConfig(a.split, input_size=a.input_size, seed=a.seed, augment=True), paths)
-    out = Path(a.out)
+    out = Path(a.out) if a.out else (REPO / "artifacts" / "p3" / ("_preview_synthetic/det_viz_check" if a.fake
+                                                                   else "det/viz_check"))
     out.mkdir(parents=True, exist_ok=True)
-    prefix = "FAKE_" if a.fake else ""
+    if not a.fake and not (out / ".gitignore").exists():   # images derived from real X-rays: never committed
+        (out / ".gitignore").write_text("# P3: derived from real images, never commit
+*
+!.gitignore
+")
+    prefix = "SYNTHETIC_" if a.fake else ""
     rng = np.random.default_rng(a.seed)
     idx = rng.choice(len(ds), size=min(a.n, len(ds)), replace=False)
     rows = []

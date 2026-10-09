@@ -1,0 +1,4 @@
+# P3: generated mock outputs are not committed; regenerate with make p3-mocks (generators *.py stay tracked)
+artifacts/
+logs/
+__pycache__/

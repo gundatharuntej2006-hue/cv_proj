@@ -1,0 +1,4 @@
+# P3: synthetic previews are never committed (README.md explains why)
+*
+!.gitignore
+!README.md

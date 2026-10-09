@@ -326,18 +326,32 @@ def test_C4():
 
 
 def test_C5():
-    refs = []
+    synth = REPO / "artifacts/p3/_preview_synthetic"
+    refs = []                                                     # nothing real may point at mock or synthetic files
     for f in glob.glob(str(REPO / "decisions/*.json")) + glob.glob(str(REPO / "report/*.md")):
-        if "mock/" in Path(f).read_text(encoding="utf-8"):
+        t = Path(f).read_text(encoding="utf-8")
+        if "mock/" in t or "_preview_synthetic" in t:
             refs.append(Path(f).name)
-    fake_in_artifacts = [p for p in ("artifacts/p3/det/viz_check", "artifacts/p3/ops/pdf_preview",
-                                     "artifacts/p3/xai/overlay_preview") if (REPO / p).exists()]
-    pdfs_unmarked = [Path(p).name for p in glob.glob(str(REPO / "artifacts/p3/ops/pdf_preview/*.pdf"))
-                     if "fake" not in Path(p).name.lower() and "stand" not in Path(p).name.lower()]
-    ev = f"decisions/report referencing mock/: {refs or 'none'}. Synthetic/stand-in outputs inside the REAL " \
-         f"artifacts area: {fake_in_artifacts}; PDFs with PLACEHOLDER disclaimer text but ordinary names: " \
-         f"{pdfs_unmarked}. Stale mock outputs: see C3."
-    bad = refs or pdfs_unmarked
+    outside, unprefixed = [], []
+    for p in (REPO / "artifacts/p3").rglob("*"):
+        if not p.is_file() or "verify" in p.parts:
+            continue
+        rel = p.relative_to(REPO).as_posix()
+        is_synth = p.name.startswith(("SYNTHETIC_", "FAKE_")) or (p.suffix == ".pdf" and
+                                                                 "TEST-DISCLAIMER" in p.read_bytes().decode("latin-1"))
+        if synth in p.parents:
+            if p.name not in ("README.md", ".gitignore") and not p.name.startswith("SYNTHETIC_"):
+                unprefixed.append(rel)
+        elif is_synth:
+            outside.append(rel)
+    guards = {"README": (synth / "README.md").exists(), ".gitignore": (synth / ".gitignore").exists(),
+              "checkpoints/.gitignore": (REPO / "artifacts/p3/det/checkpoints/.gitignore").exists(),
+              "mock/.gitignore": (REPO / "mock/.gitignore").exists()}
+    n_synth = sum(1 for p in synth.rglob("SYNTHETIC_*")) if synth.exists() else 0
+    ev = f"decisions/report referencing mock/ or synthetic files: {refs or 'none'}; synthetic files outside " \
+         f"artifacts/p3/_preview_synthetic/: {outside or 'none'}; files there without SYNTHETIC_ prefix: " \
+         f"{unprefixed or 'none'}; {n_synth} SYNTHETIC_ files; guards present: {guards}"
+    bad = refs or outside or unprefixed or not all(guards.values())
     finish("C5", "Mocks separated from real files", "FAIL" if bad else "PASS", ev,
            fix="move preview outputs out of artifacts/ (e.g. artifacts/p3/_preview_synthetic/ with a README) or "
                "prefix every file SYNTHETIC_; never commit the placeholder-disclaimer PDFs", owner="P3")
@@ -572,7 +586,7 @@ def test_F6():
 def test_G1():
     rc, tail = run_pytest("tests/p3_xai/test_overlay.py")
     names = [Path(p).name for p in glob.glob(str(REPO / "artifacts/p3/**/*overlay*.png"), recursive=True)]
-    bad = [n for n in names if not re.fullmatch(r"(c_[0-9a-z]+_overlay|overlay_full|R\d\d_[A-Za-z0-9_-]+)\.png", n)]
+    bad = [n for n in names if not re.fullmatch(r"(c_[0-9a-z]+_overlay|overlay_[0-9a-f]{16}|SYNTHETIC_overlay_full|R\d\d_[A-Za-z0-9_-]+)\.png", n)]
     finish("G1", "Overlay caption, 0/1/many boxes, zero heatmap, no identifiers in names",
            "PASS" if rc == 0 and not bad else "FAIL", f"{summary_line(tail)}; overlay file names on disk: {names}; "
            f"suspicious: {bad or 'none'}", fix="see failing test / rename")
@@ -589,11 +603,11 @@ def test_G2():
 
 def test_G3():
     p = __import__("subprocess").run([PY, "notebooks/p3/p3_15_pdf_preview.py"], cwd=REPO, capture_output=True, text=True)
-    ok = p.returncode == 0 and (REPO / "artifacts/p3/ops/pdf_preview/contact_sheet.png").exists()
+    ok = p.returncode == 0 and (REPO / "artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_contact_sheet.png").exists()
     finish("G3", "Page 1 of each fixture PDF rendered for visual check", "MANUAL" if ok else "FAIL",
-           f"regenerated artifacts/p3/ops/pdf_preview/<type>.png and contact_sheet.png ({'ok' if ok else p.stderr[-300:]}); "
+           f"regenerated artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_<type>.png and SYNTHETIC_contact_sheet.png ({'ok' if ok else p.stderr[-300:]}); "
            "shown in chat for your layout check", owner="you",
-           command="open artifacts/p3/ops/pdf_preview/contact_sheet.png", fix="see error")
+           command="open artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_contact_sheet.png", fix="see error")
 
 
 def test_G4():

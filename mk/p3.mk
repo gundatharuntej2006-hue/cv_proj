@@ -3,7 +3,7 @@ PYTHON ?= python
 P3_DFINE := third_party/D-FINE
 P3_DFINE_COMMIT := 956d1709314c2c6a4df6f34de232054578a7449f
 
-.PHONY: p3-setup p3-test p3-feasibility p3-feasibility-smoke p3-mocks p3-train-512 p3-train-640 p3-train-smoke p3-d16-criterion p3-export-c10 p3-latency p3-latency-gpu p3-latency-cpu p3-latency-detect p3-verify
+.PHONY: p3-setup p3-test p3-feasibility p3-feasibility-smoke p3-mocks p3-train-512 p3-train-640 p3-train-smoke p3-d16-criterion p3-export-c10 p3-latency p3-latency-gpu p3-latency-cpu p3-latency-detect p3-verify p3-previews
 
 ## p3-setup: fetch the pinned D-FINE submodule and install P3 dependencies
 p3-setup:
@@ -65,3 +65,9 @@ p3-latency-cpu:
 ## p3-verify: audit all P3 work (tests/p3_verify) -> docs/p3_verification_report.md
 p3-verify:
 	PYTHONPATH=src $(PYTHON) -m p3_ops.verify_all
+
+## p3-previews: SYNTHETIC layout previews (never cited, never committed) -> artifacts/p3/_preview_synthetic/
+p3-previews:
+	PYTHONPATH=src $(PYTHON) notebooks/p3/p3_04_viz_check.py --fake
+	PYTHONPATH=src $(PYTHON) notebooks/p3/p3_11_overlay_preview.py
+	PYTHONPATH=src $(PYTHON) notebooks/p3/p3_15_pdf_preview.py
