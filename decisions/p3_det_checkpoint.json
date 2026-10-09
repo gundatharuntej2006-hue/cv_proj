@@ -1,16 +1,21 @@
 {
   "decision_id": "D17",
   "owner": "p3",
-  "title": "D-FINE Training Checkpoint",
-  "criterion_preregistered": "Best development AP@0.50 checkpoint with recorded SHA-256 hash",
-  "preregistered_at": "2026-10-15",
-  "candidates": ["dfine_hgnetv2_s_512"],
-  "value": {"checkpoint_sha256": "df1e94a8c12b7703", "epochs": 36, "dev_ap50": 0.421},
-  "evidence": ["artifacts/p3/det/dfine_train_log.csv"],
-  "data_used": ["train", "development"],
+  "title": "Detector training length / checkpoint",
+  "criterion_preregistered": "The D-FINE detector checkpoint (training length) is the epoch with the highest development AP at IoU 0.50 (p3_det.metrics.ap50 on the EMA weights, logged after every epoch in train_log.csv) within the fixed P3-06 schedule of the D16-chosen input size, trained on the LOCKED D08/D09 preprocessing; ties go to the earliest epoch. Only train (training) and development (selection) are used. The checkpoint is that epoch's ckpt_best.pt, identified by its SHA-256; inference uses its EMA weights. Its development AP50 is reported with a 95% percentile bootstrap CI over images, stratified TB/non-TB (B and seed from D21).",
+  "preregistered_at": "2026-10-08",
+  "candidates": [
+    "every epoch of the D16-chosen run"
+  ],
+  "value": {},
+  "evidence": [],
+  "data_used": [
+    "train",
+    "development"
+  ],
   "reviewed_by": "p4",
   "guide_ack": false,
-  "locked": true,
-  "locked_at": "2026-11-05",
-  "git_sha": "c0ffee1"
+  "locked": false,
+  "locked_at": null,
+  "git_sha": null
 }
