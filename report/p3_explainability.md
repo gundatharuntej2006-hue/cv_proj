@@ -43,8 +43,8 @@ stand-in models during development [tests/p3_xai/test_gradcam.py], so the absolu
 
 ## Localisation agreement (development)
 
-The measures are computed on development TB images that have radiologist boxes
-[src/p3_xai/metrics.py; artifacts/p3/xai/loc_<model_id>_development_v1.parquet]:
+The measures are computed on development TB images that have radiologist boxes [src/p3_xai/metrics.py]
+(per-image tables: TBD: waiting on the C11 development tables from python -m p3_xai.export_c11):
 - **Pointing accuracy:** the share of images whose heatmap peak lies inside any box.
 - **Energy-in-box:** the share of heatmap mass inside the boxes.
 
