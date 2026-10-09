@@ -1,0 +1,18 @@
+# Local replica of .github/workflows/ci.yml job 'test' (clean venv, Python 3.10.11; CI uses 3.11)
+# run 1 (fresh install):
+== step: create clean venv (Python 3.10.11)
+== step: Install CPU torch, requirements/base.txt (if present), requirements/p3.txt
+::notice::requirements/base.txt not present yet (P1-01); installing P3 requirements only
+torch 2.14.1+cpu cuda False
+== step: pytest (not gpu), skip reasons shown
+= 1 failed, 383 passed, 58 skipped, 2 deselected, 18 warnings in 247.95s (0:04:07) =
+skip guard: no P3 test skipped for a missing package
+== step: tbcore contract validators
+### tbcore contract validators: SKIPPED: waiting on P4 tbcore (src/tbcore/ not present)
+== RESULT: pytest exit 1, skip guard exit 0
+# run 1 failure: tests/p3_det/test_lock_decisions.py::test_full_flow_with_git_order (git show 'Filename too long' on deep paths) -> fixed: git cat-file
+# run 2 (same clean venv, after the fix):
+=== 385 passed, 58 skipped, 2 deselected, 19 warnings in 257.39s (0:04:17) ====
+skip guard: no P3 test skipped for a missing package
+### tbcore contract validators: SKIPPED: waiting on P4 tbcore (src/tbcore/ not present)
+RESULT: pytest exit 0, skip guard exit 0
