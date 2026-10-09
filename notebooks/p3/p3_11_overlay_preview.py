@@ -39,7 +39,7 @@ def main() -> int:
              {"xyxy": [298, 378, 331, 407], "score": 0.44}]
 
     OUT.mkdir(parents=True, exist_ok=True)
-    full = Path(api.render_overlay(img, heat.astype(np.float16), boxes, out_path=OUT / "SYNTHETIC_overlay_full.png",
+    full = Path(api.render_overlay_to(img, heat.astype(np.float16), boxes, out_path=OUT / "SYNTHETIC_overlay_full.png",
                                    case_id="c_0demo000"))
     panel_w, panel_h = 683, 768
     with Image.open(full) as im:

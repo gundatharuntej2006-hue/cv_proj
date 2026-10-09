@@ -63,13 +63,19 @@ def _default_pdf_path(case_result: dict, case_id: str) -> Path:
     return runs / _logger._run_id(case_result) / f"{case_id}_report.pdf"
 
 
-def make_pdf(case_result: dict, *, image=None, out_path: str | os.PathLike | None = None) -> str:
-    """One-page PDF report for a CaseResult; returns its path.
+def make_pdf(case_result: dict) -> str:
+    """R3, frozen signature: one-page PDF report for a CaseResult; returns its path.
 
-    Frozen R3 signature + keyword-only extensions (docs/p3_contract_notes.md item 15): ``image`` (the
-    512x512 image shown next to the overlay; C14 carries no image path) and ``out_path``. The overlay
-    is read from ``explainability.overlay_path``. The disclaimer and scope statement come from tbcore.
+    Uses ``explainability.overlay_path`` (the overlay already shows the X-ray). The CaseResult carries no
+    original-image path, so this report is overlay-only; see docs/p3_ccr_drafts/make_pdf_original_image.md.
+    The disclaimer and scope statement come from tbcore.
     """
+    return make_pdf_with_original(case_result, image=None, out_path=None)
+
+
+def make_pdf_with_original(case_result: dict, *, image=None, out_path: str | os.PathLike | None = None) -> str:
+    """make_pdf plus the original 512x512 ``image`` next to the overlay and/or a chosen ``out_path``.
+    Not part of the frozen R3 interface (callers that have the image, e.g. P4's run_case, may use it)."""
     cid = _case_id(case_result)
     path = Path(out_path) if out_path is not None else _default_pdf_path(case_result, cid)
     path.parent.mkdir(parents=True, exist_ok=True)

@@ -47,12 +47,12 @@ def main() -> int:
     heat[:40, :] = 0
     for cr in P4_SCENARIOS.values():
         if cr.get("explainability"):
-            xai_api.render_overlay(img, heat.astype(np.float16), (cr.get("detector") or {}).get("boxes"),
+            xai_api.render_overlay_to(img, heat.astype(np.float16), (cr.get("detector") or {}).get("boxes"),
                                    out_path=case_root / cr["explainability"]["overlay_path"], case_id=cr["case_id"])
     OUT.mkdir(parents=True, exist_ok=True)
     thumbs = []
     for kind, cr in P4_SCENARIOS.items():
-        pdf = Path(api.make_pdf(cr, image=img, out_path=OUT / f"SYNTHETIC_{kind}.pdf"))
+        pdf = Path(api.make_pdf_with_original(cr, image=img, out_path=OUT / f"SYNTHETIC_{kind}.pdf"))
         page = pdfium.PdfDocument(str(pdf))[0]
         png = page.render(scale=1.6).to_pil()
         png.save(OUT / f"SYNTHETIC_{kind}.png")

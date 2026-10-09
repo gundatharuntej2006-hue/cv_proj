@@ -49,8 +49,7 @@ def test_signatures_frozen(mod_fn, params):
     sig = inspect.signature(getattr(mod, name)).parameters.values()
     frozen = [p.name for p in sig if p.kind in (p.POSITIONAL_ONLY, p.POSITIONAL_OR_KEYWORD)]
     assert frozen == params                                   # frozen R3 positional parameters unchanged
-    extras = [p for p in sig if p.name not in params]
-    assert all(p.kind is p.KEYWORD_ONLY and p.default is not p.empty for p in extras)   # only optional kw-only
+    assert [p.name for p in sig] == params                    # exactly the frozen parameters, nothing extra
     if mod is det_api:
         assert det_api.IS_STUB is False                      # real since P3-08; mock via TB_MOCK=1
     elif mod is ops_api:

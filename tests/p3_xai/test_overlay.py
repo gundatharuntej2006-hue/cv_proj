@@ -1,6 +1,7 @@
 """P3-11: overlay renderer (R3 render_overlay)."""
 from __future__ import annotations
 
+import re
 import sys
 from pathlib import Path
 
@@ -145,19 +146,25 @@ def test_rgb_input_and_bad_shapes(img, heat):
 # --- output path and identifiers ---------------------------------------------------------------------
 
 def test_generated_path_under_runs_uses_case_id_only(img, heat, runs_dir):
-    p = Path(api.render_overlay(img, heat, [], case_id="c_7f3a9e21"))
+    p = Path(api.render_overlay_to(img, heat, [], case_id="c_7f3a9e21"))
     assert p == runs_dir / "r0001" / "c_7f3a9e21_overlay.png" and p.exists()
     with Image.open(p) as im:
         assert im.size == (overlay.WIDTH, overlay.HEIGHT) and im.format == "PNG"
         assert set(im.text) == {"Caption", "Producer"}                      # no other metadata
 
 
+def test_frozen_render_overlay_names_file_from_content_hash(img, heat, runs_dir):
+    p = Path(api.render_overlay(img, heat, []))
+    assert p.parent == runs_dir / "r0001" and re.fullmatch(r"overlay_[0-9a-f]{16}\.png", p.name)
+    assert Path(api.render_overlay(img, heat, [])) == p                 # same content -> same name
+
+
 def test_caller_path_and_refused_identifiers(img, heat, tmp_path):
     target = tmp_path / "custom" / "x.png"
-    assert api.render_overlay(img, heat, [], out_path=target) == str(target) and target.exists()
+    assert api.render_overlay_to(img, heat, [], out_path=target) == str(target) and target.exists()
     for bad in ("John Doe", "../../etc/passwd", "MRN 123/45"):
         with pytest.raises(ValueError):
-            api.render_overlay(img, heat, [], case_id=bad)
+            api.render_overlay_to(img, heat, [], case_id=bad)
 
 
 def test_header_text_has_only_allowed_strings(img, heat, monkeypatch):

@@ -154,7 +154,7 @@ def render(selection: list[dict], *, paths: DataPaths | None = None, out_dir: Pa
         ro = roi[iid]
         crop = [ro["crop_x0"], ro["crop_y0"], ro["crop_x1"], ro["crop_y1"]]
         r["overlay"] = f"{r['review_no']}_{iid}.png"
-        xai_api.render_overlay(img, heatmap_fn(img, crop), boxes_fn(img, crop, iid),
+        xai_api.render_overlay_to(img, heatmap_fn(img, crop), boxes_fn(img, crop, iid),
                                out_path=out_dir / r["overlay"], case_id=iid)
     return write_sheet(selection, out_dir)
 

@@ -96,15 +96,19 @@ def runs_root() -> Path:
     return Path(os.environ.get("TB_OVERLAY_DIR") or os.environ.get("TB_RUNS_DIR") or REPO / "runs")
 
 
-def render_overlay(img512, heatmap, boxes, *, out_path: str | os.PathLike | None = None,
-                   case_id: str | None = None) -> str:
-    """Render X-ray + Grad-CAM + detector boxes + the burned-in caption; return the PNG path.
+def render_overlay(img512, heatmap, boxes) -> str:
+    """R3, frozen signature: render X-ray + Grad-CAM + detector boxes + burned-in caption; return the PNG path.
 
-    The three positional parameters are the frozen R3 signature. Keyword-only extensions (P3-11,
-    see docs/p3_contract_notes.md item 8): ``out_path`` (caller-chosen file) and ``case_id`` (used for
-    the generated name runs/<run_id>/<case_id>_overlay.png and the header; nothing else about the
-    case appears). run_id comes from TB_RUN_ID (default "adhoc").
+    The file goes to runs/<TB_RUN_ID or "adhoc">/overlay_<content hash>.png: named from the rendered
+    content, never from a user file name. Use render_overlay_to() to choose the path or label the case.
     """
+    return render_overlay_to(img512, heatmap, boxes, out_path=None, case_id=None)
+
+
+def render_overlay_to(img512, heatmap, boxes, *, out_path: str | os.PathLike | None = None,
+                      case_id: str | None = None) -> str:
+    """render_overlay with a caller-chosen ``out_path`` and/or the salted ``case_id`` (shown in the header and
+    used for the generated name runs/<run_id>/<case_id>_overlay.png). Not part of the frozen R3 interface."""
     from . import overlay
     if case_id is not None and not overlay.CASE_ID_RE.match(case_id):
         raise ValueError("case_id must be a short salted hash ([A-Za-z0-9_-]{1,64}), never a patient identifier")

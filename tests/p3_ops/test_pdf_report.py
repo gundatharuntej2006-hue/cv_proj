@@ -47,13 +47,13 @@ def env(tmp_path, monkeypatch):
     heat = np.exp(-((xx - 330) ** 2 + (yy - 125) ** 2) / (2 * 35 ** 2)).astype(np.float16)
     for cr in P4_SCENARIOS.values():                       # each case's own overlay, at its overlay_path
         if cr.get("explainability"):
-            xai_api.render_overlay(img, heat, (cr.get("detector") or {}).get("boxes"), case_id=cr["case_id"],
+            xai_api.render_overlay_to(img, heat, (cr.get("detector") or {}).get("boxes"), case_id=cr["case_id"],
                                    out_path=tmp_path / "case" / cr["explainability"]["overlay_path"])
     return {"tmp": tmp_path, "img": img}
 
 
 def render(cr, env, **kw) -> tuple[Path, str]:
-    path = Path(api.make_pdf(cr, image=env["img"], **kw))
+    path = Path(api.make_pdf_with_original(cr, image=env["img"], **kw))
     reader = pypdf.PdfReader(str(path))
     assert len(reader.pages) == 1
     return path, norm(reader.pages[0].extract_text())
@@ -118,7 +118,7 @@ def test_detector_contingency_omits_lesion_section(env):
 def test_overlay_of_another_case_is_never_embedded(env, tmp_path):
     cr = copy.deepcopy(P4_SCENARIOS["tb"])
     cr["explainability"]["overlay_path"] = ANALYSED["explainability"]["overlay_path"]   # exists, other case
-    path = Path(api.make_pdf(cr, image=env["img"], out_path=tmp_path / "x.pdf"))
+    path = Path(api.make_pdf_with_original(cr, image=env["img"], out_path=tmp_path / "x.pdf"))
     assert "overlay not available" in norm(pypdf.PdfReader(str(path)).pages[0].extract_text())
 
 
@@ -126,9 +126,18 @@ def test_user_override_and_missing_overlay_and_image(env, tmp_path):
     cr = copy.deepcopy(ANALYSED)
     cr["triage"]["operating_point"] = "user_override"
     cr["explainability"]["overlay_path"] = "runs/r0012/does_not_exist.png"
-    path = Path(api.make_pdf(cr, out_path=tmp_path / "x.pdf"))
+    path = Path(api.make_pdf_with_original(cr, out_path=tmp_path / "x.pdf"))
     text = norm(pypdf.PdfReader(str(path)).pages[0].extract_text())
-    assert "user override" in text and "overlay not available" in text and "image not provided" in text
+    assert "user override" in text and "overlay not available" in text
+
+
+@pytest.mark.parametrize("kind", ANALYSED_KINDS)
+def test_frozen_make_pdf_is_overlay_only(env, kind):
+    cr = P4_SCENARIOS[kind]
+    path = Path(api.make_pdf(cr))                                    # frozen R3: CaseResult only
+    text = norm(pypdf.PdfReader(str(path)).pages[0].extract_text())
+    assert "Grad-CAM overlay (X-ray with attention)" in text and "Image " not in text.split("Results")[0]
+    assert "Attention evidence, not a finding" in text and norm(tbcore_standin.DISCLAIMER) in text
 
 
 # --- no identifiers -----------------------------------------------------------------------------------
@@ -153,7 +162,7 @@ def test_redaction():
 def test_refuses_without_tbcore(tmp_path, monkeypatch):
     monkeypatch.setitem(sys.modules, "tbcore", None)          # import tbcore -> ImportError
     with pytest.raises(RuntimeError, match="tbcore"):
-        api.make_pdf(ANALYSED, out_path=tmp_path / "x.pdf")
+        api.make_pdf_with_original(ANALYSED, out_path=tmp_path / "x.pdf")
     assert not (tmp_path / "x.pdf").exists()
 
 

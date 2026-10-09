@@ -230,9 +230,14 @@ def build(cr: dict, out: Path, *, image=None, overlay=None, now: datetime | None
     else:
         box = (inner - 20) / 2
         img_y = y - 14 - box
-        _image_box(c, _img_reader(image), M, img_y, box, box, "Image", missing="image not provided")
-        _image_box(c, _img_reader(overlay), M + box + 20, img_y, box, box, "Grad-CAM overlay",
-                   caption=OVERLAY_CAPTION, missing="overlay not available")
+        if image is not None:                                  # make_pdf_with_original: image | overlay
+            _image_box(c, _img_reader(image), M, img_y, box, box, "Image")
+            _image_box(c, _img_reader(overlay), M + box + 20, img_y, box, box, "Grad-CAM overlay",
+                       caption=OVERLAY_CAPTION, missing="overlay not available")
+        else:                                                  # frozen make_pdf: the overlay shows the X-ray
+            _image_box(c, _img_reader(overlay), M + (inner - box) / 2, img_y, box, box,
+                       "Grad-CAM overlay (X-ray with attention)", caption=OVERLAY_CAPTION,
+                       missing="overlay not available")
         y = img_y - 34
         y = _results(c, cr, M, y, inner) - 10
         if cr.get("detector"):
