@@ -361,29 +361,55 @@ def test_D1():
                "remove them (overlay path via env, image passed by P4 another way)", owner="P4/P1 approval, then P3")
 
 
-def test_D2():
-    hits = []
-    for f in sorted(glob.glob(str(REPO / "src/p3_*/**/*"), recursive=True)):
-        if not re.search(r"\.(py|ya?ml)$", f):
+def test_D2a():
+    import checks
+    hits = checks.code_markers(REPO)
+    finish("D2a", "No STUB/TODO/placeholder in REAL modules of src/p3_*", "FAIL" if hits else "PASS",
+           f"{len(hits)} marker line(s) in real modules (mock module {sorted(checks.MOCK_MODULES)} and tbcore adapter "
+           f"{sorted(checks.ADAPTER_MODULES)} are reported by D2c):\n" + "\n".join(hits),
+           fix="resolve the marker, or move TB_MOCK-only code into a _mock.py module", owner="P3")
+
+
+def test_D2b():
+    import checks
+    pending = checks.config_pending(REPO)
+    if not pending:
+        finish("D2b", "Training-config values set (awaiting P3-01 feasibility)", "PASS", "epochs and batch_size set")
+    finish("D2b", "Training-config values set (awaiting P3-01 feasibility)", "NOT_YET",
+           "RECLASSIFIED from D2: these are not code placeholders but values that need the P3-01 T4 numbers (J1). "
+           "Training refuses to start while they are null. Pending: " + "; ".join(pending),
+           owner="you (Kaggle T4 run, J1)", command="fill schedule.epochs and schedule.batch_size in "
+           "src/p3_det/configs/dfine_512.yaml and dfine_640.yaml from docs/p3_dfine_feasibility.md")
+
+
+def test_D2c():
+    users = []
+    for f in sorted(glob.glob(str(REPO / "src/p3_*/**/*.py"), recursive=True)):
+        if Path(f).name == "_tbcore_adapter.py":
             continue
-        for n, line in enumerate(Path(f).read_text(encoding="utf-8").splitlines(), 1):
-            if re.search(r"STUB|TODO|placeholder|PLACEHOLDER|FIXME", line) and \
-                    not re.search(r'\bIS_STUB\s*=\s*False|"IS_STUB"', line):      # flag lines saying "not a stub"
-                hits.append(f"{Path(f).relative_to(REPO).as_posix()}:{n}: {line.strip()[:110]}")
-    todo = [h for h in hits if "TODO" in h or "FIXME" in h]
-    ev = f"{len(hits)} marker lines, {len(todo)} TODO/FIXME:\n" + "\n".join(hits)
-    finish("D2", "No STUB/TODO/placeholder left in src/p3_*", "FAIL" if hits else "PASS", ev,
-           fix="TODOs in src/p3_det/configs/dfine_*.yaml (epochs, batch_size) need the P3-01 T4 numbers; "
-               "'placeholder' API names for tbcore (guard.require_unlocked, validators.validate, disclaimer.*) need "
-               "P4's published API; the TB_MOCK paths (_stub.py, _explain_stub) are intentional mocks, rename the "
-               "'STUB' wording to 'MOCK' if the rule is literal", owner="P3 (+P4 API names)")
+        if re.search(r"^\s*(from tbcore|import tbcore)", Path(f).read_text(encoding="utf-8"), re.M):
+            users.append(Path(f).relative_to(REPO).as_posix())
+    adapter = REPO / "src/p3_ops/_tbcore_adapter.py"
+    if users or not adapter.exists():
+        finish("D2c", "Assumed tbcore API names confined to one adapter", "FAIL",
+               f"adapter present: {adapter.exists()}; modules importing tbcore directly: {users}",
+               fix="route every tbcore use through src/p3_ops/_tbcore_adapter.py", owner="P3")
+    from p3_ops import _tbcore_adapter as ad
+    if not ad.tbcore_available():
+        finish("D2c", "Assumed tbcore API names confined to one adapter", "NOT_YET",
+               f"all tbcore names live in src/p3_ops/_tbcore_adapter.py ({', '.join(ad.ASSUMED_API)}); tbcore not "
+               "installed, so the names are still assumptions", owner="P4 (publish tbcore API)",
+               command="pytest tests/p3_ops/test_tbcore_adapter.py (fails loudly once tbcore exists and names differ)")
+    missing = ad.check_api()
+    finish("D2c", "Assumed tbcore API names confined to one adapter", "FAIL" if missing else "PASS",
+           f"tbcore present; missing names: {missing or 'none'}", fix="update ASSUMED_API in the adapter")
 
 
 def test_D3():
     src = (REPO / "src/p3_det/api.py").read_text()
     reads = all(n in src for n in ("p3_det_input_size.json", "p3_det_checkpoint.json", "p3_det_conf_threshold.json"))
-    literals = [l.strip() for l in src.splitlines()                   # assignments only (not docstrings/comments)
-                if re.match(r"\s*[A-Za-z_]\w*\s*=\s*(0\.\d+|512|640)\b", l) and "MIN_SCORE" not in l]
+    import checks
+    literals = checks.hardcoded_settings(src)                        # assignments only (see checks.py)
     rc, tail = run_pytest("tests/p3_det/test_r3_detect.py::test_model_loaded_once")
     ok = reads and not literals and rc == 0
     finish("D3", "detect() reads D16-D18; model cached", "PASS" if ok else "FAIL",
@@ -576,9 +602,9 @@ def test_G4():
     texts["tests/p3_mock/p3_case_results.py (C14 stand-ins)"] = (REPO / "tests/p3_mock/p3_case_results.py").read_text()
     # artifact file names / artifact paths legitimately end in .png: the "image file name" pattern applies to
     # log lines and PDF text only (where an input file name would be a leak)
-    names_only = {"overlay/preview file names", "tests/p3_mock/p3_case_results.py (C14 stand-ins)"}
-    hits = {f"{src} / {name}": m for src, t in texts.items() for name, pat in IDENTIFIER_PATTERNS.items()
-            if not (src in names_only and name == "image file name") for m in re.findall(pat, t)[:2]}
+    import checks
+    hits = checks.identifier_hits(texts, IDENTIFIER_PATTERNS,
+                                  {"overlay/preview file names", "tests/p3_mock/p3_case_results.py (C14 stand-ins)"})
     ok = rc == 0 and not hits
     finish("G4", "Logger: one line/call, versions required, 50 parallel, no identifiers anywhere",
            "PASS" if ok else "FAIL", f"logger tests: {summary_line(tail)}; identifier scan over {list(texts)}: "

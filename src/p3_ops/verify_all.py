@@ -51,8 +51,15 @@ def run_checks(only: list[str] | None) -> list[dict]:
 
 
 def _key(r: dict):
-    c = r["id"]
-    return ORDER.index(c[0]), int(c[1:])
+    import re
+    m = re.match(r"([A-Z])(\d+)([a-z]?)", r["id"])
+    return ORDER.index(m.group(1)), int(m.group(2)), m.group(3)
+
+
+def current_ids() -> set[str]:
+    import re
+    text = (REPO / "tests" / "p3_verify" / "test_p3_audit.py").read_text(encoding="utf-8")
+    return set(re.findall(r"^def test_([A-Z]\d+[a-z]?)\(", text, re.M))
 
 
 def _cell(s: str, n: int = 400) -> str:
@@ -131,7 +138,7 @@ def main(argv=None) -> int:
     if a.only and STATE.exists():
         old = {r["id"]: r for r in json.loads(STATE.read_text(encoding="utf-8"))}
         old.update({r["id"]: r for r in new})
-        rows = list(old.values())
+        rows = [r for r in old.values() if r["id"] in current_ids()]       # drop checks that no longer exist
     STATE.parent.mkdir(parents=True, exist_ok=True)
     STATE.write_text(json.dumps(rows, indent=1), encoding="utf-8")
     p = write_report(rows)
