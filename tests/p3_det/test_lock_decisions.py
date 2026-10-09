@@ -260,3 +260,21 @@ def test_verify_order_without_git(tmp_path):
     dec.save(p, {"criterion_preregistered": "r", "value": {}})
     ok, report = dec.verify_order(p)
     assert not ok and "no git history" in report
+
+
+def test_verify_order_works_in_a_deep_directory(tmp_path):
+    """Regression: `git show sha:path` stats the argument and fails past Windows' path limit; cat-file does not."""
+    if shutil.which("git") is None:
+        pytest.skip("git not available")
+    pad = max(0, 190 - len(str(tmp_path)) - len("/repo"))     # repo dir ~190 chars: files fit under 260,
+    deep = (tmp_path / ("p" * pad) if pad else tmp_path) / "repo"   # but dir + "<sha>:decisions/..." exceeds 260
+    (deep / "decisions").mkdir(parents=True)
+    _git(deep, "init", "-q", "-b", "main")
+    _git(deep, "config", "user.email", "t@example.invalid")
+    _git(deep, "config", "user.name", "t")
+    p = deep / "decisions" / "p3_det_conf_threshold.json"
+    dec.write_criterion(p, d18.criterion_template())
+    _git(deep, "add", ".")
+    _git(deep, "commit", "-q", "-m", "rule")
+    ok, report = dec.verify_order(p)
+    assert ok and dec.criterion_commit(p, d18.CRITERION), report

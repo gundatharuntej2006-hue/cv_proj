@@ -105,7 +105,7 @@ def history(path: Path) -> list[Commit]:
     for line in lines:
         sha, when, subject = line.split("\t", 2)
         try:
-            d = json.loads(_git(top, "show", f"{sha}:{rel}"))
+            d = json.loads(_git(top, "cat-file", "-p", f"{sha}:{rel}"))   # cat-file: no path stat (Windows MAX_PATH)
         except (subprocess.CalledProcessError, ValueError):
             d = {}
         out.append(Commit(sha, when, subject, d.get("criterion_preregistered"), bool(d.get("value")),
