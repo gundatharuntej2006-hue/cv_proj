@@ -14,20 +14,13 @@ import sys
 from pathlib import Path
 
 import numpy as np
-import pyarrow as pa
-import pyarrow.parquet as pq
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 import _p3_common as c  # noqa: E402
+from p3_xai import c11  # noqa: E402
 from p3_xai.metrics import localisation_row  # noqa: E402
 
-LOC_SCHEMA = pa.schema([
-    ("image_id", pa.string()), ("model_id", pa.string()),
-    ("peak_x", pa.int16()), ("peak_y", pa.int16()),
-    ("pointing_hit", pa.bool_()), ("energy_in_box", pa.float32()),
-    ("n_gt_boxes", pa.int16()), ("tb_subtype", pa.string()),
-])
 SUBTYPES = ("active", "latent", "active+latent")
 
 
@@ -60,8 +53,7 @@ def generate(split: str = "development", n: int = 30, seed: int = 0, model_id: s
             subtype = SUBTYPES[int(c.rng_for(image_id, seed, 5).integers(0, 3))]
             rows.append(localisation_row(image_id, model_id, hm, gt, subtype).__dict__)
     path = c.out_path(root, "artifacts", "p3", "xai", f"loc_{model_id}_{split}_v1.parquet")
-    pq.write_table(pa.Table.from_pylist(rows, schema=LOC_SCHEMA), path)
-    return path
+    return c11.write_table(path, rows)          # the REAL C11 writer + validator: the mock cannot drift
 
 
 def main(argv=None) -> int:

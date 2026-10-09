@@ -271,10 +271,19 @@ def test_C2():
 
 
 def test_C3():
+    import tempfile
+
     from p3_xai import c11
     real = sorted(glob.glob(str(REPO / "artifacts/p3/xai/loc_*.parquet")))
     mock_err = []
-    for m in sorted(glob.glob(str(REPO / "mock/artifacts/p3/xai/loc_*.parquet"))):
+    sys.path.insert(0, str(REPO / "mock"))
+    import make_c11
+    with tempfile.TemporaryDirectory() as tmp:                     # regenerate: catches generator drift
+        try:
+            c11.validate_table(make_c11.generate(n=24, seed=0, root=tmp))
+        except Exception as e:  # noqa: BLE001
+            mock_err.append(f"freshly generated mock: {e}")
+    for m in sorted(glob.glob(str(REPO / "mock/artifacts/p3/xai/loc_*.parquet"))):   # on disk: catches staleness
         try:
             c11.validate_table(Path(m))
         except Exception as e:  # noqa: BLE001
