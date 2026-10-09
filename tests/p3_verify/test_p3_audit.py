@@ -167,7 +167,10 @@ def test_B2():
     finish("B2", "Decisions valid, locked, evidence exists", "NOT_YET",
            ev + f". None can be locked: D16-D19 have no results ({TBD_RESULTS}); D20 waits for the P3-01 T4 numbers "
                 "and your confirmation; the real schema is P4's.",
-           owner="P4 (schema), P1/P2 (data, classifier), you (Kaggle runs, D20 confirmation)")
+           owner="P4 (schema), P1/P2 (data, classifier), you (Kaggle runs, D20 confirmation)",
+           command="python -m p3_det.select_size compare --run512 <dir> --run640 <dir> --lock; "
+                   "python -m p3_det.lock_checkpoint result --run <dir> --lock; "
+                   "python -m p3_det.lock_threshold result --run <dir> --lock; python -m p3_xai.sanity --write-d19 --lock")
 
 
 def test_B3():
@@ -339,7 +342,8 @@ def test_C4():
     if not real.exists():
         finish("C4", "predictions.jsonl valid C15", "NOT_YET" if ok_mock else "FAIL",
                f"no real log (written by P4's run_case via log_case). Mock log: {len(mock_lines)} lines valid C15, "
-               f"version fields present, operating points OK: {ok_mock}", owner="P4 (run_case/run_batch)")
+               f"version fields present, operating points OK: {ok_mock}", owner="P4 (run_case/run_batch)",
+               command="after P4's run_batch writes logs/predictions.jsonl: make p3-verify")
     lines = sc.validate_c15_file(real)
     keys = [(l["ts"], l["case_id"], l["operating_point"]) for l in lines]
     ts_sorted = [l["ts"] for l in lines] == sorted(l["ts"] for l in lines)
@@ -552,7 +556,8 @@ def test_E5():
     if not runs:
         finish("E5", "Seeds recorded; 512 and 640 same schedule and seed", "NOT_YET" if same else "FAIL",
                f"configs: same schedule hash {same} ({a.schedule_hash[:19]}...), seed {a.seed}; no run logs yet",
-               owner="you (Kaggle training)", fix="configs must differ only in run_name/input_size")
+               owner="you (Kaggle training)", fix="configs must differ only in run_name/input_size",
+               command="make p3-train-512 ; make p3-train-640 (Kaggle), then copy each run folder to artifacts/p3/det/runs/")
     metas = [json.loads(Path(p).read_text()) for p in runs]
     ok = all("seed" in m and m.get("seed_util") for m in metas)
     finish("E5", "Seeds recorded; 512 and 640 same schedule and seed", "PASS" if ok and same else "FAIL",
@@ -621,7 +626,9 @@ def test_G2():
            "NOT_YET" if rc == 0 else "FAIL",
            f"with STAND-INS for P4's 7 fixtures and for tbcore.disclaimer: {summary_line(tail)} (incl. grep proving "
            "the texts are not retyped). Real check needs P4's fixtures and tbcore",
-           owner="P4 (fixtures P4-02, tbcore.disclaimer)", fix="see failing test")
+           owner="P4 (fixtures P4-02, tbcore.disclaimer)", fix="see failing test",
+           command="replace the stand-ins in tests/p3_mock/p3_case_results.py with P4's 7 fixtures, then "
+                   "pytest tests/p3_ops/test_pdf_report.py")
 
 
 def test_G3():
@@ -674,7 +681,9 @@ def test_H1():
 
 def test_H2():
     finish("H2", "Audit: internal_test once, then challenge_test once", "NOT_YET",
-           "no sealed run has happened (no token, no gate, no audit file)", owner="P4 (gate) / P3-13")
+           "no sealed run has happened (no token, no gate, no audit file)", owner="P4 (gate) / P3-13",
+           command="after P3-13: check docs/p4_gate_audit.md has exactly one internal_test then one challenge_test line "
+                   "with git SHAs; make p3-verify")
 
 
 def test_H3():
@@ -688,6 +697,8 @@ def test_H4():
               if re.search(r"internal_test|challenge_test", p)]
     finish("H4", "Sealed artifacts not modified after audit", "FAIL" if sealed else "NOT_YET",
            f"sealed-split files under artifacts/p3: {sealed or 'none'}", owner="after P3-13",
+           command="after P3-13: git log --format=%cI -- 'artifacts/p3/**/*internal_test*' 'artifacts/p3/**/*challenge_test*' "
+                   "and compare with the audit timestamps in docs/p4_gate_audit.md",
            fix="sealed files exist without an audit record: investigate immediately")
 
 
@@ -702,7 +713,9 @@ def test_I1():
 def test_I2():
     rc, tail = run_pytest("tests/p3_ops/test_latency.py", "-k", "verdict or known_numbers")
     finish("I2", "PASS/FAIL from the median, matches report", "NOT_YET",
-           f"no E6 results; verdict logic tests: {summary_line(tail)}; report row is TBD", owner="you (after I1)")
+           f"no E6 results; verdict logic tests: {summary_line(tail)}; report row is TBD", owner="you (after I1)",
+           command="after make p3-latency-gpu / p3-latency-cpu: copy the verdict lines of artifacts/p3/latency/e6_*.md "
+                   "into report/p3_operations.md; make p3-verify")
 
 
 def test_I3():
@@ -822,20 +835,26 @@ def test_J4():
 def test_J5():
     finish("J5", "Every reported metric has n and 95% CI", "NOT_YET",
            "no metric values reported yet (all TBD); every metric table in report/p3_*.md has n and 95% CI columns",
-           owner="you (after results)")
+           owner="you (after results)",
+           command="fill report/p3_*.md tables from the artifacts; pytest tests/p3_docs; make p3-verify")
 
 
 # ===================================================================================== K
 def test_K1():
     finish("K1", "P4 run_batch on a mixed batch completes, one log line + one PDF per case", "NOT_YET",
-           "p4_pipeline (R4) not in the repo", owner="P4")
+           "p4_pipeline (R4) not in the repo", owner="P4",
+           command="PYTHONPATH=src python -c \"from p4_pipeline.api import run_batch; r = run_batch([...mixed paths...]); "
+                   "print(len(r))\" then check one line per case in logs/predictions.jsonl and one PDF per case under runs/")
 
 
 def test_K2():
     finish("K2", "run_case equals offline triage on 50 dev images (detector + explainability blocks)", "NOT_YET",
-           "no run_case, no C12", owner="P4")
+           "no run_case, no C12", owner="P4",
+           command="after P4 ships run_case + C12: compare CaseResult.detector / explainability with C10 / C11 for 50 "
+                   "development images (P3 adds tests/p3_integration/ then)")
 
 
 def test_K3():
     finish("K3", "P1 dashboard opens my overlay + PDF at 1366x768", "NOT_YET", "P1 dashboard not in the repo",
-           owner="P1, then you (MANUAL visual check)")
+           owner="P1, then you (MANUAL visual check)",
+           command="open one overlay PNG and one PDF in P1's dashboard at 1366x768 and confirm in chat")

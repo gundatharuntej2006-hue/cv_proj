@@ -1,0 +1,506 @@
+[
+ {
+  "id": "A1",
+  "desc": "Only my paths touched (ownership check)",
+  "status": "PASS",
+  "evidence": "git diff main...HEAD on branch p3/audit-fixes (local repo, no team remote yet): checked 127 path(s) on 'p3/audit-fixes' (ownership as P3)\nOK\n. Untracked outside the diff: simulated ownership check of all 554 files I created as branch p3/audit: 0 violation(s)",
+  "fix": "revert edits outside P3 paths",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "A2",
+  "desc": "CI: Python 3.11, pytest, tbcore validators, ownership check, data guard",
+  "status": "PASS",
+  "evidence": ".github\\workflows\\ci.yml: python ['3.11']; all present",
+  "fix": "(mine) install requirements/p3.txt with the CPU torch index in the test job, or add a p3 job, so P3 tests actually run; (P4) enable the validator step once tbcore exposes its entry point",
+  "owner": "P3 (deps), P4 (validator entry point)",
+  "command": ""
+ },
+ {
+  "id": "A3",
+  "desc": "Full pytest on CPU",
+  "status": "PASS",
+  "evidence": "385 passed, 2 skipped, 2 deselected, 19 warnings in 1382.01s (0:23:02) (CPU, venv 3.14.0). gpu-marked (MANUAL, see F6): tests/p3_det/test_r3_detect.py::test_latency_rtx4050_under_500ms, tests/p3_xai/test_gradcam.py::test_vram_peak_explain_rtx4050",
+  "fix": "see failing tests above",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "A4",
+  "desc": "No images under data/, no checkpoints/large files outside LFS",
+  "status": "PASS",
+  "evidence": "images under data/: 0; model weight files in my paths: 0; largest files: artifacts/p3/_preview_synthetic/xai_overlay_preview/SYNTHETIC_overlay_full.png (0.9 MB), artifacts/p3/_preview_synthetic/xai_overlay_preview/SYNTHETIC_dashboard_1366x768.png (0.5 MB), mock/artifacts/p3/xai/radino_crop_m0.10_clahe0_bin/development/tb0028.npy (0.5 MB). Note: nothing is 'staged' because there is no repository yet (A1).",
+  "fix": "remove the listed files from the commit; checkpoints stay on Drive with SHA in D17",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "A5",
+  "desc": "D-FINE pinned submodule, clean",
+  "status": "NOT_YET",
+  "evidence": "third_party/D-FINE HEAD 956d1709314c (pin 956d1709314c: match); working tree clean; .gitmodules: absent. It is a plain clone at the pin, not yet a registered submodule (needs the repo; .gitmodules is at the repo root).",
+  "fix": "",
+  "owner": "P1 (repo) then P3",
+  "command": "git submodule add https://github.com/Peterande/D-FINE third_party/D-FINE && git -C third_party/D-FINE checkout 956d1709314c2c6a4df6f34de232054578a7449f && git add .gitmodules third_party/D-FINE"
+ },
+ {
+  "id": "B1",
+  "desc": "Decision files D16-D20 exist",
+  "status": "PASS",
+  "evidence": "all five present: decisions/p3_det_input_size.json, decisions/p3_det_checkpoint.json, decisions/p3_det_conf_threshold.json, decisions/p3_gradcam_config.json, decisions/p3_licences.json",
+  "fix": "python -m p3_det.select_size criterion / lock_checkpoint criterion / lock_threshold criterion / p3_xai.d19 criterion",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "B2",
+  "desc": "Decisions valid, locked, evidence exists",
+  "status": "NOT_YET",
+  "evidence": "validated against C16 STAND-IN (contracts/ missing); D16 locked=False value=empty; D17 locked=False value=empty; D18 locked=False value=empty; D19 locked=False value=empty; D20 locked=False value=yes. None can be locked: D16-D19 have no results (no real training runs / P1 data / P2 classifier / P4 pipeline yet); D20 waits for the P3-01 T4 numbers and your confirmation; the real schema is P4's.",
+  "fix": "",
+  "owner": "P4 (schema), P1/P2 (data, classifier), you (Kaggle runs, D20 confirmation)",
+  "command": "python -m p3_det.select_size compare --run512 <dir> --run640 <dir> --lock; python -m p3_det.lock_checkpoint result --run <dir> --lock; python -m p3_det.lock_threshold result --run <dir> --lock; python -m p3_xai.sanity --write-d19 --lock"
+ },
+ {
+  "id": "B3",
+  "desc": "data_used has no sealed split",
+  "status": "PASS",
+  "evidence": "{\"D16\": [\"train\", \"development\"], \"D17\": [\"train\", \"development\"], \"D18\": [\"development\"], \"D19\": [\"development\"], \"D20\": [\"none\"]}",
+  "fix": "data_used must be a subset of {none, train, development, calibration}",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "B4",
+  "desc": "Criterion committed before result (git log)",
+  "status": "NOT_YET",
+  "evidence": "no violation; criterion not yet committed for ['D19'] (no result exists). D16:\nc98b23402f  2026-10-09T12:39:22+05:30  rule                P3-06: pre-register D16 criterion (input size 512 vs 640)\nOK so far: rule committed, no result committed yet\nD17:\n50be8b7156  2026-10-09T12:39:23+05:30  rule                P3-07: pre-register D17 criterion (checkpoint by development AP50)\nOK so far: rule committed, no result committed yet\nD18:\n61ef02a548  2026-10-09T12:39:23+05:30  rule                P3-07: pre-register D18 rule (confidence threshold, 5% non-TB)\nOK so far: rule committed, no result committed yet\nD19:\nC:\\Users\\Girish Kulkarni\\OneDrive\\Desktop\\appdev\\cv_proj\\decisions\\p3_gradcam_config.json: no git history (not committed, or not inside a git repository)",
+  "fix": "",
+  "owner": "you (D19: decide signed vs absolute Spearman, then commit the criterion)",
+  "command": "git add decisions/p3_gradcam_config.json && git commit -m 'P3-09: pre-register D19 criterion'"
+ },
+ {
+  "id": "B5",
+  "desc": "D18 guide_ack only after guide approval",
+  "status": "NOT_YET",
+  "evidence": "D18 has no threshold yet (needs D17); guide_ack=false",
+  "fix": "",
+  "owner": "you + guide",
+  "command": "after the guide approves: python -m p3_det.lock_threshold ack-guide --date YYYY-MM-DD --note '...'"
+ },
+ {
+  "id": "B6",
+  "desc": "D17 checkpoint SHA matches the file",
+  "status": "NOT_YET",
+  "evidence": "D17 has no checkpoint yet (no training run)",
+  "fix": "",
+  "owner": "you (Kaggle training)",
+  "command": "sha256sum artifacts/p3/det/checkpoints/<run>/ckpt_best.pt"
+ },
+ {
+  "id": "B7",
+  "desc": "D20 licences match actual LICENSE files",
+  "status": "PASS",
+  "evidence": "D-FINE LICENSE sha256 1eb85fc97224598d... == D20 (Apache-2.0); installed grad-cam 1.5.7, LICENSE MIT, Jacob Gildenblat (text-identical to D20's: False); RT-DETRv2 not installed (extension, not started) - D20 records commit 29320b6",
+  "fix": "re-read the licence file and update D20",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "C1",
+  "desc": "C10 files valid",
+  "status": "NOT_YET",
+  "evidence": "no real C10 (needs locked D16-D18 + checkpoint). Mock C10 ['detections_tbx11k_calibration_v1.json', 'detections_tbx11k_development_v1.json'] validate with the producer validator",
+  "fix": "",
+  "owner": "you (P3-08 after D16-D18)",
+  "command": "make p3-export-c10"
+ },
+ {
+  "id": "C2",
+  "desc": "C11 heatmaps float16 [512,512] in [0,1], zero outside crop",
+  "status": "NOT_YET",
+  "evidence": "no real C11 heatmaps (needs P2's classifier and P1's data)",
+  "fix": "",
+  "owner": "P2, P1, then you",
+  "command": "python -m p3_xai.export_c11 --crop-model <id> --full-model <id>"
+ },
+ {
+  "id": "C3",
+  "desc": "loc_*.parquet columns/dtypes/ranges",
+  "status": "NOT_YET",
+  "evidence": "no real C11 tables yet",
+  "fix": "",
+  "owner": "P2, P1, then you",
+  "command": "python -m p3_xai.export_c11 ..."
+ },
+ {
+  "id": "C4",
+  "desc": "predictions.jsonl valid C15",
+  "status": "NOT_YET",
+  "evidence": "no real log (written by P4's run_case via log_case). Mock log: 43 lines valid C15, version fields present, operating points OK: True",
+  "fix": "",
+  "owner": "P4 (run_case/run_batch)",
+  "command": "after P4's run_batch writes logs/predictions.jsonl: make p3-verify"
+ },
+ {
+  "id": "C5",
+  "desc": "Mocks separated from real files",
+  "status": "PASS",
+  "evidence": "decisions/report referencing mock/ or synthetic files: none; synthetic files outside artifacts/p3/_preview_synthetic/: none; files there without SYNTHETIC_ prefix: none; 68 SYNTHETIC_ files; guards present: {'README': True, '.gitignore': True, 'checkpoints/.gitignore': True, 'mock/.gitignore': True}",
+  "fix": "move preview outputs out of artifacts/ (e.g. artifacts/p3/_preview_synthetic/ with a README) or prefix every file SYNTHETIC_; never commit the placeholder-disclaimer PDFs",
+  "owner": "P3",
+  "command": ""
+ },
+ {
+  "id": "D1",
+  "desc": "R3 signatures exactly as frozen",
+  "status": "PASS",
+  "evidence": "frozen positional parameters: all match; DetResult fields ['boxes_full512', 'scores', 'n_lesions_above_thr']; keyword-only EXTENSIONS beyond the frozen signatures: []",
+  "fix": "either get the extensions approved (contract notes items 8 and 15, CCR if contracts-v1 is tagged) or remove them (overlay path via env, image passed by P4 another way)",
+  "owner": "P4/P1 approval, then P3",
+  "command": ""
+ },
+ {
+  "id": "D2a",
+  "desc": "No STUB/TODO/placeholder in REAL modules of src/p3_*",
+  "status": "PASS",
+  "evidence": "0 marker line(s) in real modules (mock module ['_mock.py'] and tbcore adapter ['_tbcore_adapter.py'] are reported by D2c):",
+  "fix": "resolve the marker, or move TB_MOCK-only code into a _mock.py module",
+  "owner": "P3",
+  "command": ""
+ },
+ {
+  "id": "D2b",
+  "desc": "Training-config values set (awaiting P3-01 feasibility)",
+  "status": "NOT_YET",
+  "evidence": "RECLASSIFIED from D2: these are not code placeholders but values that need the P3-01 T4 numbers (J1). Training refuses to start while they are null. Pending: dfine_512.yaml: schedule.epochs = null; dfine_512.yaml: schedule.batch_size = null; dfine_640.yaml: schedule.epochs = null; dfine_640.yaml: schedule.batch_size = null",
+  "fix": "",
+  "owner": "you (Kaggle T4 run, J1)",
+  "command": "fill schedule.epochs and schedule.batch_size in src/p3_det/configs/dfine_512.yaml and dfine_640.yaml from docs/p3_dfine_feasibility.md"
+ },
+ {
+  "id": "D2c",
+  "desc": "Assumed tbcore API names confined to one adapter",
+  "status": "NOT_YET",
+  "evidence": "all tbcore names live in src/p3_ops/_tbcore_adapter.py (tbcore.seed, tbcore.guard, tbcore.validators, tbcore.disclaimer); tbcore not installed, so the names are still assumptions",
+  "fix": "",
+  "owner": "P4 (publish tbcore API)",
+  "command": "pytest tests/p3_ops/test_tbcore_adapter.py (fails loudly once tbcore exists and names differ)"
+ },
+ {
+  "id": "D3",
+  "desc": "detect() reads D16-D18; model cached",
+  "status": "PASS",
+  "evidence": "reads D16/D17/D18 files: True; numeric settings hard-coded in api.py: none (MIN_SCORE 0.01 is the C10 rule; the mock threshold lives in _stub.py); cache test: 1 passed in 24.15s",
+  "fix": "read every setting from the decision files",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "D4",
+  "desc": "detect() equals C10 on 50 development images",
+  "status": "NOT_YET",
+  "evidence": "no real checkpoint/C10 yet. Same test on a real (tiny, random) D-FINE checkpoint + fake data: 1 passed, 2 warnings in 47.64s",
+  "fix": "",
+  "owner": "you (after D16-D18 + checkpoint)",
+  "command": "pytest tests/p3_det/test_r3_detect.py (then rerun this audit after make p3-export-c10)"
+ },
+ {
+  "id": "D5",
+  "desc": "explain() float16 [512,512] [0,1], zero outside crop, deterministic",
+  "status": "NOT_YET",
+  "evidence": "P2's classifier_module() is not available; same checks on a DINOv2 stand-in: 5 passed, 17 deselected in 11.12s",
+  "fix": "",
+  "owner": "P2 (R2 classifier_module)",
+  "command": "pytest tests/p3_xai/test_gradcam.py"
+ },
+ {
+  "id": "D6",
+  "desc": "Contingency: detector disabled handled",
+  "status": "NOT_YET",
+  "evidence": "the detector_enabled flag was not implemented: its source of truth is undefined (task stopped, see earlier report; needs P4). Partial: no-box overlay and PDF without a detector block: 2 passed in 1.90s",
+  "fix": "",
+  "owner": "P4 (flag source: D21 key, C14 field or new decision)",
+  "command": "after P4 decides: implement empty DetResult when disabled + test"
+ },
+ {
+  "id": "E1",
+  "desc": "AP50 = pycocotools (1e-3), FROC hand fixture, bootstrap over images with fixed seed",
+  "status": "PASS",
+  "evidence": "6 passed, 11 deselected in 0.26s",
+  "fix": "see failing test",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "E2",
+  "desc": "Metric results carry n and CI; no-n refused",
+  "status": "PASS",
+  "evidence": "MetricResult fields ['name', 'value', 'ci_low', 'ci_high', 'n_images', 'n_tb_images', 'n_non_tb_images', 'n_boxes', 'ci_method', 'note']; refused 2/2 results without n",
+  "fix": "enforce n in __post_init__",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "E3",
+  "desc": "Development AP50 512/640 with CIs; chosen = D16; contingency",
+  "status": "NOT_YET",
+  "evidence": "D16 value empty: no training runs yet. Contingency (AP50 < 0.05) cannot be evaluated; the tooling stops and refuses to lock when it triggers (tests/p3_det/test_select_size.py). D16 locked=False",
+  "fix": "",
+  "owner": "you (Kaggle training) + P1 data + P2 D08/D09",
+  "command": "python -m p3_det.select_size compare --run512 ... --run640 ..."
+ },
+ {
+  "id": "E4",
+  "desc": "Augmentation in bounds (1000 samples), round trip < 1 px, sealed refused",
+  "status": "PASS",
+  "evidence": "1000-sample property run here: 0 violations; round-trip + sealed-split tests: 9 passed, 14 deselected in 7.40s",
+  "fix": "see violations / failing tests",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "E5",
+  "desc": "Seeds recorded; 512 and 640 same schedule and seed",
+  "status": "NOT_YET",
+  "evidence": "configs: same schedule hash True (sha256:4d8bade0af2b...), seed 0; no run logs yet",
+  "fix": "configs must differ only in run_name/input_size",
+  "owner": "you (Kaggle training)",
+  "command": "make p3-train-512 ; make p3-train-640 (Kaggle), then copy each run folder to artifacts/p3/det/runs/"
+ },
+ {
+  "id": "F1",
+  "desc": "Last block target, CLS/register tokens from config, grid from input/patch size",
+  "status": "PASS",
+  "evidence": "6 passed, 16 deselected in 10.04s (CLS-only and 4-register stand-ins); token counts read from config: True. Target is the last block's norm1 (attention input), see D19 rationale",
+  "fix": "see failing test",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "F2",
+  "desc": "Randomisation Spearman < 0.5 on 20 development images, saved",
+  "status": "NOT_YET",
+  "evidence": "saved results: 0; needs P2's classifier + P1 data. NOTE: the pre-registered signed rule can be passed by an inverted map (found on stand-ins: mean rho -0.73); awaiting your decision on |rho| before committing D19's criterion",
+  "fix": "",
+  "owner": "P2, P1, you",
+  "command": "python -m p3_xai.sanity --write-d19"
+ },
+ {
+  "id": "F3",
+  "desc": "Heatmaps regenerated with the REAL classifier",
+  "status": "NOT_YET",
+  "evidence": "no real C11 exists at all (artifacts/p3/xai has no model folders); mock C11 is in mock/ only",
+  "fix": "",
+  "owner": "P2 (real classifier_module after D11)",
+  "command": "python -m p3_xai.export_c11 ..."
+ },
+ {
+  "id": "F4",
+  "desc": "Localisation synthetic tests",
+  "status": "PASS",
+  "evidence": "4 passed, 11 deselected in 8.88s",
+  "fix": "see failing test",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "F5",
+  "desc": "C11 for crop and full-image models",
+  "status": "NOT_YET",
+  "evidence": "0 real tables; R2 cannot yet load the full-image model (contract notes item 14) and D14 is missing",
+  "fix": "",
+  "owner": "P2",
+  "command": "python -m p3_xai.export_c11 --crop-model <id> --full-model <id>"
+ },
+ {
+  "id": "F6",
+  "desc": "GPU: explain() <= 5.5 GB VRAM, detect() <= 500 ms",
+  "status": "MANUAL",
+  "evidence": "no CUDA GPU on this machine; needs the real models",
+  "fix": "",
+  "owner": "you (RTX 4050)",
+  "command": "pytest tests/p3_xai/test_gradcam.py -m gpu -s ; make p3-latency-detect"
+ },
+ {
+  "id": "G1",
+  "desc": "Overlay caption, 0/1/many boxes, zero heatmap, no identifiers in names",
+  "status": "PASS",
+  "evidence": "17 passed in 3.33s; overlay file names on disk: ['SYNTHETIC_overlay_full.png']; suspicious: none",
+  "fix": "see failing test / rename",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "G2",
+  "desc": "PDF for 7 fixture types; disclaimer + scope imported; < 2 MB; no analysis on rejected/unreadable",
+  "status": "NOT_YET",
+  "evidence": "with STAND-INS for P4's 7 fixtures and for tbcore.disclaimer: 39 passed in 23.30s (incl. grep proving the texts are not retyped). Real check needs P4's fixtures and tbcore",
+  "fix": "see failing test",
+  "owner": "P4 (fixtures P4-02, tbcore.disclaimer)",
+  "command": "replace the stand-ins in tests/p3_mock/p3_case_results.py with P4's 7 fixtures, then pytest tests/p3_ops/test_pdf_report.py"
+ },
+ {
+  "id": "G3",
+  "desc": "Page 1 of each fixture PDF rendered for visual check",
+  "status": "MANUAL",
+  "evidence": "regenerated artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_<type>.png and SYNTHETIC_contact_sheet.png (ok); shown in chat for your layout check",
+  "fix": "see error",
+  "owner": "you",
+  "command": "open artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_contact_sheet.png"
+ },
+ {
+  "id": "G4",
+  "desc": "Logger: one line/call, versions required, 50 parallel, no identifiers anywhere",
+  "status": "PASS",
+  "evidence": "logger tests: 36 passed in 3.66s; identifier scan over ['mock/logs/predictions.jsonl', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_link_fired.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_not_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_refer.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_rejected_gate.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_segmentation_fallback.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_unreadable.pdf', 'overlay/preview file names', 'tests/p3_mock/p3_case_results.py (C14 stand-ins)']: no matches",
+  "fix": "remove the identifier source",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "G5",
+  "desc": "user_override written exactly",
+  "status": "PASS",
+  "evidence": "1 passed in 0.37s",
+  "fix": "",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "H1",
+  "desc": "sealed_run.py refuses without a valid token",
+  "status": "NOT_YET",
+  "evidence": "sealed_run.py exists: False (not written: P3-13 stopped at its stop conditions, no gate). Existing guards: data adapter refuses sealed splits without tbcore.guard: 5 passed, 18 deselected in 5.77s",
+  "fix": "",
+  "owner": "P4 (gate P4-09 + token API), then P3",
+  "command": "build sealed_run.py against P4's gate API"
+ },
+ {
+  "id": "H2",
+  "desc": "Audit: internal_test once, then challenge_test once",
+  "status": "NOT_YET",
+  "evidence": "no sealed run has happened (no token, no gate, no audit file)",
+  "fix": "",
+  "owner": "P4 (gate) / P3-13",
+  "command": "after P3-13: check docs/p4_gate_audit.md has exactly one internal_test then one challenge_test line with git SHAs; make p3-verify"
+ },
+ {
+  "id": "H3",
+  "desc": "No locked decision / threshold / weights changed after the internal-test audit",
+  "status": "NOT_YET",
+  "evidence": "cv_proj is not its own git repository (git toplevel = the home folder, no commits), so git-based evidence cannot exist yet; no internal-test audit timestamp exists",
+  "fix": "",
+  "owner": "after P3-13",
+  "command": "git log --since=<audit ts> -- decisions/p3_* artifacts/p3/det/checkpoints"
+ },
+ {
+  "id": "H4",
+  "desc": "Sealed artifacts not modified after audit",
+  "status": "NOT_YET",
+  "evidence": "sealed-split files under artifacts/p3: none",
+  "fix": "sealed files exist without an audit record: investigate immediately",
+  "owner": "after P3-13",
+  "command": "after P3-13: git log --format=%cI -- 'artifacts/p3/**/*internal_test*' 'artifacts/p3/**/*challenge_test*' and compare with the audit timestamps in docs/p4_gate_audit.md"
+ },
+ {
+  "id": "I1",
+  "desc": "E6 CSVs with required columns, n = 100",
+  "status": "NOT_YET",
+  "evidence": "present: none; needs P4's run_batch (R4). Tool + columns tested in tests/p3_ops/test_latency.py",
+  "fix": "",
+  "owner": "P4 (R4), then you",
+  "command": "make p3-latency-gpu ; make p3-latency-cpu (8 GB limit)"
+ },
+ {
+  "id": "I2",
+  "desc": "PASS/FAIL from the median, matches report",
+  "status": "NOT_YET",
+  "evidence": "no E6 results; verdict logic tests: 2 passed, 5 deselected in 2.19s; report row is TBD",
+  "fix": "",
+  "owner": "you (after I1)",
+  "command": "after make p3-latency-gpu / p3-latency-cpu: copy the verdict lines of artifacts/p3/latency/e6_*.md into report/p3_operations.md; make p3-verify"
+ },
+ {
+  "id": "I3",
+  "desc": "Checkpoint helper kill/resume; deliberate-kill log",
+  "status": "MANUAL",
+  "evidence": "CPU kill/resume tests: 14 passed in 5.09s; runbook log row filled: False",
+  "fix": "",
+  "owner": "you (Kaggle)",
+  "command": "docs/p3_kaggle_runbook.md section 10 procedure, then send me the result"
+ },
+ {
+  "id": "J1",
+  "desc": "Feasibility doc has real numbers, peak <= 14 GB",
+  "status": "MANUAL",
+  "evidence": "result tables still empty (template)",
+  "fix": "",
+  "owner": "you (Kaggle T4)",
+  "command": "run notebooks/p3/p3_01_dfine_feasibility.ipynb on a Kaggle T4 and send me the summary"
+ },
+ {
+  "id": "J2",
+  "desc": "Review doc: 40 cases, comments, sign-off; rule before selection",
+  "status": "NOT_YET",
+  "evidence": "selection rule pre-written: True; selection run: False; comments/sign-off: empty. Needs P4's C12 (and P1/P2 for overlays), then the session",
+  "fix": "",
+  "owner": "P4 (C12), then you + guide",
+  "command": "python -m p3_xai.review select ; python -m p3_xai.review render"
+ },
+ {
+  "id": "J3",
+  "desc": "Report numbers cite existing paths; 10 recomputed; TBD listed",
+  "status": "PASS",
+  "evidence": "28 distinct cited paths, missing on disk: none; TBD present (108x) and listed in report/p3_numbers_checklist.md: True.\nRecomputed 10 random numbers:\n| Number in report | Source | Recomputed | Match |\n|---|---|---|---|\n| 5.5 GB VRAM | decisions/p3_gradcam_config.json | 5.5 | yes |\n| 956d170 D-FINE pin | decisions/p3_licences.json | 956d170 | yes |\n| 54 combined | docs/methodology.md | 54 | yes |\n| ~540 TB / ~5,940 training | docs/methodology.md | 540 / 5,940 | yes |\n| AP50 < 0.05 contingency | decisions/p3_det_input_size.json | 0.05 | yes |\n| margin 0.10 provisional | src/p3_det/data/config.py | 0.1 | yes |\n| seed 0 | src/p3_det/configs/dfine_512.yaml | 0 | yes |\n| < 2 s GPU / < 10 s CPU | README.md | found | yes |\n| <= 500 ms detector | README.md | found | yes |\n| ~60 development TB | docs/methodology.md | 60 | yes |",
+  "fix": "fix the listed citations / numbers",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "J4",
+  "desc": "Latent caveat, attention evidence, not-clinical-proof, ~540 limitation present",
+  "status": "PASS",
+  "evidence": "missing: none",
+  "fix": "add the missing statements",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "J5",
+  "desc": "Every reported metric has n and 95% CI",
+  "status": "NOT_YET",
+  "evidence": "no metric values reported yet (all TBD); every metric table in report/p3_*.md has n and 95% CI columns",
+  "fix": "",
+  "owner": "you (after results)",
+  "command": "fill report/p3_*.md tables from the artifacts; pytest tests/p3_docs; make p3-verify"
+ },
+ {
+  "id": "K1",
+  "desc": "P4 run_batch on a mixed batch completes, one log line + one PDF per case",
+  "status": "NOT_YET",
+  "evidence": "p4_pipeline (R4) not in the repo",
+  "fix": "",
+  "owner": "P4",
+  "command": "PYTHONPATH=src python -c \"from p4_pipeline.api import run_batch; r = run_batch([...mixed paths...]); print(len(r))\" then check one line per case in logs/predictions.jsonl and one PDF per case under runs/"
+ },
+ {
+  "id": "K2",
+  "desc": "run_case equals offline triage on 50 dev images (detector + explainability blocks)",
+  "status": "NOT_YET",
+  "evidence": "no run_case, no C12",
+  "fix": "",
+  "owner": "P4",
+  "command": "after P4 ships run_case + C12: compare CaseResult.detector / explainability with C10 / C11 for 50 development images (P3 adds tests/p3_integration/ then)"
+ },
+ {
+  "id": "K3",
+  "desc": "P1 dashboard opens my overlay + PDF at 1366x768",
+  "status": "NOT_YET",
+  "evidence": "P1 dashboard not in the repo",
+  "fix": "",
+  "owner": "P1, then you (MANUAL visual check)",
+  "command": "open one overlay PNG and one PDF in P1's dashboard at 1366x768 and confirm in chat"
+ }
+]
