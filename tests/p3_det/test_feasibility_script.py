@@ -74,3 +74,26 @@ def test_smoke_args_are_cpu_and_tiny():
     assert a.sizes == [512, 640]
     full = feas.parse_args([])
     assert full.sizes == [512, 640] and not full.no_amp and full.device == "cuda"
+
+
+# --- the Kaggle notebook (P3-01 prep): runnable without shell magics, last cell prints the paste block --------
+
+def test_notebook_cells_are_plain_python_and_end_with_the_paste_block():
+    nb = json.loads((REPO / "notebooks/p3/p3_01_dfine_feasibility.ipynb").read_text(encoding="utf-8"))
+    code = ["".join(c["source"]) for c in nb["cells"] if c["cell_type"] == "code"]
+    for src in code:
+        compile(src, "<cell>", "exec")                                   # no "!" / "%" magics
+        assert "<org>" not in src and "TODO" not in src
+    assert "paste_block(" in code[-1] and code[-1].count("print(") == 1   # ONE printed block
+    assert "--n-train" in code[-2] and "--n-dev" in code[-2]
+
+
+def test_kaggle_bundle_is_code_only(tmp_path):
+    import zipfile
+    from p3_ops import kaggle_bundle
+    p = kaggle_bundle.build(tmp_path / "b.zip")
+    names = zipfile.ZipFile(p).namelist()
+    assert "notebooks/p3/p3_01_dfine_feasibility.py" in names and "src/p3_det/fill_training_config.py" in names
+    assert "requirements/p3.txt" in names and "src/p3_ops/cloud/demo.py" in names
+    assert all(Path(n).suffix in {".py", ".yaml", ".ipynb", ".txt"} for n in names)
+    assert not [n for n in names if n.startswith(("third_party", "artifacts", "decisions", "mock")) or "__pycache__" in n]

@@ -5,13 +5,18 @@ For each model variant x input size this measures, on the GPU it runs on:
     (D-FINE trains at up to 1.25x the base size: 512 -> 640 px, 640 -> 800 px),
   * the largest workable batch (no OOM) and the chosen batch (largest with
     peak reserved memory <= 14 GB, decimal GB = 1e9 bytes),
-  * seconds per epoch with the chosen batch (1 warm-up epoch, then timed),
-    plus the peak memory seen during that real multi-scale epoch.
+  * seconds per epoch at ONE common batch for all sizes of a model (the smallest chosen batch,
+    so 512 and 640 share an identical schedule, D16), 1 warm-up epoch then timed, plus the peak
+    memory seen during that real multi-scale epoch,
+  * seconds per image of one development evaluation pass (EMA weights, as P3-06 does every epoch).
+
+The last notebook cell prints one JSON block (p3_det.fill_training_config.paste_block) to paste
+back; ``python -m p3_det.fill_training_config`` turns it into batch_size / epochs.
 
 Synthetic data only (src/p3_det/synthetic_coco.py): no real images, no sealed data.
 
 Run on Kaggle/Colab T4 (one GPU):
-    python notebooks/p3/p3_01_dfine_feasibility.py --models s m --n-train 6600
+    python notebooks/p3/p3_01_dfine_feasibility.py --models s --n-train 5940 --n-dev 660
 CPU smoke test (checks the plumbing, no memory numbers):
     python notebooks/p3/p3_01_dfine_feasibility.py --smoke
 """
@@ -193,6 +198,24 @@ def time_epochs(solver, n_epochs: int) -> tuple[list[float], dict]:
     return times, _cuda_peaks()
 
 
+def time_eval(solver, amp: bool) -> tuple[float, int]:
+    """One development-style evaluation pass (EMA weights + postprocessor) over the val loader."""
+    import torch
+    model = solver.ema.module if solver.ema is not None else solver.model
+    model.eval()
+    n, t0 = 0, time.perf_counter()
+    with torch.no_grad():
+        for samples, targets in solver.val_dataloader:
+            samples = samples.to(solver.device)
+            sizes = torch.stack([t["orig_size"] for t in targets]).to(solver.device)
+            with torch.autocast(device_type=str(solver.device), enabled=amp):
+                solver.postprocessor(model(samples), sizes)
+            n += samples.shape[0]
+    if torch.cuda.is_available():
+        torch.cuda.synchronize()
+    return round(time.perf_counter() - t0, 2), n
+
+
 def environment(dfine_dir: Path, seed: int, seed_util: str) -> dict:
     import torch
     try:
@@ -212,6 +235,12 @@ def environment(dfine_dir: Path, seed: int, seed_util: str) -> dict:
     }
 
 
+def _cfg(args, work: Path, dfine_dir: Path, data_dir: Path, amp: bool, model: str, size: int, batch: int,
+         tag: str) -> Path:
+    return write_config(work / f"cfg_{model}_{size}_{tag}.yml", dfine_dir, model, size, data_dir, batch,
+                        args.workers, amp, not args.no_pretrained, work / f"out_{model}_{size}")
+
+
 def run(args: argparse.Namespace) -> dict:
     dfine_dir = Path(args.dfine_dir).resolve()
     sys.path.insert(0, str(dfine_dir))  # D-FINE's own "src" package
@@ -229,17 +258,16 @@ def run(args: argparse.Namespace) -> dict:
     results = {"env": environment(dfine_dir, args.seed, seed_util),
                "settings": {"amp": amp, "peak_limit_gb": PEAK_LIMIT_GB, "num_classes": NUM_CLASSES,
                             "n_mock_images": n_mock, "n_train_for_extrapolation": args.n_train,
+                            "n_dev_for_extrapolation": args.n_dev,
                             "workers": args.workers, "pretrained": not args.no_pretrained},
                "runs": []}
     for model in args.models:
-        for size in args.sizes:
+        entries = []
+        for size in args.sizes:                                   # phase 1: memory per batch, per size
             scale = max_train_scale(size)
             print(f"\n=== D-FINE-{model.upper()} @ {size} (max multi-scale {scale}) ===", flush=True)
-            mk = lambda b, tag: write_config(  # noqa: E731
-                work / f"cfg_{model}_{size}_{tag}.yml", dfine_dir, model, size, data_dir, b,
-                args.workers, amp, not args.no_pretrained, work / f"out_{model}_{size}")
-
-            solver = build_solver(mk(args.batches[0], "probe"), args.device, args.seed, amp)
+            solver = build_solver(_cfg(args, work, dfine_dir, data_dir, amp, model, size, args.batches[0], "probe"),
+                                  args.device, args.seed, amp)
             probes = []
             for b in args.batches:
                 p = probe_batch(solver, b, scale)
@@ -249,40 +277,47 @@ def run(args: argparse.Namespace) -> dict:
                     break
             del solver
             _reset_cuda()
-
             ok = [p for p in probes if p["ok"]]
             within = [p for p in ok if p["peak_reserved_gb"] is None
                       or p["peak_reserved_gb"] <= PEAK_LIMIT_GB]
-            largest = max((p["batch"] for p in ok), default=None)
-            chosen = max((p["batch"] for p in within), default=None)
-            entry = {"model": model, "size": size, "max_train_scale": scale, "probes": probes,
-                     "largest_workable_batch": largest, "chosen_batch": chosen,
-                     "largest_tried_batch": args.batches[-1]}
-            if chosen is not None:
+            entries.append({"model": model, "size": size, "max_train_scale": scale, "probes": probes,
+                            "largest_workable_batch": max((p["batch"] for p in ok), default=None),
+                            "chosen_batch": max((p["batch"] for p in within), default=None),
+                            "largest_tried_batch": args.batches[-1]})
+        chosen = [e["chosen_batch"] for e in entries]
+        common = min(chosen) if None not in chosen else None    # one schedule for every size (D16)
+        for e in entries:                                         # phase 2: time real epochs at the common batch
+            e["common_batch"] = common
+            if common is not None:
                 set_seed(args.seed)
-                solver = build_solver(mk(chosen, "epoch"), args.device, args.seed, amp)
+                solver = build_solver(_cfg(args, work, dfine_dir, data_dir, amp, model, e["size"], common, "epoch"),
+                                      args.device, args.seed, amp)
                 times, peaks = time_epochs(solver, args.epochs)
+                eval_s, eval_n = time_eval(solver, amp)
                 del solver
                 _reset_cuda()
                 timed = times[-1]
-                entry.update({
-                    "epoch_times_s": times, "s_per_epoch_mock": timed,
+                e.update({
+                    "timed_at_batch": common, "epoch_times_s": times, "s_per_epoch_mock": timed,
                     "s_per_image": round(timed / n_mock, 4),
-                    "s_per_epoch_extrapolated": round(timed / n_mock * args.n_train, 1)
-                    if args.n_train else None,
+                    "s_per_epoch_extrapolated": round(timed / n_mock * args.n_train, 1) if args.n_train else None,
+                    "eval_s_mock": eval_s, "eval_n_mock": eval_n,
+                    "eval_s_per_image": round(eval_s / max(eval_n, 1), 4),
+                    "eval_s_extrapolated": round(eval_s / max(eval_n, 1) * args.n_dev, 1) if args.n_dev else None,
                     "epoch_peak_alloc_gb": peaks["peak_alloc_gb"],
                     "epoch_peak_reserved_gb": peaks["peak_reserved_gb"],
                     "epoch_within_limit": peaks["peak_reserved_gb"] is None
                     or peaks["peak_reserved_gb"] <= PEAK_LIMIT_GB,
                 })
-            print(f"  -> {({k: v for k, v in entry.items() if k != 'probes'})}", flush=True)
-            results["runs"].append(entry)
+            print(f"  -> {({k: v for k, v in e.items() if k != 'probes'})}", flush=True)
+            results["runs"].append(e)
     return results
 
 
 SUMMARY_FIELDS = ["model", "size", "max_train_scale", "largest_workable_batch", "chosen_batch",
-                  "chosen_peak_reserved_gb", "epoch_peak_reserved_gb", "epoch_within_limit",
-                  "s_per_epoch_mock", "s_per_image", "s_per_epoch_extrapolated"]
+                  "chosen_peak_reserved_gb", "common_batch", "epoch_peak_reserved_gb", "epoch_within_limit",
+                  "s_per_epoch_mock", "s_per_image", "s_per_epoch_extrapolated", "eval_s_per_image",
+                  "eval_s_extrapolated"]
 
 
 def summarise(results: dict) -> list[dict]:
@@ -305,6 +340,8 @@ def parse_args(argv=None) -> argparse.Namespace:
     ap.add_argument("--n-mock", type=int, default=320, help="synthetic training images")
     ap.add_argument("--n-train", type=int, default=None,
                     help="real training-set size, for s/epoch extrapolation (from C01 when known)")
+    ap.add_argument("--n-dev", type=int, default=None,
+                    help="development-set size, for eval-time extrapolation (methodology: 660)")
     ap.add_argument("--epochs", type=int, default=2, help="epochs to run; the last one is timed")
     ap.add_argument("--workers", type=int, default=2)
     ap.add_argument("--device", default="cuda")
