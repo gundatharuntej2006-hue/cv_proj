@@ -1,16 +1,21 @@
 {
   "decision_id": "D19",
   "owner": "p3",
-  "title": "Grad-CAM ViT Configuration",
-  "criterion_preregistered": "Target layer = last RAD-DINO transformer block, drop CLS/register tokens with patch-grid reshape, crop-to-512 mapping",
-  "preregistered_at": "2026-10-15",
-  "candidates": ["Last block attention reshape"],
-  "value": {"target_layer": "blocks.-1.norm1", "reshape_transform": "vit_patch_grid", "crop_mapping": "offset_and_scale"},
-  "evidence": ["docs/p3_gradcam_review.md"],
-  "data_used": ["development"],
+  "title": "Grad-CAM configuration (target layer, reshape rule, target class, crop->512 mapping)",
+  "criterion_preregistered": "Grad-CAM configuration for the RAD-DINO classifier (methodology: Grad-CAM on the last RAD-DINO block with a reshape rule, TB target and crop-to-512 mapping), fixed a priori and checked on development only. (1) Target layer: the first LayerNorm (attention input, norm1) of the LAST transformer block of the classifier's ViT backbone, found by inspecting classifier_module() (last element of the backbone's block list). Rationale: the block output reaches a CLS-pooled head only through a per-token LayerNorm, so patch tokens there receive zero gradient; norm1 lets the gradient reach patch tokens through the last block's attention. (2) Reshape rule: drop the first P tokens, P = 1 (CLS) + num_register_tokens read from the backbone config; reshape the rest to [H/p, W/p], p = patch size from the config, H x W = classifier input size; fail if the token count disagrees. (3) Target: the TB logit of the classifier output (binary head: output 0; three-class head: the 'tb' output), before sigmoid/softmax. (4) Mapping: the classifier input is the lung crop of img_for_analysis prepared exactly as P2's classifier input; the Grad-CAM map (pytorch-grad-cam 1.5.7 GradCAM: ReLU, min-max scaled, resized to the input) is resized bilinearly to the crop size, min-max normalised to [0, 1] inside the crop, pasted into a zero 512x512 canvas at crop_box and returned as float16. Acceptance (model-randomisation sanity test, Adebayo et al. 2018). Randomised weights: the classifier head re-initialised (seed 0). Spearman rank correlation is computed over pixels inside the crop; the 20 development images are a seeded sample (seed 0, 10 TB + 10 non-TB); an undefined correlation (constant map) counts as 0 and is reported separately. Model-randomisation sanity test passes if the mean of |Spearman rank correlation| between original and randomised-weights heatmaps over the 20 development images is below 0.5 (mean |rho| < 0.5). Also report the maximum |Spearman| and the per-image values. The same check with head + last block re-initialised is reported. Reason for the absolute value: a signed rule would pass an inverted heatmap, which still depends on the weights. Peak GPU memory of one explain() call must be <= 5.5 GB on the RTX 4050.",
+  "preregistered_at": "2026-10-10",
+  "candidates": [
+    "last block norm1 (attention input)",
+    "last block output"
+  ],
+  "value": {},
+  "evidence": [],
+  "data_used": [
+    "development"
+  ],
   "reviewed_by": "p4",
   "guide_ack": false,
-  "locked": true,
-  "locked_at": "2026-11-05",
-  "git_sha": "c0ffee1"
+  "locked": false,
+  "locked_at": null,
+  "git_sha": null
 }
