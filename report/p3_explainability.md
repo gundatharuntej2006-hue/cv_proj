@@ -29,17 +29,18 @@ A heatmap that does not change when the model's learned weights are destroyed is
 model (Adebayo et al., 2018). Pre-registered check [decisions/p3_gradcam_config.json, criterion]:
 - re-initialise the classifier head;
 - recompute heatmaps on 20 development images (10 TB, 10 non-TB) [decisions/p3_gradcam_config.json];
-- require a mean Spearman correlation with the original heatmaps below 0.5, computed inside the crop only
-  [decisions/p3_gradcam_config.json];
-- also report the same check with the head and last block re-initialised.
+- require a mean absolute Spearman correlation (|rho|) with the original heatmaps below 0.5, computed inside the
+  crop only [decisions/p3_gradcam_config.json];
+- report the maximum |rho| and the per-image values, and the same check with the head and last block re-initialised.
 
-| Randomised part | Mean Spearman | Mean abs Spearman | n images | Pass (below the pre-registered limit) | Source |
-|---|---|---|---|---|---|
-| Head | TBD | TBD | TBD | TBD | TBD: waiting on artifacts/p3/xai/sanity/randomisation_<model_id>.json |
-| Head + last block | TBD | TBD | TBD | (reported) | TBD: waiting on artifacts/p3/xai/sanity/randomisation_<model_id>.json |
+| Randomised part | Mean abs Spearman (rule) | Max abs Spearman | Mean signed Spearman (not the rule) | n images | Pass (below the pre-registered limit) | Source |
+|---|---|---|---|---|---|---|
+| Head | TBD | TBD | TBD | TBD | TBD | TBD: waiting on artifacts/p3/xai/sanity/randomisation_<model_id>.json |
+| Head + last block | TBD | TBD | TBD | TBD | (reported) | TBD: waiting on artifacts/p3/xai/sanity/randomisation_<model_id>.json |
 
-Note for the reader: a signed correlation below 0.5 [decisions/p3_gradcam_config.json] is also met by an *inverted* map. We found this on random
-stand-in models during development [tests/p3_xai/test_gradcam.py], so the absolute value is reported as well.
+Why the absolute value: a signed correlation below 0.5 is also met by an *inverted* map, which still depends on the
+weights [decisions/p3_gradcam_config.json, criterion]. Runs on P2's stub or on stand-in models are labelled
+"stub, not evidence" and are never cited here [src/p3_xai/sanity.py].
 
 ## Localisation agreement (development)
 

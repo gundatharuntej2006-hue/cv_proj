@@ -126,9 +126,11 @@ def test_sanity_check_on_fake_development_images(model, tmp_path):
     res = sanity.run(model, items, seed=0)
     for scope in ("head", "head+last_block"):
         sm = res["summary"][scope]
-        assert sm["n_images"] == 20 and -1 <= sm["mean"] <= 1 and sm["mean_abs"] >= abs(sm["mean"]) - 1e-9
-    assert res["passed"] == (res["summary"]["head"]["mean"] < 0.5)        # the pre-registered rule, as written
-    assert all("spearman_head+last_block" in r for r in res["per_image"])
+        assert sm["n_images"] == 20 and 0 <= sm["mean_abs"] <= sm["max_abs"] <= 1
+        assert sm["mean_abs"] >= abs(sm["mean_signed"]) - 1e-9 and len(sm["per_image_abs"]) == 20
+        assert sm["max_abs"] == pytest.approx(max(sm["per_image_abs"]))
+    assert res["passed"] == (res["summary"]["head"]["mean_abs"] < 0.5)    # D19 rule (7a812a7): mean |rho| < 0.5
+    assert all("spearman_head+last_block" in r and "abs_spearman_head" in r for r in res["per_image"])
     # NOTE: the outcome on a random-weight stand-in says nothing about RAD-DINO; only the machinery is tested.
 
 
@@ -142,6 +144,42 @@ def test_spearman_uses_inside_crop_only():
     assert sanity.spearman_inside(a, a, [10, 10, 100, 100]) == pytest.approx(1.0)
 
 
+def _rows(head, block=None):
+    return [{"spearman_head": h, "spearman_head+last_block": (block or head)[i]} for i, h in enumerate(head)]
+
+
+def test_rule_uses_absolute_value_so_inverted_maps_fail():
+    inverted = sanity.evaluate(_rows([-0.9] * 20))              # map still depends on the weights, just flipped
+    assert inverted["summary"]["head"]["mean_signed"] == pytest.approx(-0.9)
+    assert inverted["summary"]["head"]["mean_abs"] == pytest.approx(0.9) and inverted["passed"] is False
+    ok = sanity.evaluate(_rows([0.1, -0.2] * 10))
+    assert ok["passed"] is True and ok["summary"]["head"]["mean_abs"] == pytest.approx(0.15)
+    assert ok["summary"]["head"]["max_abs"] == pytest.approx(0.2)
+    assert ok["summary"]["head"]["per_image_abs"] == [0.1, 0.2] * 10
+    edge = sanity.evaluate(_rows([0.5] * 20))                   # "below 0.5": exactly 0.5 fails
+    assert edge["passed"] is False
+    und = sanity.evaluate(_rows([float("nan")] + [0.9] * 19))   # undefined counts as 0, reported separately
+    assert und["summary"]["head"]["n_undefined_as_0"] == 1 and und["summary"]["head"]["per_image_abs"][0] == 0.0
+
+
+def test_stub_results_are_labelled_and_never_evidence(model, tmp_path):
+    res = sanity.evaluate(_rows([0.1] * 20))
+    out = sanity.save_results({"spec": {}, "seed": 0, **res}, model, out_dir=tmp_path)
+    assert out.parent.name == "stub_not_evidence" and out.name.startswith("STUB_")
+    assert json.loads(out.read_text())["evidence_status"] == "stub, not evidence"
+    assert not list(tmp_path.glob("randomisation_*.json"))     # the F2 / report glob never sees a stub result
+    with pytest.raises(Exception, match="stub, not evidence"):
+        sanity.write_d19(res, model, out, path=tmp_path / "d19.json", vram_file=tmp_path / "none.json")
+
+
+def test_d19_criterion_matches_committed_rule():
+    c = d19.CRITERION
+    assert "mean of |Spearman rank correlation|" in c and "below 0.5" in c and "maximum |Spearman|" in c
+    assert "per-image values" in c and "inverted heatmap" in c
+    if d19.D19_PATH.exists():
+        assert json.loads(d19.D19_PATH.read_text())["criterion_preregistered"] == c
+
+
 # --- D19 file ----------------------------------------------------------------------------------------
 
 def test_d19_written_from_results_and_lock_refused_on_standin(model, img, tmp_path):
@@ -151,12 +189,13 @@ def test_d19_written_from_results_and_lock_refused_on_standin(model, img, tmp_pa
     dec.write_criterion(path, d19.criterion_template("2026-10-09"))
     validate_decision(json.loads(path.read_text()))
     res = {"spec": inspect_classifier(model)[0].as_record(), "seed": 0, "passed": True,
-           "summary": {"head": {"mean": 0.1}, "head+last_block": {"mean": 0.05}}}
+           "summary": {"head": {"mean_abs": 0.1}, "head+last_block": {"mean_abs": 0.05}}}
     rp = tmp_path / "res.json"
     rp.write_text("{}")
     doc = sanity.write_d19(res, model, rp, dry_run=True, path=path, vram_file=tmp_path / "none.json")
     v = doc["value"]
     assert v["target_layer"].endswith(".norm1") and v["classifier_is_stub"] is True
+    assert v["evidence_status"] == "stub, not evidence"                    # dry run only; a real write refuses
     assert doc["data_used"] == ["development"] and doc["locked"] is False
     validate_decision(doc)
     with pytest.raises(dec.Refused, match="stand-in"):

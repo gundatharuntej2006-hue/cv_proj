@@ -21,8 +21,9 @@
   closed.
 - **Explanations are not findings.** Localisation agreement is measured against boxes from one radiologist that
   are not exhaustive. High agreement does not prove clinical correctness, and low agreement does not prove error.
-- **Sanity check caveat.** The pre-registered randomisation check uses signed Spearman correlation, which an
-  inverted map can satisfy. The absolute value is reported alongside.
+- **Sanity check scope.** The pre-registered randomisation check uses the mean absolute Spearman correlation
+  [decisions/p3_gradcam_config.json, criterion], because a signed rule would pass an inverted heatmap. It tests
+  dependence on the weights, not clinical correctness.
 - **Non-determinism.** Runs use a fixed seed, recorded per run, but GPU kernels are not bit-for-bit deterministic,
   so retraining may give slightly different numbers.
 - **Latency on our hardware only.** E6 was measured on one laptop GPU and one CPU-only set-up; other hardware will

@@ -26,12 +26,18 @@ CRITERION = (
     "the lung crop of img_for_analysis prepared exactly as P2's classifier input; the Grad-CAM map "
     "(pytorch-grad-cam 1.5.7 GradCAM: ReLU, min-max scaled, resized to the input) is resized bilinearly to the "
     "crop size, min-max normalised to [0, 1] inside the crop, pasted into a zero 512x512 canvas at crop_box and "
-    "returned as float16. Acceptance (model-randomisation sanity check, Adebayo et al. 2018): with the "
-    "classifier head re-initialised (seed 0), the mean Spearman correlation between original and randomised "
-    "heatmaps, over pixels inside the crop, on 20 development images (seeded sample, seed 0, 10 TB + 10 non-TB) "
-    "must be < 0.5; the same check with head + last block re-initialised is reported. Peak GPU memory of one "
-    "explain() call must be <= 5.5 GB on the RTX 4050."
+    "returned as float16. Acceptance (model-randomisation sanity test, Adebayo et al. 2018). Randomised weights: "
+    "the classifier head re-initialised (seed 0). Spearman rank correlation is computed over pixels inside the "
+    "crop; the 20 development images are a seeded sample (seed 0, 10 TB + 10 non-TB); an undefined correlation "
+    "(constant map) counts as 0 and is reported separately. Model-randomisation sanity test passes if the mean of "
+    "|Spearman rank correlation| between original and randomised-weights heatmaps over the 20 development images "
+    "is below 0.5 (mean |rho| < 0.5). Also report the maximum |Spearman| and the per-image values. The same check "
+    "with head + last block re-initialised is reported. Reason for the absolute value: a signed rule would pass an "
+    "inverted heatmap, which still depends on the weights. Peak GPU memory of one explain() call must be <= 5.5 GB "
+    "on the RTX 4050."
 )
+# Committed rule-only in 7a812a7 ("P3 D19: pre-register criterion (rule only)", tag p3-prereg-D19). The signed
+# rule drafted on 2026-10-09 was never committed.
 
 
 def criterion_template(today: str | None = None) -> dict:

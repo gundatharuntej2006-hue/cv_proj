@@ -7,10 +7,14 @@ For each of 20 development images (seeded: 10 TB + 10 non-TB, readable, crop at 
 variant per D08) the Grad-CAM heatmap of the trained classifier is compared with the heatmap of a
 copy whose head (and, reported too, head + last block) is re-initialised. Spearman correlation is
 computed over the pixels INSIDE the crop (outside both maps are zero by construction, which would
-inflate it). Pass: mean Spearman (head re-initialised) < 0.5. A constant randomised map gives an
+inflate it). Pass (D19, committed 7a812a7): mean |Spearman| (head re-initialised) < 0.5; the maximum
+|Spearman| and every per-image value are reported too. The absolute value is used because a signed rule
+would pass an inverted heatmap, which still depends on the weights. A constant randomised map gives an
 undefined correlation; it is counted as 0 (no dependence left) and reported separately.
 
 Results: artifacts/p3/xai/sanity/randomisation_<model_id>.json (+ D19 value with --write-d19).
+A run on P2's stub or a stand-in is saved under artifacts/p3/xai/sanity/stub_not_evidence/ with
+"evidence_status": "stub, not evidence"; it can never be written into D19.
 """
 from __future__ import annotations
 
@@ -36,6 +40,8 @@ OUT_DIR = dec.REPO / "artifacts" / "p3" / "xai" / "sanity"
 VRAM_FILE = dec.REPO / "artifacts" / "p3" / "xai" / "vram_explain.json"
 VRAM_LIMIT_GB = 5.5
 PASS_BELOW = 0.5
+STUB_DIR = OUT_DIR / "stub_not_evidence"
+STUB_LABEL = "stub, not evidence"
 
 
 def sample_images(paths: DataPaths, n_tb: int = 10, n_non_tb: int = 10, seed: int = 0,
@@ -82,20 +88,27 @@ def run(module, items, scopes=("head", "head+last_block"), seed: int = 0) -> dic
         h0 = base(img, crop)
         row = {"image_id": iid, "tb_label": label, "crop_box": crop}
         for s, e in rand.items():
-            row[f"spearman_{s}"] = spearman_inside(h0, e(img, crop), crop)
+            v = spearman_inside(h0, e(img, crop), crop)
+            row[f"spearman_{s}"], row[f"abs_spearman_{s}"] = v, (0.0 if math.isnan(v) else abs(v))
         per_image.append(row)
+    return {"spec": base.spec.as_record(), "seed": seed, "pass_below": PASS_BELOW,
+            "rule": "mean |Spearman| (head re-initialised) < 0.5", **evaluate(per_image, scopes)}
+
+
+def evaluate(per_image: list[dict], scopes=("head", "head+last_block")) -> dict:
+    """D19 rule on per-image signed values: pass if mean |rho| (head) < PASS_BELOW; undefined counts as 0."""
     summary = {}
     for s in scopes:
         vals = [r[f"spearman_{s}"] for r in per_image]
         n_nan = sum(math.isnan(v) for v in vals)
-        filled = [0.0 if math.isnan(v) else v for v in vals]
-        summary[s] = {"mean": round(float(np.mean(filled)), 4), "median": round(float(np.median(filled)), 4),
-                      "max": round(float(np.max(filled)), 4),
-                      # reported, not the pre-registered pass rule: an inverted map (rho ~ -1) passes "rho < 0.5"
-                      "mean_abs": round(float(np.mean(np.abs(filled))), 4),
+        absval = np.abs([0.0 if math.isnan(v) else v for v in vals])
+        summary[s] = {"mean_abs": round(float(np.mean(absval)), 4), "max_abs": round(float(np.max(absval)), 4),
+                      "median_abs": round(float(np.median(absval)), 4),
+                      "per_image_abs": [round(float(v), 4) for v in absval],
+                      # signed mean reported for transparency only; it is NOT the rule (an inverted map passes it)
+                      "mean_signed": round(float(np.mean([0.0 if math.isnan(v) else v for v in vals])), 4),
                       "n_images": len(vals), "n_undefined_as_0": n_nan}
-    return {"spec": base.spec.as_record(), "seed": seed, "pass_below": PASS_BELOW,
-            "passed": summary["head"]["mean"] < PASS_BELOW, "summary": summary, "per_image": per_image}
+    return {"passed": summary["head"]["mean_abs"] < PASS_BELOW, "summary": summary, "per_image": per_image}
 
 
 def _model_id(module) -> str:
@@ -109,6 +122,9 @@ def _is_stub(module) -> bool:
 
 def write_d19(results: dict, module, results_path: Path, *, lock: bool = False, dry_run: bool = False,
               path: Path = D19_PATH, vram_file: Path = VRAM_FILE, today: str | None = None) -> dict:
+    if _is_stub(module) and not dry_run:
+        raise dec.Refused(f"classifier is P2's stub / a stand-in: its sanity result is '{STUB_LABEL}' and is never "
+                          "written into D19")
     doc = dec.load_for_result(path, CRITERION)
     sha = dec.criterion_commit(path, CRITERION)
     if sha is None and not dry_run:
@@ -116,6 +132,7 @@ def write_d19(results: dict, module, results_path: Path, *, lock: bool = False, 
     vram = json.loads(vram_file.read_text()) if vram_file.exists() else None
     doc["value"] = {
         "classifier_model_id": _model_id(module), "classifier_is_stub": _is_stub(module),
+        **({"evidence_status": STUB_LABEL} if _is_stub(module) else {}),
         **results["spec"],
         "reshape_rule": f"drop first {results['spec']['n_prefix_tokens']} tokens (CLS + registers), "
                         f"reshape to {results['spec']['grid_hw'][0]}x{results['spec']['grid_hw'][1]}",
@@ -144,6 +161,25 @@ def write_d19(results: dict, module, results_path: Path, *, lock: bool = False, 
     return doc
 
 
+def save_results(results: dict, module, out_dir: Path = OUT_DIR) -> Path:
+    """Real classifier -> out_dir/randomisation_<id>.json; stub/stand-in -> out_dir/stub_not_evidence/ (labelled)."""
+    stub = _is_stub(module)
+    folder = out_dir / "stub_not_evidence" if stub else out_dir
+    folder.mkdir(parents=True, exist_ok=True)
+    out = folder / (f"STUB_randomisation_{_model_id(module)}.json" if stub else f"randomisation_{_model_id(module)}.json")
+    out.write_text(json.dumps({"model_id": _model_id(module), "classifier_is_stub": stub,
+                               "evidence_status": STUB_LABEL if stub else "development result", **results}, indent=1))
+    return out
+
+
+def summary_text(results: dict) -> str:
+    h, b = results["summary"]["head"], results["summary"]["head+last_block"]
+    per = ", ".join(f"{v:.2f}" for v in h["per_image_abs"])
+    return (f"|Spearman| inside crop, n={h['n_images']}: head re-init mean {h['mean_abs']:.3f}, max {h['max_abs']:.3f} "
+            f"(signed mean {h['mean_signed']:.3f}, not the rule); head+last block mean |rho| {b['mean_abs']:.3f} -> "
+            f"{'PASS' if results['passed'] else 'FAIL'} (mean |rho| < {PASS_BELOW}); per image: [{per}]")
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--seed", type=int, default=0)
@@ -155,15 +191,8 @@ def main(argv=None) -> int:
     module = api.explainer().module
     items = sample_images(DataPaths.default(), seed=a.seed)
     results = run(module, items, seed=a.seed)
-    OUT_DIR.mkdir(parents=True, exist_ok=True)
-    out = OUT_DIR / f"randomisation_{_model_id(module)}.json"
-    out.write_text(json.dumps({"model_id": _model_id(module), "classifier_is_stub": _is_stub(module), **results},
-                              indent=1))
-    s = results["summary"]
-    print(f"Spearman inside crop, n={s['head']['n_images']}: head re-init mean {s['head']['mean']:.3f} "
-          f"(mean |rho| {s['head']['mean_abs']:.3f}) "
-          f"(max {s['head']['max']:.3f}); head+last block mean {s['head+last_block']['mean']:.3f} -> "
-          f"{'PASS' if results['passed'] else 'FAIL'} (< {PASS_BELOW}); saved {out}")
+    out = save_results(results, module)
+    print(summary_text(results) + f"; saved {out}")
     if a.write_d19:
         try:
             write_d19(results, module, out, lock=a.lock, dry_run=a.dry_run)
