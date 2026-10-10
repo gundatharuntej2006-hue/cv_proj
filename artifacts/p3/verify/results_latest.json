@@ -3,7 +3,7 @@
   "id": "A1",
   "desc": "Only my paths touched (ownership check)",
   "status": "PASS",
-  "evidence": "git diff main...HEAD on branch p3/audit-fixes (local repo, no team remote yet): checked 127 path(s) on 'p3/audit-fixes' (ownership as P3)\nOK\n. Untracked outside the diff: simulated ownership check of all 554 files I created as branch p3/audit: 0 violation(s)",
+  "evidence": "git diff main...HEAD on branch p3/audit-fixes (local repo, no team remote yet): checked 139 path(s) on 'p3/audit-fixes' (ownership as P3)\nOK\n. Untracked outside the diff: simulated ownership check of all 653 files I created as branch p3/audit: 0 violation(s)",
   "fix": "revert edits outside P3 paths",
   "owner": "",
   "command": ""
@@ -21,7 +21,7 @@
   "id": "A3",
   "desc": "Full pytest on CPU",
   "status": "PASS",
-  "evidence": "385 passed, 2 skipped, 2 deselected, 19 warnings in 1382.01s (0:23:02) (CPU, venv 3.14.0). gpu-marked (MANUAL, see F6): tests/p3_det/test_r3_detect.py::test_latency_rtx4050_under_500ms, tests/p3_xai/test_gradcam.py::test_vram_peak_explain_rtx4050",
+  "evidence": "433 passed, 2 skipped, 2 deselected, 19 warnings in 2168.89s (0:36:08) (CPU, venv 3.14.0). gpu-marked (MANUAL, see F6): tests/p3_det/test_r3_detect.py::test_latency_rtx4050_under_500ms, tests/p3_xai/test_gradcam.py::test_vram_peak_explain_rtx4050",
   "fix": "see failing tests above",
   "owner": "",
   "command": ""
@@ -74,11 +74,11 @@
  {
   "id": "B4",
   "desc": "Criterion committed before result (git log)",
-  "status": "NOT_YET",
-  "evidence": "no violation; criterion not yet committed for ['D19'] (no result exists). D16:\nc98b23402f  2026-10-09T12:39:22+05:30  rule                P3-06: pre-register D16 criterion (input size 512 vs 640)\nOK so far: rule committed, no result committed yet\nD17:\n50be8b7156  2026-10-09T12:39:23+05:30  rule                P3-07: pre-register D17 criterion (checkpoint by development AP50)\nOK so far: rule committed, no result committed yet\nD18:\n61ef02a548  2026-10-09T12:39:23+05:30  rule                P3-07: pre-register D18 rule (confidence threshold, 5% non-TB)\nOK so far: rule committed, no result committed yet\nD19:\nC:\\Users\\Girish Kulkarni\\OneDrive\\Desktop\\appdev\\cv_proj\\decisions\\p3_gradcam_config.json: no git history (not committed, or not inside a git repository)",
-  "fix": "",
-  "owner": "you (D19: decide signed vs absolute Spearman, then commit the criterion)",
-  "command": "git add decisions/p3_gradcam_config.json && git commit -m 'P3-09: pre-register D19 criterion'"
+  "status": "PASS",
+  "evidence": "D16: c98b23402f  2026-10-09T12:39:22+05:30  rule                P3-06: pre-register D16 criterion (input size 512 vs 640)\nOK so far: rule committed, no result committed yet\nD17: 50be8b7156  2026-10-09T12:39:23+05:30  rule                P3-07: pre-register D17 criterion (checkpoint by development AP50)\nOK so far: rule committed, no result committed yet\nD18: 61ef02a548  2026-10-09T12:39:23+05:30  rule                P3-07: pre-register D18 rule (confidence threshold, 5% non-TB)\nOK so far: rule committed, no result committed yet\nD19: 7a812a7867  2026-10-10T23:03:04+05:30  rule                P3 D19: pre-register criterion (rule only)\nOK so far: rule committed, no result committed yet",
+  "fix": "re-register a criterion via P4 (CCR)",
+  "owner": "",
+  "command": ""
  },
  {
   "id": "B5",
@@ -192,7 +192,7 @@
   "id": "D3",
   "desc": "detect() reads D16-D18; model cached",
   "status": "PASS",
-  "evidence": "reads D16/D17/D18 files: True; numeric settings hard-coded in api.py: none (MIN_SCORE 0.01 is the C10 rule; the mock threshold lives in _stub.py); cache test: 1 passed in 24.15s",
+  "evidence": "reads D16/D17/D18 files: True; numeric settings hard-coded in api.py: none (MIN_SCORE 0.01 is the C10 rule; the mock threshold lives in _stub.py); cache test: 1 passed in 109.49s (0:01:49)",
   "fix": "read every setting from the decision files",
   "owner": "",
   "command": ""
@@ -201,7 +201,7 @@
   "id": "D4",
   "desc": "detect() equals C10 on 50 development images",
   "status": "NOT_YET",
-  "evidence": "no real checkpoint/C10 yet. Same test on a real (tiny, random) D-FINE checkpoint + fake data: 1 passed, 2 warnings in 47.64s",
+  "evidence": "no real checkpoint/C10 yet. Same test on a real (tiny, random) D-FINE checkpoint + fake data: 1 passed, 2 warnings in 267.84s (0:04:27)",
   "fix": "",
   "owner": "you (after D16-D18 + checkpoint)",
   "command": "pytest tests/p3_det/test_r3_detect.py (then rerun this audit after make p3-export-c10)"
@@ -210,7 +210,7 @@
   "id": "D5",
   "desc": "explain() float16 [512,512] [0,1], zero outside crop, deterministic",
   "status": "NOT_YET",
-  "evidence": "P2's classifier_module() is not available; same checks on a DINOv2 stand-in: 5 passed, 17 deselected in 11.12s",
+  "evidence": "P2's classifier_module() is not available; same checks on a DINOv2 stand-in: 5 passed, 21 deselected in 62.23s (0:01:02)",
   "fix": "",
   "owner": "P2 (R2 classifier_module)",
   "command": "pytest tests/p3_xai/test_gradcam.py"
@@ -219,7 +219,7 @@
   "id": "D6",
   "desc": "Contingency: detector disabled handled",
   "status": "NOT_YET",
-  "evidence": "the detector_enabled flag was not implemented: its source of truth is undefined (task stopped, see earlier report; needs P4). Partial: no-box overlay and PDF without a detector block: 2 passed in 1.90s",
+  "evidence": "the detector_enabled flag was not implemented: its source of truth is undefined (task stopped, see earlier report; needs P4). Partial: no-box overlay and PDF without a detector block: 2 passed in 10.62s",
   "fix": "",
   "owner": "P4 (flag source: D21 key, C14 field or new decision)",
   "command": "after P4 decides: implement empty DetResult when disabled + test"
@@ -228,7 +228,7 @@
   "id": "E1",
   "desc": "AP50 = pycocotools (1e-3), FROC hand fixture, bootstrap over images with fixed seed",
   "status": "PASS",
-  "evidence": "6 passed, 11 deselected in 0.26s",
+  "evidence": "6 passed, 11 deselected in 1.33s",
   "fix": "see failing test",
   "owner": "",
   "command": ""
@@ -255,7 +255,7 @@
   "id": "E4",
   "desc": "Augmentation in bounds (1000 samples), round trip < 1 px, sealed refused",
   "status": "PASS",
-  "evidence": "1000-sample property run here: 0 violations; round-trip + sealed-split tests: 9 passed, 14 deselected in 7.40s",
+  "evidence": "1000-sample property run here: 0 violations; round-trip + sealed-split tests: 9 passed, 14 deselected in 34.95s",
   "fix": "see violations / failing tests",
   "owner": "",
   "command": ""
@@ -273,7 +273,7 @@
   "id": "F1",
   "desc": "Last block target, CLS/register tokens from config, grid from input/patch size",
   "status": "PASS",
-  "evidence": "6 passed, 16 deselected in 10.04s (CLS-only and 4-register stand-ins); token counts read from config: True. Target is the last block's norm1 (attention input), see D19 rationale",
+  "evidence": "6 passed, 20 deselected in 32.59s (CLS-only and 4-register stand-ins); token counts read from config: True. Target is the last block's norm1 (attention input), see D19 rationale",
   "fix": "see failing test",
   "owner": "",
   "command": ""
@@ -300,7 +300,7 @@
   "id": "F4",
   "desc": "Localisation synthetic tests",
   "status": "PASS",
-  "evidence": "4 passed, 11 deselected in 8.88s",
+  "evidence": "4 passed, 11 deselected in 26.87s",
   "fix": "see failing test",
   "owner": "",
   "command": ""
@@ -327,7 +327,7 @@
   "id": "G1",
   "desc": "Overlay caption, 0/1/many boxes, zero heatmap, no identifiers in names",
   "status": "PASS",
-  "evidence": "17 passed in 3.33s; overlay file names on disk: ['SYNTHETIC_overlay_full.png']; suspicious: none",
+  "evidence": "17 passed in 10.43s; overlay file names on disk: ['SYNTHETIC_overlay_full.png']; suspicious: none",
   "fix": "see failing test / rename",
   "owner": "",
   "command": ""
@@ -336,7 +336,7 @@
   "id": "G2",
   "desc": "PDF for 7 fixture types; disclaimer + scope imported; < 2 MB; no analysis on rejected/unreadable",
   "status": "NOT_YET",
-  "evidence": "with STAND-INS for P4's 7 fixtures and for tbcore.disclaimer: 39 passed in 23.30s (incl. grep proving the texts are not retyped). Real check needs P4's fixtures and tbcore",
+  "evidence": "with STAND-INS for P4's 7 fixtures and for tbcore.disclaimer: 39 passed in 53.33s (incl. grep proving the texts are not retyped). Real check needs P4's fixtures and tbcore",
   "fix": "see failing test",
   "owner": "P4 (fixtures P4-02, tbcore.disclaimer)",
   "command": "replace the stand-ins in tests/p3_mock/p3_case_results.py with P4's 7 fixtures, then pytest tests/p3_ops/test_pdf_report.py"
@@ -354,7 +354,7 @@
   "id": "G4",
   "desc": "Logger: one line/call, versions required, 50 parallel, no identifiers anywhere",
   "status": "PASS",
-  "evidence": "logger tests: 36 passed in 3.66s; identifier scan over ['mock/logs/predictions.jsonl', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_link_fired.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_not_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_refer.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_rejected_gate.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_segmentation_fallback.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_unreadable.pdf', 'overlay/preview file names', 'tests/p3_mock/p3_case_results.py (C14 stand-ins)']: no matches",
+  "evidence": "logger tests: 36 passed in 7.70s; identifier scan over ['mock/logs/predictions.jsonl', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_link_fired.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_not_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_refer.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_rejected_gate.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_segmentation_fallback.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_unreadable.pdf', 'overlay/preview file names', 'tests/p3_mock/p3_case_results.py (C14 stand-ins)']: no matches",
   "fix": "remove the identifier source",
   "owner": "",
   "command": ""
@@ -363,7 +363,7 @@
   "id": "G5",
   "desc": "user_override written exactly",
   "status": "PASS",
-  "evidence": "1 passed in 0.37s",
+  "evidence": "1 passed in 0.77s",
   "fix": "",
   "owner": "",
   "command": ""
@@ -372,7 +372,7 @@
   "id": "H1",
   "desc": "sealed_run.py refuses without a valid token",
   "status": "NOT_YET",
-  "evidence": "sealed_run.py exists: False (not written: P3-13 stopped at its stop conditions, no gate). Existing guards: data adapter refuses sealed splits without tbcore.guard: 5 passed, 18 deselected in 5.77s",
+  "evidence": "sealed_run.py exists: False (not written: P3-13 stopped at its stop conditions, no gate). Existing guards: data adapter refuses sealed splits without tbcore.guard: 5 passed, 18 deselected in 11.70s",
   "fix": "",
   "owner": "P4 (gate P4-09 + token API), then P3",
   "command": "build sealed_run.py against P4's gate API"
@@ -417,7 +417,7 @@
   "id": "I2",
   "desc": "PASS/FAIL from the median, matches report",
   "status": "NOT_YET",
-  "evidence": "no E6 results; verdict logic tests: 2 passed, 5 deselected in 2.19s; report row is TBD",
+  "evidence": "no E6 results; verdict logic tests: 2 passed, 5 deselected in 4.61s; report row is TBD",
   "fix": "",
   "owner": "you (after I1)",
   "command": "after make p3-latency-gpu / p3-latency-cpu: copy the verdict lines of artifacts/p3/latency/e6_*.md into report/p3_operations.md; make p3-verify"
@@ -426,7 +426,7 @@
   "id": "I3",
   "desc": "Checkpoint helper kill/resume; deliberate-kill log",
   "status": "MANUAL",
-  "evidence": "CPU kill/resume tests: 14 passed in 5.09s; runbook log row filled: False",
+  "evidence": "CPU kill/resume tests: 14 passed in 11.79s; runbook log row filled: False",
   "fix": "",
   "owner": "you (Kaggle)",
   "command": "docs/p3_kaggle_runbook.md section 10 procedure, then send me the result"
@@ -453,7 +453,7 @@
   "id": "J3",
   "desc": "Report numbers cite existing paths; 10 recomputed; TBD listed",
   "status": "PASS",
-  "evidence": "28 distinct cited paths, missing on disk: none; TBD present (108x) and listed in report/p3_numbers_checklist.md: True.\nRecomputed 10 random numbers:\n| Number in report | Source | Recomputed | Match |\n|---|---|---|---|\n| 5.5 GB VRAM | decisions/p3_gradcam_config.json | 5.5 | yes |\n| 956d170 D-FINE pin | decisions/p3_licences.json | 956d170 | yes |\n| 54 combined | docs/methodology.md | 54 | yes |\n| ~540 TB / ~5,940 training | docs/methodology.md | 540 / 5,940 | yes |\n| AP50 < 0.05 contingency | decisions/p3_det_input_size.json | 0.05 | yes |\n| margin 0.10 provisional | src/p3_det/data/config.py | 0.1 | yes |\n| seed 0 | src/p3_det/configs/dfine_512.yaml | 0 | yes |\n| < 2 s GPU / < 10 s CPU | README.md | found | yes |\n| <= 500 ms detector | README.md | found | yes |\n| ~60 development TB | docs/methodology.md | 60 | yes |",
+  "evidence": "29 distinct cited paths, missing on disk: none; TBD present (110x) and listed in report/p3_numbers_checklist.md: True.\nRecomputed 10 random numbers:\n| Number in report | Source | Recomputed | Match |\n|---|---|---|---|\n| 5.5 GB VRAM | decisions/p3_gradcam_config.json | 5.5 | yes |\n| 956d170 D-FINE pin | decisions/p3_licences.json | 956d170 | yes |\n| 54 combined | docs/methodology.md | 54 | yes |\n| ~540 TB / ~5,940 training | docs/methodology.md | 540 / 5,940 | yes |\n| AP50 < 0.05 contingency | decisions/p3_det_input_size.json | 0.05 | yes |\n| margin 0.10 provisional | src/p3_det/data/config.py | 0.1 | yes |\n| seed 0 | src/p3_det/configs/dfine_512.yaml | 0 | yes |\n| < 2 s GPU / < 10 s CPU | README.md | found | yes |\n| <= 500 ms detector | README.md | found | yes |\n| ~60 development TB | docs/methodology.md | 60 | yes |",
   "fix": "fix the listed citations / numbers",
   "owner": "",
   "command": ""
