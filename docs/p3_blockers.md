@@ -1,6 +1,6 @@
 # P3: what is blocked on other people (and on me)
 
-Status on 2026-10-09, after the audit fixes. Check IDs refer to docs/p3_verification_report.md.
+Status on 2026-10-10 (D19 rule committed; first written 2026-10-09 after the audit fixes). Check IDs refer to docs/p3_verification_report.md.
 
 ## Blockers by owner
 
@@ -29,11 +29,13 @@ Status on 2026-10-09, after the audit fixes. Check IDs refer to docs/p3_verifica
 | D-FINE training, both sizes | me | B2, B6, E3, E5 | After P1 data and D08/D09: train `dfine_512.yaml` and `dfine_640.yaml` | to do |
 | Deliberate-kill test | me | I3 | `docs/p3_kaggle_runbook.md` section 10 | to do |
 | GPU tests on the RTX 4050 | me | F6 | `pytest tests/p3_xai/test_gradcam.py -m gpu -s` and `make p3-latency-detect` | to do |
-| D19 sanity rule: signed vs absolute Spearman | me | B4 (D19) | Decide whether to change "mean Spearman < 0.5" to "mean abs Spearman < 0.5" BEFORE committing D19's criterion | decision needed |
+| D19 sanity rule: signed vs absolute Spearman | me | B4 (D19) | Decided 2026-10-10: mean \|Spearman\| < 0.5, max and per-image values reported. Rule committed alone in `7a812a7` (tag `p3-prereg-D19`) | done |
 | D20 confirmation | me | B2 | Confirm the licences after the T4 numbers; then lock D20 | to do |
 | Guide sessions | me + guide | B5, J2 | D18 acknowledgement; Grad-CAM review session | to do |
 
 ## Messages to paste
+
+The current, dated versions (2026-10-10) are in `docs/p3_messages_to_send.md`; the texts below are the 2026-10-09 drafts.
 
 **To P1:**
 > Hi! P3 here. Could you (1) create the team repo so I can push my branch `p3/audit-fixes`, (2) register D-FINE as a
@@ -72,8 +74,24 @@ There is no team repo yet, so P3 keeps a local repository in this working copy:
 | `61ef02a` | 2026-10-09 12:39 | P3-07: pre-register D18 rule |
 | `11b45b5` | 2026-10-09 12:39 | P3 work P3-00..P3-18 (snapshot) |
 | `894721b` … | 2026-10-09 | `P3-fix …` commits, one per audit fix |
+| `7a812a7` | 2026-10-10 | P3 D19: pre-register criterion (rule only) |
+| `2e9b9f5` | 2026-10-10 | P3-09: sanity code uses mean \|Spearman\| (after the rule commit) |
 
-D19's criterion is **not** committed yet: it waits for the signed vs absolute Spearman decision above.
+### Pre-registration tags (survive a squash merge)
+
+Each tag is an annotated tag on the commit that contains the decision file with the rule only (`value` = {},
+`locked` = false). Check any of them with `git cat-file -p <tag>:decisions/<file>.json`.
+
+| Tag | Commit (full hash) | Decision file |
+|---|---|---|
+| `p3-prereg-D16` | `c98b23402f86a1e25e0ff29f233efe5109cde748` | `decisions/p3_det_input_size.json` |
+| `p3-prereg-D17` | `50be8b7156d7faf237a6b3b3f5299ad4162b6b12` | `decisions/p3_det_checkpoint.json` |
+| `p3-prereg-D18` | `61ef02a548e4f3a5224aa55affc37de8a7a27767` | `decisions/p3_det_conf_threshold.json` |
+| `p3-prereg-D19` | `7a812a7867d980e835ac7466a9bc11484160c7b2` | `decisions/p3_gradcam_config.json` |
+
+Push the tags together with the branch (`git push team p3/audit-fixes --follow-tags`, or `git push team --tags`).
+A tag keeps its commit reachable even if the PR is squash-merged, so the rule-only versions and their dates stay
+provable. After a rebase the branch commits get new hashes; the tags still point to these original commits.
 
 **Moving these commits onto the team repo** (keeps every commit, hash-independent order and dates; no squash, no rewrite):
 
