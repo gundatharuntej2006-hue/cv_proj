@@ -166,15 +166,34 @@ Symptoms: "Session stopped", "Kernel died", a quota or time limit, or a frozen t
 
 ## 10. Deliberate-kill test log (P3-02 acceptance: a killed session resumes losing ≤ 1 epoch)
 
-**Procedure** (Kaggle, GPU optional, about 10 minutes):
-1. Sections 1–4a in a fresh notebook.
-2. Run `!PYTHONPATH=src python -m p3_ops.cloud.demo --run killtest_<date> --epochs 20 --epoch-seconds 30`
-3. When the output shows `epoch   4` (or later), **stop the session**: top-right power button → *Stop session* (a hard kill, not a cell interrupt).
-4. Note the last `epoch N` line printed before the stop.
-5. Open the notebook again, re-run sections 2–4a, then re-run the **same** command from step 2.
-6. Record the first line (`start at epoch …`) and check that training continues.
+**Procedure: notebook `notebooks/p3/kill_resume_test.ipynb`** (Kaggle, GPU optional, about 20 minutes)
 
-**Pass rule:** `resumed epoch ≥ last completed epoch before the kill` (so at most the interrupted epoch was lost), checkpoints present on Drive, run finishes to epoch 19.
+Before you start: build the code bundle on your laptop (`python -m p3_ops.kaggle_bundle`, which writes
+`artifacts/p3/kaggle/p3_code_bundle.zip`) and upload it as a **private** Kaggle dataset. Do sections 0.2-0.3 once,
+so the `RCLONE_CONF` secret exists.
+
+1. Kaggle → *+ New Notebook* → *File → Import Notebook* → upload `notebooks/p3/kill_resume_test.ipynb`.
+   Session options: Accelerator **GPU T4** (or None), Internet **On**. Then *+ Add Input* → your bundle
+   dataset, and *Add-ons → Secrets* → tick **RCLONE_CONF**.
+2. Run **Cells 1-3**. Cell 3 must print `rclone configured: True`.
+3. **Part A (automatic):** run **Cell 4**. It kills its own training process half-way through epoch 4, deletes
+   the local checkpoints and resumes from Drive. It prints a one-row table.
+4. **Part B (the I3 acceptance test):** run **Cell 5**. When the output shows `epoch   4` (or later), stop the
+   whole session: top-right power button → **Stop session**. Write down the last `epoch N` number you saw.
+5. Open the notebook again (*Edit*). Run **Cells 1-3**, set `LAST_PRINTED_B = N` in Cell 1 and re-run Cell 1,
+   then run **Cell 6** (resume; it lists the checkpoints on Drive first) and **Cell 7**. Do not run Cell 5 again.
+6. Copy everything Cell 7 prints (the table and the `KILLTEST_RESULT` lines) and paste it back to Claude Code,
+   or log it yourself: save it to a file and run
+   `python -m p3_ops.kill_test_log --paste <file>` (shows the rows), then the same command with `--write`
+   (appends them to the table below). Only a Part B row from Kaggle is written as a "Kaggle" row; Part A is a
+   supporting row.
+
+Manual alternative (no notebook): sections 1-4a, then
+`!PYTHONPATH=src python -m p3_ops.cloud.demo --run killtest_<date> --epochs 20 --epoch-seconds 30`, stop the
+session after `epoch   4`, reopen, re-run sections 2-4a and the same command, and check the first line
+(`start at epoch …`).
+
+**Pass rule:** epochs lost ≤ 1, where epochs lost = (last epoch printed before the kill + 2) − (epoch the restart begins at). So the restart must begin right after the last completed epoch, and only the interrupted epoch is re-run. Checkpoints must be on Drive, and the run must finish to epoch 19. (Before 2026-10-10 the wording was "resumed epoch ≥ last completed epoch", which would have allowed 2 lost epochs.)
 
 | Date | Platform / GPU | Run name | Last epoch printed before kill | Killed how | Checkpoints on Drive after kill | First line after restart | Epochs lost | Pass? | Notes |
 |---|---|---|---|---|---|---|---|---|---|
