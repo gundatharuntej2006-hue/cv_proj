@@ -165,7 +165,7 @@ def test_rule_uses_absolute_value_so_inverted_maps_fail():
 def test_stub_results_are_labelled_and_never_evidence(model, tmp_path):
     res = sanity.evaluate(_rows([0.1] * 20))
     out = sanity.save_results({"spec": {}, "seed": 0, **res}, model, out_dir=tmp_path)
-    assert out.parent.name == "stub_not_evidence" and out.name.startswith("STUB_")
+    assert out.parent.name == "stub_not_evidence" and out.name.startswith("NOT_EVIDENCE_")
     assert json.loads(out.read_text())["evidence_status"] == "stub, not evidence"
     assert not list(tmp_path.glob("randomisation_*.json"))     # the F2 / report glob never sees a stub result
     with pytest.raises(Exception, match="stub, not evidence"):

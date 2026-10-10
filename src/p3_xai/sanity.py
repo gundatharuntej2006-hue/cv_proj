@@ -40,8 +40,8 @@ OUT_DIR = dec.REPO / "artifacts" / "p3" / "xai" / "sanity"
 VRAM_FILE = dec.REPO / "artifacts" / "p3" / "xai" / "vram_explain.json"
 VRAM_LIMIT_GB = 5.5
 PASS_BELOW = 0.5
-STUB_DIR = OUT_DIR / "stub_not_evidence"
-STUB_LABEL = "stub, not evidence"
+NOT_EVIDENCE_DIR = OUT_DIR / "stub_not_evidence"
+NOT_EVIDENCE_LABEL = "stub, not evidence"
 
 
 def sample_images(paths: DataPaths, n_tb: int = 10, n_non_tb: int = 10, seed: int = 0,
@@ -123,7 +123,7 @@ def _is_stub(module) -> bool:
 def write_d19(results: dict, module, results_path: Path, *, lock: bool = False, dry_run: bool = False,
               path: Path = D19_PATH, vram_file: Path = VRAM_FILE, today: str | None = None) -> dict:
     if _is_stub(module) and not dry_run:
-        raise dec.Refused(f"classifier is P2's stub / a stand-in: its sanity result is '{STUB_LABEL}' and is never "
+        raise dec.Refused(f"classifier is P2's stub / a stand-in: its sanity result is '{NOT_EVIDENCE_LABEL}' and is never "
                           "written into D19")
     doc = dec.load_for_result(path, CRITERION)
     sha = dec.criterion_commit(path, CRITERION)
@@ -132,7 +132,7 @@ def write_d19(results: dict, module, results_path: Path, *, lock: bool = False, 
     vram = json.loads(vram_file.read_text()) if vram_file.exists() else None
     doc["value"] = {
         "classifier_model_id": _model_id(module), "classifier_is_stub": _is_stub(module),
-        **({"evidence_status": STUB_LABEL} if _is_stub(module) else {}),
+        **({"evidence_status": NOT_EVIDENCE_LABEL} if _is_stub(module) else {}),
         **results["spec"],
         "reshape_rule": f"drop first {results['spec']['n_prefix_tokens']} tokens (CLS + registers), "
                         f"reshape to {results['spec']['grid_hw'][0]}x{results['spec']['grid_hw'][1]}",
@@ -166,9 +166,9 @@ def save_results(results: dict, module, out_dir: Path = OUT_DIR) -> Path:
     stub = _is_stub(module)
     folder = out_dir / "stub_not_evidence" if stub else out_dir
     folder.mkdir(parents=True, exist_ok=True)
-    out = folder / (f"STUB_randomisation_{_model_id(module)}.json" if stub else f"randomisation_{_model_id(module)}.json")
+    out = folder / (f"NOT_EVIDENCE_randomisation_{_model_id(module)}.json" if stub else f"randomisation_{_model_id(module)}.json")
     out.write_text(json.dumps({"model_id": _model_id(module), "classifier_is_stub": stub,
-                               "evidence_status": STUB_LABEL if stub else "development result", **results}, indent=1))
+                               "evidence_status": NOT_EVIDENCE_LABEL if stub else "development result", **results}, indent=1))
     return out
 
 
