@@ -3,7 +3,7 @@
   "id": "A1",
   "desc": "Only my paths touched (ownership check)",
   "status": "PASS",
-  "evidence": "git diff main...HEAD on branch p3/audit-fixes (local repo, no team remote yet): checked 139 path(s) on 'p3/audit-fixes' (ownership as P3)\nOK\n. Untracked outside the diff: simulated ownership check of all 653 files I created as branch p3/audit: 0 violation(s)",
+  "evidence": "git diff main...HEAD on branch p3/audit-fixes (local repo, no team remote yet): checked 139 path(s) on 'p3/audit-fixes' (ownership as P3)\nOK\n. Untracked outside the diff: simulated ownership check of all 669 files I created as branch p3/audit: 0 violation(s)",
   "fix": "revert edits outside P3 paths",
   "owner": "",
   "command": ""
@@ -21,7 +21,7 @@
   "id": "A3",
   "desc": "Full pytest on CPU",
   "status": "PASS",
-  "evidence": "433 passed, 2 skipped, 2 deselected, 19 warnings in 2168.89s (0:36:08) (CPU, venv 3.14.0). gpu-marked (MANUAL, see F6): tests/p3_det/test_r3_detect.py::test_latency_rtx4050_under_500ms, tests/p3_xai/test_gradcam.py::test_vram_peak_explain_rtx4050",
+  "evidence": "433 passed, 2 skipped, 2 deselected, 19 warnings in 1050.54s (0:17:30) (CPU, venv 3.14.0). gpu-marked (MANUAL, see F6): tests/p3_det/test_r3_detect.py::test_latency_rtx4050_under_500ms, tests/p3_xai/test_gradcam.py::test_vram_peak_explain_rtx4050",
   "fix": "see failing tests above",
   "owner": "",
   "command": ""
@@ -68,6 +68,15 @@
   "status": "PASS",
   "evidence": "{\"D16\": [\"train\", \"development\"], \"D17\": [\"train\", \"development\"], \"D18\": [\"development\"], \"D19\": [\"development\"], \"D20\": [\"none\"]}",
   "fix": "data_used must be a subset of {none, train, development, calibration}",
+  "owner": "",
+  "command": ""
+ },
+ {
+  "id": "B4",
+  "desc": "Criterion committed before result (git log)",
+  "status": "PASS",
+  "evidence": "D16:\nc98b23402f  2026-10-09T12:39:22+05:30  rule                P3-06: pre-register D16 criterion (input size 512 vs 640)\nOK so far: rule committed, no result committed yet\nD17:\n50be8b7156  2026-10-09T12:39:23+05:30  rule                P3-07: pre-register D17 criterion (checkpoint by development AP50)\nOK so far: rule committed, no result committed yet\nD18:\n61ef02a548  2026-10-09T12:39:23+05:30  rule                P3-07: pre-register D18 rule (confidence threshold, 5% non-TB)\nOK so far: rule committed, no result committed yet\nD19:\n7a812a7867  2026-10-10T23:03:04+05:30  rule                P3 D19: pre-register criterion (rule only)\nOK so far: rule committed, no result committed yet",
+  "fix": "",
   "owner": "",
   "command": ""
  },
@@ -192,7 +201,7 @@
   "id": "D3",
   "desc": "detect() reads D16-D18; model cached",
   "status": "PASS",
-  "evidence": "reads D16/D17/D18 files: True; numeric settings hard-coded in api.py: none (MIN_SCORE 0.01 is the C10 rule; the mock threshold lives in _stub.py); cache test: 1 passed in 109.49s (0:01:49)",
+  "evidence": "reads D16/D17/D18 files: True; numeric settings hard-coded in api.py: none (MIN_SCORE 0.01 is the C10 rule; the mock threshold lives in _stub.py); cache test: 1 passed in 24.56s",
   "fix": "read every setting from the decision files",
   "owner": "",
   "command": ""
@@ -201,7 +210,7 @@
   "id": "D4",
   "desc": "detect() equals C10 on 50 development images",
   "status": "NOT_YET",
-  "evidence": "no real checkpoint/C10 yet. Same test on a real (tiny, random) D-FINE checkpoint + fake data: 1 passed, 2 warnings in 267.84s (0:04:27)",
+  "evidence": "no real checkpoint/C10 yet. Same test on a real (tiny, random) D-FINE checkpoint + fake data: 1 passed, 2 warnings in 45.18s",
   "fix": "",
   "owner": "you (after D16-D18 + checkpoint)",
   "command": "pytest tests/p3_det/test_r3_detect.py (then rerun this audit after make p3-export-c10)"
@@ -210,7 +219,7 @@
   "id": "D5",
   "desc": "explain() float16 [512,512] [0,1], zero outside crop, deterministic",
   "status": "NOT_YET",
-  "evidence": "P2's classifier_module() is not available; same checks on a DINOv2 stand-in: 5 passed, 21 deselected in 62.23s (0:01:02)",
+  "evidence": "P2's classifier_module() is not available; same checks on a DINOv2 stand-in: 5 passed, 21 deselected in 10.47s",
   "fix": "",
   "owner": "P2 (R2 classifier_module)",
   "command": "pytest tests/p3_xai/test_gradcam.py"
@@ -219,7 +228,7 @@
   "id": "D6",
   "desc": "Contingency: detector disabled handled",
   "status": "NOT_YET",
-  "evidence": "the detector_enabled flag was not implemented: its source of truth is undefined (task stopped, see earlier report; needs P4). Partial: no-box overlay and PDF without a detector block: 2 passed in 10.62s",
+  "evidence": "the detector_enabled flag was not implemented: its source of truth is undefined (task stopped, see earlier report; needs P4). Partial: no-box overlay and PDF without a detector block: 2 passed in 1.82s",
   "fix": "",
   "owner": "P4 (flag source: D21 key, C14 field or new decision)",
   "command": "after P4 decides: implement empty DetResult when disabled + test"
@@ -228,7 +237,7 @@
   "id": "E1",
   "desc": "AP50 = pycocotools (1e-3), FROC hand fixture, bootstrap over images with fixed seed",
   "status": "PASS",
-  "evidence": "6 passed, 11 deselected in 1.33s",
+  "evidence": "6 passed, 11 deselected in 0.32s",
   "fix": "see failing test",
   "owner": "",
   "command": ""
@@ -255,7 +264,7 @@
   "id": "E4",
   "desc": "Augmentation in bounds (1000 samples), round trip < 1 px, sealed refused",
   "status": "PASS",
-  "evidence": "1000-sample property run here: 0 violations; round-trip + sealed-split tests: 9 passed, 14 deselected in 34.95s",
+  "evidence": "1000-sample property run here: 0 violations; round-trip + sealed-split tests: 9 passed, 14 deselected in 7.06s",
   "fix": "see violations / failing tests",
   "owner": "",
   "command": ""
@@ -273,7 +282,7 @@
   "id": "F1",
   "desc": "Last block target, CLS/register tokens from config, grid from input/patch size",
   "status": "PASS",
-  "evidence": "6 passed, 20 deselected in 32.59s (CLS-only and 4-register stand-ins); token counts read from config: True. Target is the last block's norm1 (attention input), see D19 rationale",
+  "evidence": "6 passed, 20 deselected in 9.77s (CLS-only and 4-register stand-ins); token counts read from config: True. Target is the last block's norm1 (attention input), see D19 rationale",
   "fix": "see failing test",
   "owner": "",
   "command": ""
@@ -300,7 +309,7 @@
   "id": "F4",
   "desc": "Localisation synthetic tests",
   "status": "PASS",
-  "evidence": "4 passed, 11 deselected in 26.87s",
+  "evidence": "4 passed, 11 deselected in 8.78s",
   "fix": "see failing test",
   "owner": "",
   "command": ""
@@ -327,7 +336,7 @@
   "id": "G1",
   "desc": "Overlay caption, 0/1/many boxes, zero heatmap, no identifiers in names",
   "status": "PASS",
-  "evidence": "17 passed in 10.43s; overlay file names on disk: ['SYNTHETIC_overlay_full.png']; suspicious: none",
+  "evidence": "17 passed in 3.31s; overlay file names on disk: ['SYNTHETIC_overlay_full.png']; suspicious: none",
   "fix": "see failing test / rename",
   "owner": "",
   "command": ""
@@ -336,7 +345,7 @@
   "id": "G2",
   "desc": "PDF for 7 fixture types; disclaimer + scope imported; < 2 MB; no analysis on rejected/unreadable",
   "status": "NOT_YET",
-  "evidence": "with STAND-INS for P4's 7 fixtures and for tbcore.disclaimer: 39 passed in 53.33s (incl. grep proving the texts are not retyped). Real check needs P4's fixtures and tbcore",
+  "evidence": "with STAND-INS for P4's 7 fixtures and for tbcore.disclaimer: 39 passed in 23.24s (incl. grep proving the texts are not retyped). Real check needs P4's fixtures and tbcore",
   "fix": "see failing test",
   "owner": "P4 (fixtures P4-02, tbcore.disclaimer)",
   "command": "replace the stand-ins in tests/p3_mock/p3_case_results.py with P4's 7 fixtures, then pytest tests/p3_ops/test_pdf_report.py"
@@ -354,7 +363,7 @@
   "id": "G4",
   "desc": "Logger: one line/call, versions required, 50 parallel, no identifiers anywhere",
   "status": "PASS",
-  "evidence": "logger tests: 36 passed in 7.70s; identifier scan over ['mock/logs/predictions.jsonl', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_link_fired.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_not_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_refer.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_rejected_gate.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_segmentation_fallback.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_unreadable.pdf', 'overlay/preview file names', 'tests/p3_mock/p3_case_results.py (C14 stand-ins)']: no matches",
+  "evidence": "logger tests: 36 passed in 4.87s; identifier scan over ['mock/logs/predictions.jsonl', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_link_fired.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_not_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_refer.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_rejected_gate.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_segmentation_fallback.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_tb.pdf', 'artifacts/p3/_preview_synthetic/ops_pdf_preview/SYNTHETIC_unreadable.pdf', 'overlay/preview file names', 'tests/p3_mock/p3_case_results.py (C14 stand-ins)']: no matches",
   "fix": "remove the identifier source",
   "owner": "",
   "command": ""
@@ -363,7 +372,7 @@
   "id": "G5",
   "desc": "user_override written exactly",
   "status": "PASS",
-  "evidence": "1 passed in 0.77s",
+  "evidence": "1 passed in 0.60s",
   "fix": "",
   "owner": "",
   "command": ""
@@ -372,7 +381,7 @@
   "id": "H1",
   "desc": "sealed_run.py refuses without a valid token",
   "status": "NOT_YET",
-  "evidence": "sealed_run.py exists: False (not written: P3-13 stopped at its stop conditions, no gate). Existing guards: data adapter refuses sealed splits without tbcore.guard: 5 passed, 18 deselected in 11.70s",
+  "evidence": "sealed_run.py exists: False (not written: P3-13 stopped at its stop conditions, no gate). Existing guards: data adapter refuses sealed splits without tbcore.guard: 5 passed, 18 deselected in 7.59s",
   "fix": "",
   "owner": "P4 (gate P4-09 + token API), then P3",
   "command": "build sealed_run.py against P4's gate API"
@@ -417,7 +426,7 @@
   "id": "I2",
   "desc": "PASS/FAIL from the median, matches report",
   "status": "NOT_YET",
-  "evidence": "no E6 results; verdict logic tests: 2 passed, 5 deselected in 4.61s; report row is TBD",
+  "evidence": "no E6 results; verdict logic tests: 2 passed, 5 deselected in 2.94s; report row is TBD",
   "fix": "",
   "owner": "you (after I1)",
   "command": "after make p3-latency-gpu / p3-latency-cpu: copy the verdict lines of artifacts/p3/latency/e6_*.md into report/p3_operations.md; make p3-verify"
@@ -426,7 +435,7 @@
   "id": "I3",
   "desc": "Checkpoint helper kill/resume; deliberate-kill log",
   "status": "MANUAL",
-  "evidence": "CPU kill/resume tests: 14 passed in 11.79s; runbook log row filled: False",
+  "evidence": "CPU kill/resume tests: 14 passed in 6.37s; runbook log row filled: False",
   "fix": "",
   "owner": "you (Kaggle)",
   "command": "docs/p3_kaggle_runbook.md section 10 procedure, then send me the result"
