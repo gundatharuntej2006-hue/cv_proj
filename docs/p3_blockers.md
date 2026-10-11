@@ -109,3 +109,34 @@ git push team p3/audit-fixes                      # then open a PR from p3/audit
   replayed (`--onto` starts after it).
 - Do not squash-merge the criterion commits into the result commits. Ask P4 to use a merge or rebase-merge for this
   PR, so the pre-registration commits stay visible in the team history.
+
+## Rebase onto the team repo, branch `ritika` (2026-10-12)
+
+Pushed to `https://github.com/gundatharuntej2006-hue/cv_proj`, branch `ritika`, which already held the team history (tip `e49b012`, same as `main`; no common ancestor with the local repo). Command: `git rebase --onto cvproj/ritika 2e91fe6 ritika` on a copy of `p3/audit-fixes`; `p3/audit-fixes` and the four `p3-prereg-*` tags still point to the original hashes below. The local baseline `2e91fe6` (README, methodology, proposal) was not replayed. Conflicts arose only in P3-owned files (decisions/p3_*.json in the D16-D19 rule commits; ci.yml, requirements/p3.txt, src/p3_*/__init__.py, src/p3_xai/gradcam.py, decisions/p3_licences.json in 11b45b5) and were resolved to the version of the commit being replayed. Checked: every new commit has the same file contents for all its files, the same author, author date and message as the old one, in the same order.
+
+| # | Old (local) | New (team repo) | Range-diff | Commit |
+|---|---|---|---|---|
+| 1 | `c98b234` | `dbccc8d` | content identical; diff differs because the file already existed on the team branch | P3-06: pre-register D16 criterion (input size 512 vs 640) |
+| 2 | `50be8b7` | `e7ba134` | content identical; diff differs because the file already existed on the team branch | P3-07: pre-register D17 criterion (checkpoint by development AP50) |
+| 3 | `61ef02a` | `b958521` | content identical; diff differs because the file already existed on the team branch | P3-07: pre-register D18 rule (confidence threshold, 5% non-TB) |
+| 4 | `11b45b5` | `80fe723` | content identical; diff differs because the file already existed on the team branch | P3: existing work P3-00..P3-18 before audit fixes (snapshot, no generated outputs) |
+| 5 | `894721b` | `73fd69d` | = | P3-fix D2/D3/G4: shared check logic + mutation tests proving each check can fail; split D2 into D2a/D2b/D2c |
+| 6 | `734d73c` | `1bcf2cf` | = | P3-fix C3: C11 mock written by the real C11 writer, drift test, audit regenerates mocks in a temp dir |
+| 7 | `37b5995` | `b26e834` | = | P3-fix C5: synthetic previews moved to artifacts/p3/_preview_synthetic (SYNTHETIC_ prefix, README, nested .gitignore); checkpoints and mock outputs never committed |
+| 8 | `f138a8e` | `a47a9ef` | = | P3-fix D1: R3 signatures exactly frozen; extras moved to render_overlay_to / make_pdf_with_original; frozen make_pdf is overlay-only; CCR draft for the original image |
+| 9 | `6cd1cea` | `2a19177` | = | P3-fix D2: STUB->MOCK in TB_MOCK paths (_mock.py), all tbcore names in one adapter, configs null + training refuses until P3-01 numbers, real paths proven placeholder-free |
+| 10 | `f14a008` | `775d2c8` | = | P3-fix J3: report cites no template path; test rejects <, >, { placeholders and missing cited paths |
+| 11 | `b22b31e` | `ea2cde7` | = | P3-fix B4/A1: blockers list with messages per person; audit proves pre-registration from the local git history (D19 pending, not a violation) |
+| 12 | `1289a3b` | `c886a91` | = | P3-fix B4: read committed decision files with git cat-file (git show failed past the Windows path limit); deep-path regression test |
+| 13 | `1247a83` | `fb147bb` | = | P3-fix A2: CI installs CPU torch + requirements/p3.txt, fails on P3 tests skipped for missing packages, explicit tbcore SKIPPED notice that becomes a hard step once src/tbcore exists |
+| 14 | `c6a09b9` | `08bc133` | = | P3-fix audit: full re-run (0 FAIL), READY rule requires owner AND command, follow-up command for every open item |
+| 15 | `7a812a7` | `01ddf68` | content identical; diff differs because the file already existed on the team branch | P3 D19: pre-register criterion (rule only) |
+| 16 | `2e9b9f5` | `eb416da` | = | P3-09: D19 sanity uses mean |Spearman|, reports max and per-image values; stub runs labelled 'stub, not evidence' and never written to D19 |
+| 17 | `8d2e7b6` | `bea7495` | = | P3 D19: record pre-registration tags p3-prereg-D16..D19 and their hashes in the blockers list |
+| 18 | `321b16c` | `afa2595` | = | P3-plan: paste-ready messages to P1, P2 and P4 (not sent) |
+| 19 | `b8d2066` | `0cd44fc` | = | P3-01: Kaggle-ready feasibility notebook (code bundle, common batch, eval timing, one paste-back JSON) and fill_training_config with tests |
+| 20 | `dd19473` | `091102e` | = | P3-fix F6: laptop_checks.py runs the Grad-CAM GPU test (5.5 GB limit) and detect latency only with a trained checkpoint, writes a text report |
+| 21 | `8dfee12` | `746f5da` | = | P3-fix I3: kill_resume_test notebook (automatic kill + real session stop), runbook section 10 steps, helper that appends pasted results |
+| 22 | `f84ca29` | `0fa94e9` | = | P3-fix D2a: rename the not-evidence constants in sanity.py so they are not stub markers |
+| 23 | `5295d58` | `6d3c802` | = | P3-plan: audit re-run after D19 rule commit and Kaggle/laptop prep (0 FAIL, B4 PASS) |
+| 24 | `5f22aef` | `70eb76a` | = | P3-plan: final verdict (INCOMPLETE) and audit re-run against 5295d58 |
