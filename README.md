@@ -98,7 +98,7 @@ cv_proj/
 │   ├── schemas/                           formal JSON Schema for C01, C14, C16, C18
 │   ├── specs/                             specifications for remaining contracts
 │   ├── case_result.schema.json            C14
-│   ├── decision.schema.json               C16
+│   ├── decision.schema.json               C16 compatibility mirror; canonical: schemas/c16_decision.schema.json
 │   └── ccr/CCR-NNN.md                     contract change requests
 │
 ├── decisions/                             one JSON per locked decision; owner = filename prefix
