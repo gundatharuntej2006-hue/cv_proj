@@ -20,7 +20,7 @@ def check_split_access(
     role: Optional[str] = None,
     purpose: Optional[str] = None,
     token_dir: Optional[Path] = None,
-    consume_token: bool = False
+    consume_token: bool = True
 ) -> bool:
     """
     Checks whether access to a given dataset split or role is permitted under governance rules.
@@ -64,7 +64,7 @@ def check_split_access(
             f"Token mismatch: token is for '{token_data.get('split')}', requested '{target_key}'."
         )
 
-    if token_data.get("consumed", False) and not consume_token:
+    if token_data.get("consumed", False):
         raise SealedSplitAccessError(
             f"Gate token for '{target_key}' has already been consumed at {token_data.get('consumed_at')}."
         )

@@ -1,9 +1,11 @@
 """Tests for p4_stats: Wilson CI, bootstrap, metrics, temperature, conformal, thresholds, triage."""
 
 import numpy as np
+import pandas as pd
 import pytest
 
 from p4_stats.ci import bootstrap_ci, wilson_score_interval
+from p4_stats.fit_triage import build_triage_table, fit_temperature_on_dev, fit_thresholds_on_calibration
 from p4_stats.conformal import compute_conformal_lower_threshold, evaluate_conformal_empirical_coverage
 from p4_stats.metrics import (
     compute_confusion_matrix,
@@ -86,14 +88,57 @@ def test_conformal_lower_threshold():
     assert np.isclose(t_lower, scores[9], atol=1e-5)
 
 
+def test_conformal_requires_enough_labelled_tb_cases():
+    with pytest.raises(ValueError, match="No finite-sample guarantee"):
+        compute_conformal_lower_threshold(np.linspace(0.1, 0.9, 8), alpha=0.10)
+    assert compute_conformal_lower_threshold(np.linspace(0.1, 0.9, 9), alpha=0.10) == 0.1
+
+
+def test_triage_table_uses_row_position_after_filter_and_sort():
+    df = pd.DataFrame({
+        "image_id": ["a", "b", "c"], "p_tb_raw": [0.2, 0.8, 0.5]
+    }, index=[8, 3, 5])
+    result = build_triage_table(df, "calibration", 1.0, 0.3, 0.7)
+    assert result["image_id"].tolist() == ["a", "b", "c"]
+    assert np.allclose(result["p_tb_cal"], [0.2, 0.8, 0.5])
+
+
+def test_fitted_decisions_require_separate_review_and_lock():
+    dev = pd.DataFrame({"split": ["development"] * 4,
+                        "logit_tb": [-2.0, -1.0, 1.0, 2.0], "y": [0, 0, 1, 1]})
+    temperature, d22 = fit_temperature_on_dev(dev)
+    assert d22["locked"] is False and d22["locked_at"] is None
+
+    cal = pd.DataFrame({"logit_tb": np.linspace(-2, 2, 20),
+                        "y": [1] * 10 + [0] * 10})
+    _, _, d23 = fit_thresholds_on_calibration(cal, temperature)
+    assert d23["locked"] is False and d23["locked_at"] is None
+
+
+def test_three_binary_probabilities_remain_binary():
+    scaler = TemperatureScaler(temperature=2.0)
+    result = scaler.calibrate([0.1, 0.5, 0.9], is_prob=True)
+    assert result.shape == (3,)
+    assert np.isclose(result[1], 0.5)
+    assert not np.isclose(result.sum(), 1.0)
+
+
 def test_precision_upper_threshold_clamps():
     cal_probs = np.array([0.1, 0.2, 0.3, 0.4, 0.7, 0.85, 0.95])
     cal_labels = np.array([0, 0, 0, 0, 1, 1, 1])
 
     t_lower = 0.3
-    t_upper, prec = compute_precision_upper_threshold(cal_probs, cal_labels, t_lower, target_precision=0.80)
+    t_upper, prec = compute_precision_upper_threshold(
+        cal_probs, cal_labels, t_lower, target_precision=0.80, min_count=3
+    )
     assert t_upper >= t_lower
     assert prec >= 0.80
+
+    # A high-precision crossing with too little support is not selected.
+    t_upper_sparse, _ = compute_precision_upper_threshold(
+        cal_probs, cal_labels, t_lower, target_precision=0.80
+    )
+    assert t_upper_sparse == 1.01
 
     # Unattainable precision target -> clamps to 1.01
     all_zero_labels = np.zeros(len(cal_probs))

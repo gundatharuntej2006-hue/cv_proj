@@ -40,6 +40,13 @@ def run_external_recalibration(
         n_pos_sample = max(1, int(n_local * (len(pos_idx) / n_total)))
         n_neg_sample = n_local - n_pos_sample
 
+        if (n_pos_sample + 1) * alpha < 1:
+            raise ValueError(
+                f"N={n_local} local cases provide only {n_pos_sample} labelled TB cases; "
+                f"at alpha={alpha:g}, conformal risk control requires at least "
+                "ceil(1/alpha - 1). Increase the local cohort or TB case count."
+            )
+
         cal_pos = rng.choice(pos_idx, size=n_pos_sample, replace=False)
         cal_neg = rng.choice(neg_idx, size=n_neg_sample, replace=False)
         cal_idx = np.concatenate([cal_pos, cal_neg])

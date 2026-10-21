@@ -61,11 +61,13 @@ def generate_operating_curve(
     tb_probs_cal: np.ndarray | list,
     labels_cal: np.ndarray | list,
     t_upper: float,
+    locked_t_lower: float,
     n_points: int = 100,
-    locked_t_lower: float = 0.18
 ) -> pd.DataFrame:
     """
-    Generates the calibration operating curve (Contract C13) across candidate lower thresholds.
+    Generates the classifier-only calibration operating curve (Contract C13).
+    The detector link rule is excluded, so these sensitivity/specificity values
+    must not be compared directly with full-system 90%/70% targets.
     """
     probs = np.asarray(tb_probs_cal, dtype=float)
     y = np.asarray(labels_cal, dtype=int)
@@ -109,6 +111,7 @@ def generate_operating_curve(
             "n_tb": n_tb,
             "n_non_tb": n_non_tb,
             "is_locked_default": is_locked,
+            "link_rule_applied": False,
         })
 
     df = pd.DataFrame(rows)

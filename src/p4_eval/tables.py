@@ -1,7 +1,7 @@
 """Evaluation Tables 12.1-12.7 generator adhering strictly to C18 schema and mandatory n/CI constraints."""
 
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 import numpy as np
 import pandas as pd
 

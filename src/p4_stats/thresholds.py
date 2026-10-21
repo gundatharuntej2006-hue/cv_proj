@@ -9,7 +9,8 @@ def compute_precision_upper_threshold(
     labels_calibration: np.ndarray | list,
     t_lower: float,
     target_precision: float = 0.80,
-    grid_steps: int = 1000
+    grid_steps: int = 1000,
+    min_count: int = 10,
 ) -> Tuple[float, float]:
     """
     Finds the lowest qualifying upper threshold t_upper >= t_lower achieving
@@ -27,12 +28,15 @@ def compute_precision_upper_threshold(
         t_lower: conformal lower threshold
         target_precision: desired precision for the 'TB' triage category (default 0.80)
         grid_steps: search grid granularity
+        min_count: minimum number of calibration predictions supporting a TB threshold
         
     Returns:
         (t_upper, achieved_precision)
     """
     probs = np.asarray(tb_probs_calibration, dtype=float)
     y = np.asarray(labels_calibration, dtype=int)
+    if min_count < 1:
+        raise ValueError("min_count must be at least 1")
 
     # Candidate thresholds starting from t_lower up to 1.0
     candidates = np.linspace(t_lower, 1.0, grid_steps)
@@ -41,7 +45,7 @@ def compute_precision_upper_threshold(
     for t in candidates:
         mask = probs >= t
         n_pred = np.sum(mask)
-        if n_pred > 0:
+        if n_pred >= min_count:
             prec = float(np.sum(y[mask]) / n_pred)
             if prec >= target_precision:
                 qualifying_thresholds.append((t, prec))
