@@ -88,9 +88,6 @@ def test_guard_access_control(tmp_path):
 
     assert check_split_access("internal_test", token_dir=tmp_path) is True
 
-    # consume token
-    check_split_access("internal_test", token_dir=tmp_path, consume_token=True)
-
-    # next access without consume_token flag should fail because it was consumed
+    # Default access consumes the token; even an explicit peek cannot reuse it.
     with pytest.raises(SealedSplitAccessError):
         check_split_access("internal_test", token_dir=tmp_path, consume_token=False)

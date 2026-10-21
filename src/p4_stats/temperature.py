@@ -88,15 +88,15 @@ class TemperatureScaler:
         if arr.ndim == 0:
             arr = np.array([arr])
 
-        if arr.ndim == 1 and not (is_prob and arr.shape[0] == 3 and not is_scalar):
-            # Binary probabilities or logits
+        if arr.ndim == 1:
+            # A vector is a batch of binary scores, including a batch of three.
             if is_prob:
                 z = self._prob_to_logit(arr)
             else:
                 z = arr
             calib = self._sigmoid(z / self.temperature)
-        elif arr.ndim >= 1 and arr.shape[-1] == 3:
-            # 3-Class logits or probabilities
+        elif arr.ndim == 2 and arr.shape[-1] == 3:
+            # Multiclass input must have an explicit samples x classes axis.
             if is_prob:
                 z = np.log(np.clip(arr, 1e-6, 1.0))
             else:

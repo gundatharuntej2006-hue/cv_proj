@@ -12,8 +12,10 @@ With target significance level $\alpha = 0.10$, the conformal lower threshold $t
 $$k = \lfloor (n + 1) \alpha \rfloor$$
 For $n = 100$, $k = 10$. Setting $t_{\text{lower}} = s_{(10)}$ ensures that at most 9 calibration TB cases fall below $t_{\text{lower}}$, providing a finite-sample risk guarantee $\mathbb{E}[\text{FN Risk}] \le \alpha$.
 
+The threshold is defined only when $k \ge 1$. At $\alpha=0.10$, this requires at least **nine labelled TB calibration cases**. Smaller local subsets must be reported as insufficient for conformal risk control rather than assigned a threshold. This bound assumes the calibration and future TB cases are exchangeable.
+
 ## 2. Precision-Constrained Upper Threshold (Section 9.2)
-To reserve the `TB` confident category for actionable suspect cases, $t_{\text{upper}}$ is selected as the lowest threshold $\ge t_{\text{lower}}$ achieving precision $\ge 80\%$ on calibration. If unattainable, $t_{\text{upper}} = 1.01$, routing all screen-positive cases to `REFER`.
+To reserve the `TB` confident category for actionable suspect cases, $t_{\text{upper}}$ is selected as the lowest threshold $\ge t_{\text{lower}}$ achieving precision $\ge 80\%$ on calibration with at least 10 predicted TB cases supporting that threshold. If unattainable, $t_{\text{upper}} = 1.01$, routing all screen-positive cases to `REFER`.
 
 Locked thresholds from Decision **D23**:
 - $t_{\text{lower}} = 0.1800$
