@@ -24,3 +24,5 @@ report/arxiv/paper.log
 !artifacts/p2/bundle_v2_regional/head.npz
 !artifacts/p2/bundle_v3_candidate/head.npz
 !artifacts/fusion_on_stacked_head_20261101_0800/tables/X_noNLM_head.npz
+report/college/report.log
+report/college/build.log
