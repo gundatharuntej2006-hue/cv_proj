@@ -1,0 +1,42 @@
+{
+ "threshold": 0.5755060911178589,
+ "note": "bank augmented with n local frontals from the new site",
+ "curve": [
+  {
+   "n_local": 0,
+   "frontal_rejected": 0.9866666666666667,
+   "lateral_rejected": 1.0,
+   "nonmedical_rejected": 1.0
+  },
+  {
+   "n_local": 5,
+   "frontal_rejected": 0.9862068965517242,
+   "lateral_rejected": 1.0,
+   "nonmedical_rejected": 1.0
+  },
+  {
+   "n_local": 10,
+   "frontal_rejected": 0.9871428571428572,
+   "lateral_rejected": 1.0,
+   "nonmedical_rejected": 1.0
+  },
+  {
+   "n_local": 25,
+   "frontal_rejected": 0.9856,
+   "lateral_rejected": 1.0,
+   "nonmedical_rejected": 1.0
+  },
+  {
+   "n_local": 50,
+   "frontal_rejected": 0.9860000000000001,
+   "lateral_rejected": 1.0,
+   "nonmedical_rejected": 1.0
+  },
+  {
+   "n_local": 75,
+   "frontal_rejected": 0.9893333333333334,
+   "lateral_rejected": 1.0,
+   "nonmedical_rejected": 1.0
+  }
+ ]
+}

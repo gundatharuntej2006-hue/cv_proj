@@ -1,0 +1,426 @@
+{
+  "inputs": {
+    "artifacts/prevtb_subgroup_20261021_1055/COLLABORATION_OUTREACH_DRAFT.md": "747d09b474007099ee0481d82fa0d021a6dd5fb3f4ac1fd6d41c69e912ee44d3",
+    "artifacts/prevtb_subgroup_20261021_1055/DATA_ACQUISITION_CHECKLIST.md": "6e21e07e01fdfbe6bfc192fc43398f7b8b670ff1ece773b89e0f56a888dc87e6",
+    "artifacts/prevtb_subgroup_20261021_1055/FILE_MANIFEST.md": "1863c806063bd2cafbe091b8de4cabc1bc813178d17f1dadf946072db7721851",
+    "artifacts/prevtb_subgroup_20261021_1055/NEXT_STUDY_PROTOCOL.md": "ee8406e6be4171d974616dad8d53ba32ed3e77c00578dcd9d6bce2a4724e5eac",
+    "artifacts/prevtb_subgroup_20261021_1055/PREVIOUS_TB_SUBGROUP_REPORT.md": "e0f6e4b77bf5a07f7b7ee7d61c2fa04fd320f9bebbffd9594ad6061816a5aa5d",
+    "artifacts/prevtb_subgroup_20261021_1055/PRIOR_ART_COMPARISON.md": "010c7d50cd22363b7d95c6773d123d2e93d961ab38981e7cfda1b53b99869e87",
+    "artifacts/prevtb_subgroup_20261021_1055/scripts/make_manifest.py": "63d5def769b90bdc30d2ea84feffc34a5303899ed8ebf26f8125f01bca39568a",
+    "artifacts/prevtb_subgroup_20261021_1055/scripts/power_for_subgroup_study.py": "197b5c11ce838144802e91735e875d21daa2c45e836002f71a16744e474e5c45",
+    "artifacts/prevtb_subgroup_20261021_1055/scripts/verify_subgroup.py": "2f59994d9d681b076b0241a6a5be42acceb54babc5f29a10e76fc71af7edd29d",
+    "artifacts/prevtb_subgroup_20261021_1055/tables/metric_reproduction.json": "60a2e0286c2eba38841c39e75a0006ae72635328d470f3a6e34cb3a9c5db2e70",
+    "artifacts/prevtb_subgroup_20261021_1055/tables/power_subgroup_study.json": "16514bb0e397bebc21975035b0b314f4723a8ed998d41b31cdd35c4de662f959",
+    "artifacts/prevtb_subgroup_20261021_1055/tables/subgroup_difference_tests.csv": "2e6e5ad1c771169cc986b8fc19011e47eab383b3ad8aa437a8819d057df3d4a1",
+    "artifacts/prevtb_subgroup_20261021_1055/tables/subgroup_metrics.csv": "6bc2923f53e53c06ae61ba82f164d3d602a919c05af58e23bbeea70197d4bf04",
+    "artifacts/prevtb_subgroup_20261021_1055/tests/test_subgroup.py": "71caec95e92161151d4c710a576036cad7c3489f0e0872fdbd13dbbee4b2714c"
+  },
+  "phase2_and_3_checks": [
+    {
+      "check": "unique patients = 2708",
+      "expected": 2708,
+      "actual": 2708,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "one image per patient",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "past_tb fully populated (0 blanks)",
+      "expected": 0,
+      "actual": 0,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "past_tb has NO explicit unknown code",
+      "expected": false,
+      "actual": false,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "past_tb self-reported, not record-verified",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "note": "unlike dm, which carries a 99 'Don't Know or Refused' code, past_tb has only 0/1. Whether "
+    },
+    {
+      "check": "ours no-previous-TB = 0.7811",
+      "expected": 0.7811,
+      "actual": 0.7811,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "ours previous-TB = 0.6182",
+      "expected": 0.6182,
+      "actual": 0.6182,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "Lunit no-previous-TB = 0.8170",
+      "expected": 0.817,
+      "actual": 0.817,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "Lunit previous-TB = 0.7192",
+      "expected": 0.7192,
+      "actual": 0.7192,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "Phase 2 refit no-previous-TB = 0.7822",
+      "expected": 0.7822,
+      "actual": 0.7822,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "Phase 2 refit previous-TB = 0.6173",
+      "expected": 0.6173,
+      "actual": 0.6173,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "refit is a SEPARATE fit, not mixed into the primary comparison",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "note": "phases must not be compared against each other in one contrast"
+    },
+    {
+      "check": "our degradation = 0.1629",
+      "expected": 0.1629,
+      "actual": 0.1629,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "our degradation CI = [0.1372, 0.1890]",
+      "expected": [
+        0.1372,
+        0.189
+      ],
+      "actual": [
+        0.1372,
+        0.189
+      ],
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "Lunit degradation = 0.0978",
+      "expected": 0.0978,
+      "actual": 0.0978,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "Lunit degradation CI = [0.0770, 0.1196]",
+      "expected": [
+        0.077,
+        0.1196
+      ],
+      "actual": [
+        0.077,
+        0.1196
+      ],
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "difference-in-differences = +0.0651",
+      "expected": 0.0651,
+      "actual": 0.0651,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "DiD CI = [0.0399, 0.0900]",
+      "expected": [
+        0.0399,
+        0.09
+      ],
+      "actual": [
+        0.0399,
+        0.09
+      ],
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "DiD arithmetic: ours - Lunit",
+      "expected": 0.0651,
+      "actual": 0.0651,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "negative-only separation = 0.6914",
+      "expected": 0.6914,
+      "actual": 0.6914,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "negative-only separation CI = [0.6698, 0.7126]",
+      "expected": [
+        0.6698,
+        0.7126
+      ],
+      "actual": [
+        0.6698,
+        0.7126
+      ],
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "subgroup NOT prespecified",
+      "expected": false,
+      "actual": false,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "five clinical variables screened",
+      "expected": 5,
+      "actual": 5,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "bootstrap shares the positive resample within each replicate",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "note": "stratified; positives resampled once per replicate and shared by both subgroup AUROCs; each negative stratum resampled independently"
+    },
+    {
+      "check": "positives shared by both subgroups = 280",
+      "expected": 280,
+      "actual": 280,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "report states performance without previous TB is ALSO below the comparator",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "note": "guards against implying the subgroup explains the whole gap"
+    },
+    {
+      "check": "report declines a causal claim",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "primary n reproduces for gap 0.05",
+      "expected": 1467,
+      "actual": 1467,
+      "pass": true,
+      "note": "n = n0*((za+zb)*SE/delta)^2 with SE=0.01313"
+    },
+    {
+      "check": "primary n reproduces for gap 0.075",
+      "expected": 652,
+      "actual": 652,
+      "pass": true,
+      "note": "n = n0*((za+zb)*SE/delta)^2 with SE=0.01313"
+    },
+    {
+      "check": "primary n reproduces for gap 0.1",
+      "expected": 367,
+      "actual": 367,
+      "pass": true,
+      "note": "n = n0*((za+zb)*SE/delta)^2 with SE=0.01313"
+    },
+    {
+      "check": "primary n reproduces for gap 0.1629",
+      "expected": 139,
+      "actual": 139,
+      "pass": true,
+      "note": "n = n0*((za+zb)*SE/delta)^2 with SE=0.01313"
+    },
+    {
+      "check": "secondary (DiD) n reproduces for 0.05",
+      "expected": 1366,
+      "actual": 1366,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "secondary (DiD) n reproduces for 0.065",
+      "expected": 808,
+      "actual": 808,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "secondary (DiD) n reproduces for 0.075",
+      "expected": 607,
+      "actual": 607,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "secondary (DiD) n reproduces for 0.1",
+      "expected": 342,
+      "actual": 342,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "Bonferroni(5) n reproduces",
+      "expected": 2182,
+      "actual": 2182,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "SE x1.00 n reproduces",
+      "expected": 1467,
+      "actual": 1467,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "SE x1.25 n reproduces",
+      "expected": 2291,
+      "actual": 2291,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "SE x1.50 n reproduces",
+      "expected": 3299,
+      "actual": 3299,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "SE x2.00 n reproduces",
+      "expected": 5865,
+      "actual": 5865,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "prevalence 0.103 n reproduces",
+      "expected": 1472,
+      "actual": 1472,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "prevalence 0.050 n reproduces",
+      "expected": 3032,
+      "actual": 3032,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "prevalence 0.030 n reproduces",
+      "expected": 5054,
+      "actual": 5054,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "previous-TB fraction 0.35 n reproduces",
+      "expected": 1467,
+      "actual": 1467,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "previous-TB fraction 0.24 n reproduces",
+      "expected": 2139,
+      "actual": 2139,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "previous-TB fraction 0.15 n reproduces",
+      "expected": 3422,
+      "actual": 3422,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "previous-TB fraction 0.10 n reproduces",
+      "expected": 5133,
+      "actual": 5133,
+      "pass": true,
+      "note": ""
+    },
+    {
+      "check": "protocol states a recommended range",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "note": "Recommended target: 2,500\u20133,500"
+    },
+    {
+      "check": "recommended 2,500-3,500 covers every binding scenario in the table",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "note": "{\"gap_0.05_unadjusted\": 1467, \"bonferroni_5\": 2182, \"previous_TB_fraction_0.24\": 2139, \"SE_1.25x\": 2291}"
+    },
+    {
+      "check": "CIDRZ 1,884 is BELOW the requirement at a 24% previous-TB fraction",
+      "expected": true,
+      "actual": true,
+      "pass": true,
+      "note": "1884 vs 2139 required"
+    }
+  ],
+  "n_checks": 50,
+  "n_failed": 0,
+  "all_pass": true,
+  "power_script_endpoint_audit": {
+    "scripts_found": {
+      "prevtb_subgroup_20261021_1055/scripts/power_for_subgroup_study.py": "sizes the BETWEEN-SUBGROUP AUROC difference - this is what NEXT_STUDY_PROTOCOL.md is built on",
+      "doc_finalisation_20261021_0930/scripts/power_planning.py": "sizes a DIFFERENT endpoint: the paired AUROC difference between two model arms on the whole cohort, and the precision of a single-arm AUROC"
+    },
+    "the_brief_named_power_planning_py": true,
+    "resolution": "the brief refers to scripts/power_planning.py; the script governing the protocol under review is power_for_subgroup_study.py. Both were inspected. They size different endpoints and their outputs must not be combined.",
+    "doc_finalisation_endpoint": null,
+    "doc_finalisation_requirement_for_its_own_endpoint": {
+      "target_delta_auroc": 0.0206,
+      "required_n": 3569,
+      "required_tb_cases": 372
+    }
+  },
+  "multiplicity_assessment": {
+    "selection": "one subgroup variable chosen after screening five (past_tb, dm, symptom count, contact, age_group)",
+    "comparisons_actually_reported": [
+      "ours: AUROC in each of 2 subgroups",
+      "Lunit: AUROC in each of 2 subgroups",
+      "between-subgroup difference for ours",
+      "between-subgroup difference for Lunit",
+      "difference in differences",
+      "negative-only separability"
+    ],
+    "bonferroni_across_5_variables_is": "a first-order correction for the SELECTION of the variable, not for the six contrasts reported from it",
+    "bootstrap_p_resolution_floor": 0.0001,
+    "consequence": "the reported 'p < 0.0001' is at the resolution floor of a 10,000-replicate percentile bootstrap. Bonferroni across five still leaves it below 0.0005, so the conclusion is unchanged, but a properly selective-inference treatment was NOT performed and the intervals are not selection-corrected.",
+    "verdict": "QUALIFY, do not drop. The claim 'survives Bonferroni across five' is defensible as a rough check but must not be presented as a complete multiplicity treatment."
+  }
+}

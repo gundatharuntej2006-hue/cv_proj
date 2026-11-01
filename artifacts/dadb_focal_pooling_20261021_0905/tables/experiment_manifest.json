@@ -1,0 +1,116 @@
+{
+  "run_id": "dadb_focal_pooling_20261021_0905",
+  "git_head": "f878a6c9e9746803938463941ae1ffaa5d1fd96a",
+  "git_status_short": [
+    "?? artifacts/dadb_focal_pooling_20261021_0905/",
+    "?? artifacts/dadb_offset_validation_20261021_0255/",
+    "?? artifacts/overnight_run_20261021_2340/",
+    "?? artifacts/overnight_scanner_run_20261021_0208/",
+    ""
+  ],
+  "environment": {
+    "python": "3.13.2",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "torch": "2.6.0+cu124",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+  },
+  "backbone": {
+    "model": "microsoft/rad-dino ViT-B/14, frozen",
+    "revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+    "input_px": 518,
+    "patch_grid": 37,
+    "retrained": false
+  },
+  "configuration": {
+    "preprocessing_variant": "lungs_only",
+    "region_grid": 12,
+    "regions": 144,
+    "aggregation_arm_B": "max over 144 region logits",
+    "seeds": [
+      17,
+      29,
+      43,
+      61,
+      79
+    ],
+    "training_data": "TBX11K train, healthy-only negatives",
+    "n_train": 3241,
+    "n_train_tb": 541,
+    "early_stop_on": "TBX11K development",
+    "n_dev": 659,
+    "n_dev_tb": 59
+  },
+  "arms": {
+    "A_global_pooler": "RAD-DINO pooler_output, logit-adjusted binary head",
+    "B_regional_max_12x12": "12x12 region logits, max-pooled",
+    "primary": "both arms 5-seed ensemble (matched seed treatment)",
+    "secondary": "arm A seed 17 only, replicating p2_36 for comparability"
+  },
+  "thresholds_from_tbx11k_development_only": {
+    "A_primary_5seed": 0.6932896971702576,
+    "A_secondary_seed17": 0.6970451474189758,
+    "B_regional_max_12x12": -3.3367552757263184
+  },
+  "target_specificity": 0.7,
+  "tbx11k_dev_auroc": {
+    "A_5seed": 0.9570338983050848,
+    "A_seed17": 0.9568079096045198,
+    "A_p2_36_mean": 0.9569661016949151,
+    "B_regional": 0.9367514124293785,
+    "published_reference": {
+      "A_global_pooler": 0.957,
+      "B_regional_max_12x12": 0.9368
+    },
+    "equivalence_passed": true
+  },
+  "streaming_equivalence": {
+    "sample_n": 64,
+    "shape": [
+      64,
+      144,
+      768
+    ],
+    "elementwise_identical": 7077888,
+    "elements": 7077888,
+    "pct_identical": 100.0,
+    "max_abs_difference": 0.0,
+    "mean_abs_difference": 0.0
+  },
+  "inclusion_rule": {
+    "primary": "all 176 cases -- the committed pipeline scored all 176; the segmentation sanity counter was incremented but no case excluded",
+    "sensitivity": "175 cases, excluding px4",
+    "exclusion_basis": "pre-existing label-blind validity rule p1_build_c04_c05.roi_from_mask -> sanity_pass; px4 fails on 'components' (1 connected lung field >=1% of frame, expected 2). Identified from mask geometry alone.",
+    "label_blind": true
+  },
+  "no_tuning_guarantee": {
+    "dadb_labels_used_to_fit_any_head": false,
+    "dadb_labels_used_to_set_any_threshold": false,
+    "dadb_used_to_select_seed_preprocessing_or_checkpoint": false,
+    "offset_correction_applied": false,
+    "rad_dino_retrained_or_finetuned": false,
+    "pooling_sweep_rerun": false
+  },
+  "metrics_prespecified": [
+    "AUROC + 95% bootstrap CI",
+    "AUPRC with prevalence",
+    "paired AUROC difference B-A with paired bootstrap CI",
+    "sensitivity/specificity/confusion/referral at the TBX11K-development threshold"
+  ],
+  "bootstrap": {
+    "n": 4000,
+    "seed": 0,
+    "paired": true,
+    "same_resampled_cases_for_both_arms": true
+  },
+  "files": {
+    "artifacts\\p2\\regional\\regional_tbx11k_lungs_g12_v1.npz": "3da5665a14433c105b38b7f1804997840520d62ae377487921638942c702845e",
+    "artifacts\\p2\\shortcut\\radino_tbx11k_lungs_only_v1.npz": "7b9d75f1921ac11e12182383c0dd4fe140b91b69e88e7a83a37e473e09829e4e",
+    "artifacts\\dadb_focal_pooling_20261021_0905\\tables\\regional_dadb_lungs_g12_v1.npz": "8be1b4f90626e0450c391246c029afe54bbda7fc366722817bfb1bf9159de478",
+    "artifacts\\p2\\external\\radino_dadb_lungs_only_v1.npz": "b31b10954be72d2a10ced84d4d2332f46e7de131ba07c3e5d96926e6a7a7d56b",
+    "artifacts\\p2\\dryrun\\provisional_c01.csv": "b228f85cb10093076e04bc082063800b2b306eb0d1f080ace6a95bd7d7026ca1",
+    "artifacts\\dadb_focal_pooling_20261021_0905\\scripts\\common.py": "d1a654e9c7734dc2a49149f0c9bba101923e0cfce7502c0f4ca2f0cd45e2e5fb",
+    "artifacts\\dadb_focal_pooling_20261021_0905\\scripts\\score_dadb.py": "69045bd44e6955c3c8454e21ae2502721a2d0fcaba63d96a6f41fbf4a2e35a0d",
+    "artifacts\\dadb_focal_pooling_20261021_0905\\scripts\\extract_dadb_regional.py": "ee1a1b459ca914fac2de43ffbe4d7ac211a6aa27399fcc6dd5473fcd16d1ec72"
+  },
+  "cohort_manifest_sha256": "b024740ab59eeff0c74eeda2148d7b7acc46a94af28700740aa0c29531659713"
+}

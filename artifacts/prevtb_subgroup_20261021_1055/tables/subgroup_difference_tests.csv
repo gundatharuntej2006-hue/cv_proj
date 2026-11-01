@@ -1,0 +1,5 @@
+contrast,estimate,ci95_lo,ci95_hi,bootstrap_p_two_sided,excludes_zero,method,note
+ours_noPastTB_minus_pastTB,0.162897,0.137194,0.188981,0.0001,True,"stratified bootstrap, 10000 replicates, seed 20261021, positives shared within replicate",
+lunit_noPastTB_minus_pastTB,0.097829,0.077021,0.119579,0.0001,True,"stratified bootstrap, 10000 replicates, seed 20261021, positives shared within replicate",
+difference_in_differences_ours_minus_lunit,0.065068,0.039905,0.090013,0.0001,True,"stratified bootstrap, 10000 replicates, seed 20261021, positives shared within replicate",positive means OUR degradation across the subgroups is larger than the commercial comparator's
+negative_stratum_separability_our_score,0.691387,0.669766,0.712581,,,"AUROC among negatives only, 10000 replicates","AUROC distinguishing past-TB negatives from other negatives using our score, among negatives only - no shared-sample issue"

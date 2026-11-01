@@ -1,0 +1,155 @@
+{
+  "n": 2708,
+  "n_tb": 280,
+  "note": "descriptive only; Vietnam is an exposed cohort. Score is the focal-pooling (12x12 max) arm, provenance verified in a prior run.",
+  "variables_source": "data/raw/vietnam/README.md (Dryad)",
+  "score_by_clinical_group": [
+    [
+      "negative, no past TB",
+      1578,
+      -0.3384,
+      2.3179,
+      4.1669,
+      0.2319,
+      0.452,
+      0.2389
+    ],
+    [
+      "negative, PAST TB",
+      850,
+      2.1749,
+      3.7886,
+      5.0082,
+      0.4576,
+      0.7095,
+      0.4153
+    ],
+    [
+      "negative, diabetes",
+      232,
+      0.3458,
+      2.8895,
+      4.3703,
+      0.2974,
+      0.477,
+      0.2457
+    ],
+    [
+      "negative, 0 symptoms",
+      1383,
+      0.5422,
+      2.8883,
+      4.5247,
+      0.2936,
+      0.518,
+      0.2531
+    ],
+    [
+      "negative, 3+ symptoms",
+      30,
+      0.5698,
+      2.2273,
+      4.1311,
+      0.2333,
+      0.588,
+      0.3333
+    ],
+    [
+      "negative, TB contact",
+      164,
+      0.1868,
+      3.1289,
+      4.8345,
+      0.2866,
+      0.584,
+      0.2805
+    ],
+    [
+      "negative, age >=55",
+      1969,
+      0.6548,
+      2.9839,
+      4.5762,
+      0.3088,
+      0.534,
+      0.2727
+    ],
+    [
+      "ALL negatives",
+      2428,
+      0.7432,
+      2.9805,
+      4.5728,
+      0.311,
+      0.568,
+      0.3007
+    ],
+    [
+      "ALL TB positives",
+      280,
+      3.1234,
+      4.5232,
+      5.6868,
+      0.6214,
+      0.889,
+      0.6857
+    ]
+  ],
+  "discrimination_by_negative_spectrum": {
+    "active TB vs negatives WITHOUT past TB": {
+      "n": 1858,
+      "n_tb": 280,
+      "n_neg": 1578,
+      "ours_auroc": 0.7811,
+      "ours_ci95": [
+        0.7546,
+        0.8057
+      ],
+      "lunit_auroc": 0.817,
+      "lunit_ci95": [
+        0.7903,
+        0.8421
+      ]
+    },
+    "active TB vs negatives WITH past TB": {
+      "n": 1130,
+      "n_tb": 280,
+      "n_neg": 850,
+      "ours_auroc": 0.6182,
+      "ours_ci95": [
+        0.5818,
+        0.6552
+      ],
+      "lunit_auroc": 0.7192,
+      "lunit_ci95": [
+        0.6832,
+        0.7558
+      ]
+    },
+    "active TB vs all negatives": {
+      "n": 2708,
+      "n_tb": 280,
+      "n_neg": 2428,
+      "ours_auroc": 0.724,
+      "ours_ci95": [
+        0.6971,
+        0.749
+      ],
+      "lunit_auroc": 0.7827,
+      "lunit_ci95": [
+        0.7552,
+        0.8106
+      ]
+    }
+  },
+  "negative_composition": {
+    "n_negatives": 2428,
+    "past_tb": 850,
+    "past_tb_pct": 35.01,
+    "diabetes": 232,
+    "diabetes_unknown": 352,
+    "three_or_more_symptoms": 30,
+    "zero_symptoms": 1383
+  },
+  "past_tb_among_positives": 102
+}

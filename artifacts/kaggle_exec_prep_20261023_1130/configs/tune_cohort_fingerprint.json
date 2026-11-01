@@ -1,0 +1,8 @@
+{
+ "cohort": "vietnam_tune",
+ "n": 1352,
+ "fingerprint_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+ "definition": "sha256 of the newline-joined, lexicographically sorted TUNE pid strings",
+ "source": "artifacts/p2/external/vietnam_tune_report_split.json (created 2026-10-20, seed 20261020)",
+ "note": "A hash, not an identifier list. The package holds no pids."
+}

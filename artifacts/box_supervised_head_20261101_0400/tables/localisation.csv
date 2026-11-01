@@ -1,0 +1,14 @@
+arm,metric,n,hit_rate,ci95
+A,top-1 hit,49,0.959,"[0.898, 1.0]"
+A,top-3 hit,49,1.0,"[1.0, 1.0]"
+B1,top-1 hit,49,0.959,"[0.898, 1.0]"
+B1,top-3 hit,49,1.0,"[1.0, 1.0]"
+R,top-1 hit,49,0.939,"[0.857, 1.0]"
+R,top-3 hit,49,1.0,"[1.0, 1.0]"
+baseline: random region,top-1 hit,49,0.184,"[0.082, 0.306]"
+baseline: random region,top-3 hit,49,0.469,"[0.327, 0.612]"
+baseline: centre region,top-1 hit,49,0.082,"[0.02, 0.163]"
+baseline: centre region,top-3 hit,49,0.306,"[0.184, 0.429]"
+baseline: random lung region,top-1 hit,49,0.367,"[0.245, 0.51]"
+baseline: random lung region,top-3 hit,49,0.714,"[0.592, 0.837]"
+chance: mean active-box coverage,fraction of regions,49,0.197,

@@ -1,0 +1,7 @@
+quantity,published_kaggle_20261023,reproduced_locally,abs_difference,tolerance,pass
+scarring_rho,0.5661,0.5661,8e-06,0.0005,True
+scarring_ci_lo,0.5276,0.5276,2.3e-05,0.005,True
+scarring_ci_hi,0.602,0.6019,5e-05,0.005,True
+fibrosis_rho,0.4166,0.4166,3.5e-05,0.0005,True
+scarring_delta_r2,0.1975,0.1975,0.0,0.001,True
+clinical_only_r2,0.2441,0.2441,0.0,0.001,True

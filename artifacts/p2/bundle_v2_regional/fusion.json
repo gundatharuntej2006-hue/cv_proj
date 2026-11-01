@@ -1,0 +1,63 @@
+{
+ "status": "EXPLORATORY - fitted on Vietnam TUNE (exposed); optional at inference",
+ "source_run": "artifacts/clinical_fusion_20261101_0330",
+ "model": "logistic regression, L2, C=1.0, on standardised image score + 12 clinical fields",
+ "cv_result": {
+  "auroc_image_only": 0.7237,
+  "auroc_fused": 0.7809,
+  "delta": 0.058,
+  "ci95": [
+   0.03,
+   0.085
+  ],
+  "prev_tb_auroc_image_only": 0.6144,
+  "prev_tb_auroc_fused": 0.7122
+ },
+ "features_order": [
+  "image_score_std",
+  "sex",
+  "age_group",
+  "c",
+  "f",
+  "wl",
+  "ns",
+  "contact",
+  "past_tb",
+  "dm",
+  "dm_unknown",
+  "scan1",
+  "scan2"
+ ],
+ "feature_definitions": {
+  "sex": "0/1 as in the Dryad CSV",
+  "age_group": "1 if Dryad age_group == 2 else 0",
+  "c": "cough 0/1",
+  "f": "fever 0/1",
+  "wl": "weight loss 0/1",
+  "ns": "night sweats 0/1",
+  "contact": "TB contact 0/1",
+  "past_tb": "self-reported previous TB 0/1",
+  "dm": "1 if diabetes == 1 else 0",
+  "dm_unknown": "1 if diabetes field == 99 else 0",
+  "scan1": "1 if scanner == 1",
+  "scan2": "1 if scanner == 2 (scanner 3 is reference)"
+ },
+ "intercept": -2.8243610517306443,
+ "image_score_std": 1.032804878590534,
+ "score_mean": 0.8265196923076923,
+ "score_sd": 2.9813719489007116,
+ "clinical": {
+  "sex": 0.6435115267716137,
+  "age_group": -0.8614484823375118,
+  "c": 0.09598582699589962,
+  "f": 0.7885842032532517,
+  "wl": 0.7260819409219487,
+  "ns": 0.13412928388787476,
+  "contact": 0.28859775865059656,
+  "past_tb": -0.5786466853138518,
+  "dm": 0.2775709154630341,
+  "dm_unknown": -0.2792901688477545,
+  "scan1": 0.7350935172427265,
+  "scan2": 0.834193815873377
+ }
+}

@@ -1,0 +1,14 @@
+{
+ "variant": "full_clahe0 (not primary)",
+ "val_auc": 0.9947,
+ "val_auc_dedup": 0.9944,
+ "auc_inflation_from_leakage": 0.0002,
+ "sens_at_70spec": 1.0,
+ "sens_ci": [
+  0.9812,
+  1.0
+ ],
+ "leaked_val_images": 50,
+ "seed_auc_std": 0.0,
+ "note": "preliminary; frozen RAD-DINO + linear head on full-image embeddings with stand-in preprocessing"
+}

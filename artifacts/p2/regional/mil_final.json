@@ -1,0 +1,48 @@
+{
+ "created": "2026-10-20",
+ "config": {
+  "grid": 12,
+  "agg": "max"
+ },
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "selection_optimism": -0.0005,
+ "results": {
+  "Vietnam TUNE": {
+   "n": 1352,
+   "n_tb": 139,
+   "auc": 0.7237,
+   "ci95": [
+    0.6846,
+    0.7626
+   ],
+   "lunit": 0.778
+  },
+  "Vietnam REPORT": {
+   "n": 1356,
+   "n_tb": 141,
+   "auc": 0.7242,
+   "ci95": [
+    0.6843,
+    0.7618
+   ],
+   "lunit": 0.7862
+  },
+  "TBX11K development": {
+   "n": 659,
+   "n_tb": 59,
+   "auc": 0.9368,
+   "ci95": [
+    0.9047,
+    0.9647
+   ],
+   "lunit": null
+  }
+ },
+ "note": "REPORT half read once. Configuration selected on TUNE only, and this script was written before the sweep results were seen."
+}

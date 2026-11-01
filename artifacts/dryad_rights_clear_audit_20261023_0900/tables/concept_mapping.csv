@@ -1,0 +1,13 @@
+concept,n_matching_entries,n_affirmative,n_negated,n_uncertain,pct_negated,exact_single_output_exists,mapping_type
+fibrosis,677,562,52,63,7.7,True,EXACT
+scarring,4204,3769,63,372,1.5,True,EXACT
+volume loss,2300,2086,40,174,1.7,True,EXACT
+calcified granuloma,808,746,15,47,1.9,True,EXACT
+calcification,4117,3827,125,165,3.0,True,EXACT
+cavity,203,175,18,10,8.9,False,PROXY - aggregate over many entries
+focal opacity,730,486,179,65,24.5,True,EXACT
+consolidation,13977,8860,3993,1124,28.6,True,EXACT
+pleural thickening,1986,1756,43,187,2.2,True,EXACT
+nodule,3546,2555,697,294,19.7,False,PROXY - aggregate over many entries
+reticular opacity,40,40,0,0,0.0,False,PROXY - aggregate over many entries
+bronchiectasis,614,520,13,81,2.1,True,EXACT

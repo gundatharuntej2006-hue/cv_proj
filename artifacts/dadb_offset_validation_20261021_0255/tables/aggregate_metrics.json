@@ -1,0 +1,70 @@
+{
+  "decision": "NOT_EVALUABLE",
+  "reason": "Phase 0 precondition 6 failed: the frozen offsets are keyed to Vietnam rad_system and cannot be mapped to DA/DB, and the DA/DB-specific estimator requires DA/DB non-TB labels",
+  "scores_computed": false,
+  "cohort": {
+    "n": 176,
+    "n_positive": 74,
+    "n_negative": 102,
+    "prevalence": 0.4205,
+    "DA": {
+      "n": 72,
+      "n_tb": 22
+    },
+    "DB": {
+      "n": 104,
+      "n_tb": 52
+    },
+    "duplicates": 0,
+    "missing_files": 0,
+    "reconciles_with_published": true
+  },
+  "metrics": {
+    "baseline_auroc": null,
+    "corrected_auroc": null,
+    "paired_delta": null,
+    "paired_ci95": null,
+    "permutation_p": null,
+    "auprc": null,
+    "note": "not computed; evaluation did not run"
+  },
+  "preregistered_rule": {
+    "min_effect_size_pooled_auroc": 0.02,
+    "ci_must_exclude_zero": true,
+    "max_per_site_auroc_drop": 0.02,
+    "source": "NEXT_STEP.md",
+    "sha256_16": "96fb00d728d3cd9d",
+    "applied": false,
+    "modified": false
+  },
+  "prior_vietnam_result_for_context_only": {
+    "cohort": "Vietnam REPORT",
+    "n": 1356,
+    "n_tb": 141,
+    "baseline_auroc": 0.7242,
+    "corrected_auroc": 0.7448,
+    "paired_delta": 0.0206,
+    "paired_ci95": [
+      -0.003,
+      0.0436
+    ],
+    "stratified_ci95": [
+      -0.0029,
+      0.044
+    ],
+    "permutation_p": 0.1575,
+    "within_scanner_auroc_change": 0.0,
+    "verdict": "inconclusive"
+  },
+  "provenance": {
+    "overlap_with_fitting_data": 0,
+    "used_in_any_selection_decision": false,
+    "rad_dino_checkpoint_exposure": "UNKNOWN",
+    "patient_overlap_checkable": false
+  },
+  "gaps": {
+    "regional_12x12_dadb_embedding_exists": false,
+    "dadb_embeddings_store_image_id": false,
+    "lungs_only_sanity_failure_scored_not_excluded": true
+  }
+}

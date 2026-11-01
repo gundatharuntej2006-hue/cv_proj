@@ -1,0 +1,8 @@
+dataset_or_check,n_rows,n_unique_ids,n_duplicate_ids,n_missing_label,n_malformed_or_mismatched,patient_identifier_note,notes
+Vietnam (Dryad),2708,2708,0,0,0,1 image per patient,pid is the patient key; xpert_result is the Xpert Ultra reference standard
+Vietnam case-level scores,2708,2708,0,0,0,1 image per patient,case-level score file used for all Vietnam analyses in this run
+TBX11K trainval,8400,8400,0,0,0,1 image per patient,patient identifiers are not distributed with TBX11K; image_id is the only key
+Shenzhen+Montgomery,800,800,0,0,0,1 image per patient,NLM sets are one image per patient
+Vietnam label agreement (Dryad vs score file),2708,2708,0,0,0,keys in both: 2708,label mismatches between the two files
+Vietnam rad_system agreement (Dryad vs score file),2708,2708,0,0,0,keys in both: 2708,scanner mismatches between the two files
+TBX11K label mapping,8400,8400,0,0,0,"tb_label=1 for folder tb (active_tb 631, latent_tb 139, active_latent 30)","healthy 3800 and sick_non_tb 3800 map to 0; the fitted head in all current results uses healthy-only negatives, giving 3,241 training rows"

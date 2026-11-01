@@ -1,0 +1,18 @@
+concept,n_negatives,is_diagnostic_probe,is_negative_control,rho_B0,rho_B1,delta_rho,ci95_lo,ci95_hi,excludes_zero,incr_r2_B0,incr_r2_B1,n_replicates
+fibrosis,1213,False,False,0.4166,0.3984,-0.0182,-0.0269,-0.0101,True,0.0996,0.0891,10000
+scarring,1213,False,False,0.5661,0.5317,-0.0344,-0.0428,-0.0266,True,0.1975,0.1725,10000
+volume loss,1213,False,False,0.1699,0.1588,-0.0111,-0.0195,-0.0028,True,0.0383,0.0339,10000
+calcified granuloma,1213,False,False,-0.1653,-0.173,-0.0077,-0.0168,0.0011,False,0.0,0.0003,10000
+calcification,1213,False,False,0.0804,0.0507,-0.0297,-0.039,-0.0209,True,0.0214,0.0139,10000
+focal opacity,1213,False,False,-0.0795,-0.0902,-0.0106,-0.0195,-0.0022,True,0.0079,0.0055,10000
+consolidation,1213,False,False,-0.3,-0.2933,0.0067,-0.0015,0.015,False,0.0182,0.017,10000
+pleural thickening,1213,False,False,0.0512,0.0162,-0.035,-0.0441,-0.0262,True,0.0066,0.002,10000
+bronchiectasis,1213,False,False,0.0816,0.0992,0.0177,0.009,0.0262,True,0.0097,0.0128,10000
+scoliosis,1213,False,True,0.0184,0.0114,-0.007,-0.0154,0.0016,False,0.0001,0.0,10000
+degenerative changes,1213,False,True,-0.1381,-0.1764,-0.0384,-0.0477,-0.0294,True,0.0063,0.0133,10000
+no consolidation,1213,True,False,-0.5339,-0.5358,-0.0019,-0.0097,0.0058,False,0.0796,0.0872,10000
+no scarring,1213,True,False,0.3009,0.2665,-0.0343,-0.0434,-0.0257,True,0.0645,0.0477,10000
+clear lungs,1213,True,False,-0.4694,-0.4685,0.0009,-0.0073,0.0091,False,0.0602,0.0652,10000
+lungs are clear,1213,True,False,-0.4107,-0.4127,-0.002,-0.0105,0.0063,False,0.0334,0.0388,10000
+no acute cardiopulmonary process,1213,True,False,-0.6012,-0.5994,0.0018,-0.0058,0.0093,False,0.1375,0.1449,10000
+normal chest,1213,True,False,-0.4348,-0.4305,0.0042,-0.0042,0.0124,False,0.0955,0.0976,10000

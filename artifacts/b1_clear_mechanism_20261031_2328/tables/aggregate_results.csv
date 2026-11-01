@@ -1,0 +1,133 @@
+arm,concept,is_negative_control,group,n,spearman_rho,rho_ci95_lo,rho_ci95_hi,p_raw,p_bh_adjusted,bh_family,incr_r2,r2_clinical_only
+baseline_production,fibrosis,False,negatives (all),1213,0.4166,0.3693,0.4626,4.004281600092193e-52,1.8019267200414866e-51,"9 primary concepts, negatives (all)",0.0996,0.2441
+baseline_production,fibrosis,False,"negatives, past TB",417,0.3718,0.2861,0.451,4.09336744248517e-15,,not in family,,
+baseline_production,fibrosis,False,"negatives, no past TB",796,0.3974,0.3338,0.4547,1.6607341747094494e-31,,not in family,,
+baseline_production,fibrosis,False,positives (all),139,0.218,0.0514,0.3746,0.009922092924265881,,not in family,,
+baseline_production,scarring,False,negatives (all),1213,0.5661,0.5276,0.6019,1.0300671905300644e-103,9.27060471477058e-103,"9 primary concepts, negatives (all)",0.1975,0.2441
+baseline_production,scarring,False,"negatives, past TB",417,0.4184,0.3338,0.4957,4.22428471298968e-19,,not in family,,
+baseline_production,scarring,False,"negatives, no past TB",796,0.5704,0.5202,0.6162,6.94705618195485e-70,,not in family,,
+baseline_production,scarring,False,positives (all),139,0.2375,0.0689,0.3886,0.00486990634912905,,not in family,,
+baseline_production,volume loss,False,negatives (all),1213,0.1699,0.115,0.2234,2.584082042288203e-09,5.814184595148457e-09,"9 primary concepts, negatives (all)",0.0383,0.2441
+baseline_production,volume loss,False,"negatives, past TB",417,0.2545,0.1679,0.3403,1.3752293495236348e-07,,not in family,,
+baseline_production,volume loss,False,"negatives, no past TB",796,0.0823,0.0138,0.1506,0.0202556410785984,,not in family,,
+baseline_production,volume loss,False,positives (all),139,0.192,0.0355,0.3436,0.023533900022340588,,not in family,,
+baseline_production,calcified granuloma,False,negatives (all),1213,-0.1653,-0.218,-0.1106,7.004443164445871e-09,1.2607997696002567e-08,"9 primary concepts, negatives (all)",0.0,0.2441
+baseline_production,calcified granuloma,False,"negatives, past TB",417,-0.2569,-0.3464,-0.1641,1.0387077963361465e-07,,not in family,,
+baseline_production,calcified granuloma,False,"negatives, no past TB",796,-0.1071,-0.1755,-0.0387,0.00249022905389502,,not in family,,
+baseline_production,calcified granuloma,False,positives (all),139,-0.2174,-0.3687,-0.0586,0.010157804246662353,,not in family,,
+baseline_production,calcification,False,negatives (all),1213,0.0804,0.0253,0.1344,0.0051004897654441,0.006268202393465726,"9 primary concepts, negatives (all)",0.0214,0.2441
+baseline_production,calcification,False,"negatives, past TB",417,0.1288,0.0335,0.2222,0.008448235516837805,,not in family,,
+baseline_production,calcification,False,"negatives, no past TB",796,0.0459,-0.0219,0.1145,0.1958791079609422,,not in family,,
+baseline_production,calcification,False,positives (all),139,0.0086,-0.1643,0.1722,0.9202790031258785,,not in family,,
+baseline_production,focal opacity,False,negatives (all),1213,-0.0795,-0.1337,-0.0228,0.005571735460858423,0.006268202393465726,"9 primary concepts, negatives (all)",0.0079,0.2441
+baseline_production,focal opacity,False,"negatives, past TB",417,-0.0392,-0.1332,0.0577,0.42507489356505035,,not in family,,
+baseline_production,focal opacity,False,"negatives, no past TB",796,-0.1169,-0.1835,-0.0476,0.0009493305520666643,,not in family,,
+baseline_production,focal opacity,False,positives (all),139,-0.1429,-0.3011,0.0261,0.09338090026336522,,not in family,,
+baseline_production,consolidation,False,negatives (all),1213,-0.3,-0.3511,-0.2477,1.1822922318232755e-26,3.5468766954698266e-26,"9 primary concepts, negatives (all)",0.0182,0.2441
+baseline_production,consolidation,False,"negatives, past TB",417,-0.285,-0.3698,-0.1943,3.1138273214472615e-09,,not in family,,
+baseline_production,consolidation,False,"negatives, no past TB",796,-0.2878,-0.3503,-0.2245,1.2137006746016344e-16,,not in family,,
+baseline_production,consolidation,False,positives (all),139,-0.3853,-0.5217,-0.2316,2.8099274807973605e-06,,not in family,,
+baseline_production,pleural thickening,False,negatives (all),1213,0.0512,-0.0032,0.1062,0.07459740196419883,0.07459740196419883,"9 primary concepts, negatives (all)",0.0066,0.2441
+baseline_production,pleural thickening,False,"negatives, past TB",417,0.017,-0.079,0.111,0.7295173093761377,,not in family,,
+baseline_production,pleural thickening,False,"negatives, no past TB",796,0.0405,-0.0285,0.1085,0.2531951683374744,,not in family,,
+baseline_production,pleural thickening,False,positives (all),139,-0.1749,-0.3365,-0.0118,0.03947818936963333,,not in family,,
+baseline_production,bronchiectasis,False,negatives (all),1213,0.0816,0.027,0.1374,0.004476209590165591,0.006268202393465726,"9 primary concepts, negatives (all)",0.0097,0.2441
+baseline_production,bronchiectasis,False,"negatives, past TB",417,-0.0921,-0.1857,0.0018,0.060099283189877284,,not in family,,
+baseline_production,bronchiectasis,False,"negatives, no past TB",796,0.1481,0.082,0.2145,2.7238148447731232e-05,,not in family,,
+baseline_production,bronchiectasis,False,positives (all),139,-0.1216,-0.2962,0.0582,0.15373084151553343,,not in family,,
+baseline_production,scoliosis,True,negatives (all),1213,0.0184,-0.0359,0.0724,0.5229548348120591,,not in family,0.0001,0.2441
+baseline_production,scoliosis,True,"negatives, past TB",417,-0.1726,-0.2657,-0.077,0.0003992000679914456,,not in family,,
+baseline_production,scoliosis,True,"negatives, no past TB",796,0.0745,0.0091,0.1406,0.035665417334520506,,not in family,,
+baseline_production,scoliosis,True,positives (all),139,-0.2795,-0.4262,-0.1196,0.0008607518387373868,,not in family,,
+baseline_production,degenerative changes,True,negatives (all),1213,-0.1381,-0.1933,-0.0828,1.3848843419859996e-06,,not in family,0.0063,0.2441
+baseline_production,degenerative changes,True,"negatives, past TB",417,0.0239,-0.0737,0.1229,0.6263832416765036,,not in family,,
+baseline_production,degenerative changes,True,"negatives, no past TB",796,-0.1884,-0.255,-0.122,8.600286743838325e-08,,not in family,,
+baseline_production,degenerative changes,True,positives (all),139,-0.0964,-0.2675,0.0795,0.25896696099999605,,not in family,,
+B0,fibrosis,False,negatives (all),1213,0.4166,0.3693,0.4626,4.004281600092193e-52,1.8019267200414866e-51,"9 primary concepts, negatives (all)",0.0996,0.2441
+B0,fibrosis,False,"negatives, past TB",417,0.3718,0.2861,0.451,4.09336744248517e-15,,not in family,,
+B0,fibrosis,False,"negatives, no past TB",796,0.3974,0.3338,0.4547,1.6607341747094494e-31,,not in family,,
+B0,fibrosis,False,positives (all),139,0.218,0.0514,0.3746,0.009922092924265881,,not in family,,
+B0,scarring,False,negatives (all),1213,0.5661,0.5276,0.6019,1.0300671905300644e-103,9.27060471477058e-103,"9 primary concepts, negatives (all)",0.1975,0.2441
+B0,scarring,False,"negatives, past TB",417,0.4184,0.3338,0.4957,4.22428471298968e-19,,not in family,,
+B0,scarring,False,"negatives, no past TB",796,0.5704,0.5202,0.6162,6.94705618195485e-70,,not in family,,
+B0,scarring,False,positives (all),139,0.2375,0.0689,0.3886,0.00486990634912905,,not in family,,
+B0,volume loss,False,negatives (all),1213,0.1699,0.115,0.2234,2.584082042288203e-09,5.814184595148457e-09,"9 primary concepts, negatives (all)",0.0383,0.2441
+B0,volume loss,False,"negatives, past TB",417,0.2545,0.1679,0.3403,1.3752293495236348e-07,,not in family,,
+B0,volume loss,False,"negatives, no past TB",796,0.0823,0.0138,0.1506,0.0202556410785984,,not in family,,
+B0,volume loss,False,positives (all),139,0.192,0.0355,0.3436,0.023533900022340588,,not in family,,
+B0,calcified granuloma,False,negatives (all),1213,-0.1653,-0.218,-0.1106,7.004443164445871e-09,1.2607997696002567e-08,"9 primary concepts, negatives (all)",0.0,0.2441
+B0,calcified granuloma,False,"negatives, past TB",417,-0.2569,-0.3464,-0.1641,1.0387077963361465e-07,,not in family,,
+B0,calcified granuloma,False,"negatives, no past TB",796,-0.1071,-0.1755,-0.0387,0.00249022905389502,,not in family,,
+B0,calcified granuloma,False,positives (all),139,-0.2174,-0.3687,-0.0586,0.010157804246662353,,not in family,,
+B0,calcification,False,negatives (all),1213,0.0804,0.0253,0.1344,0.0051004897654441,0.006268202393465726,"9 primary concepts, negatives (all)",0.0214,0.2441
+B0,calcification,False,"negatives, past TB",417,0.1288,0.0335,0.2222,0.008448235516837805,,not in family,,
+B0,calcification,False,"negatives, no past TB",796,0.0459,-0.0219,0.1145,0.1958791079609422,,not in family,,
+B0,calcification,False,positives (all),139,0.0086,-0.1643,0.1722,0.9202790031258785,,not in family,,
+B0,focal opacity,False,negatives (all),1213,-0.0795,-0.1337,-0.0228,0.005571735460858423,0.006268202393465726,"9 primary concepts, negatives (all)",0.0079,0.2441
+B0,focal opacity,False,"negatives, past TB",417,-0.0392,-0.1332,0.0577,0.42507489356505035,,not in family,,
+B0,focal opacity,False,"negatives, no past TB",796,-0.1169,-0.1835,-0.0476,0.0009493305520666643,,not in family,,
+B0,focal opacity,False,positives (all),139,-0.1429,-0.3011,0.0261,0.09338090026336522,,not in family,,
+B0,consolidation,False,negatives (all),1213,-0.3,-0.3511,-0.2477,1.1822922318232755e-26,3.5468766954698266e-26,"9 primary concepts, negatives (all)",0.0182,0.2441
+B0,consolidation,False,"negatives, past TB",417,-0.285,-0.3698,-0.1943,3.1138273214472615e-09,,not in family,,
+B0,consolidation,False,"negatives, no past TB",796,-0.2878,-0.3503,-0.2245,1.2137006746016344e-16,,not in family,,
+B0,consolidation,False,positives (all),139,-0.3853,-0.5217,-0.2316,2.8099274807973605e-06,,not in family,,
+B0,pleural thickening,False,negatives (all),1213,0.0512,-0.0032,0.1062,0.07459740196419883,0.07459740196419883,"9 primary concepts, negatives (all)",0.0066,0.2441
+B0,pleural thickening,False,"negatives, past TB",417,0.017,-0.079,0.111,0.7295173093761377,,not in family,,
+B0,pleural thickening,False,"negatives, no past TB",796,0.0405,-0.0285,0.1085,0.2531951683374744,,not in family,,
+B0,pleural thickening,False,positives (all),139,-0.1749,-0.3365,-0.0118,0.03947818936963333,,not in family,,
+B0,bronchiectasis,False,negatives (all),1213,0.0816,0.027,0.1374,0.004476209590165591,0.006268202393465726,"9 primary concepts, negatives (all)",0.0097,0.2441
+B0,bronchiectasis,False,"negatives, past TB",417,-0.0921,-0.1857,0.0018,0.060099283189877284,,not in family,,
+B0,bronchiectasis,False,"negatives, no past TB",796,0.1481,0.082,0.2145,2.7238148447731232e-05,,not in family,,
+B0,bronchiectasis,False,positives (all),139,-0.1216,-0.2962,0.0582,0.15373084151553343,,not in family,,
+B0,scoliosis,True,negatives (all),1213,0.0184,-0.0359,0.0724,0.5229548348120591,,not in family,0.0001,0.2441
+B0,scoliosis,True,"negatives, past TB",417,-0.1726,-0.2657,-0.077,0.0003992000679914456,,not in family,,
+B0,scoliosis,True,"negatives, no past TB",796,0.0745,0.0091,0.1406,0.035665417334520506,,not in family,,
+B0,scoliosis,True,positives (all),139,-0.2795,-0.4262,-0.1196,0.0008607518387373868,,not in family,,
+B0,degenerative changes,True,negatives (all),1213,-0.1381,-0.1933,-0.0828,1.3848843419859996e-06,,not in family,0.0063,0.2441
+B0,degenerative changes,True,"negatives, past TB",417,0.0239,-0.0737,0.1229,0.6263832416765036,,not in family,,
+B0,degenerative changes,True,"negatives, no past TB",796,-0.1884,-0.255,-0.122,8.600286743838325e-08,,not in family,,
+B0,degenerative changes,True,positives (all),139,-0.0964,-0.2675,0.0795,0.25896696099999605,,not in family,,
+B1,fibrosis,False,negatives (all),1213,0.3984,0.3505,0.4452,2.0413739455332812e-47,9.186182754899766e-47,"9 primary concepts, negatives (all)",0.0891,0.231
+B1,fibrosis,False,"negatives, past TB",417,0.3448,0.2575,0.4274,4.3985318773258256e-13,,not in family,,
+B1,fibrosis,False,"negatives, no past TB",796,0.3843,0.32,0.4426,2.039767274098759e-29,,not in family,,
+B1,fibrosis,False,positives (all),139,0.1855,0.0197,0.3431,0.02875259695036588,,not in family,,
+B1,scarring,False,negatives (all),1213,0.5317,0.4912,0.5694,1.769266083427007e-89,1.5923394750843064e-88,"9 primary concepts, negatives (all)",0.1725,0.231
+B1,scarring,False,"negatives, past TB",417,0.3672,0.2791,0.4487,9.36637250558362e-15,,not in family,,
+B1,scarring,False,"negatives, no past TB",796,0.543,0.4904,0.5907,2.990906577657649e-62,,not in family,,
+B1,scarring,False,positives (all),139,0.189,0.0218,0.3454,0.025859523351314622,,not in family,,
+B1,volume loss,False,negatives (all),1213,0.1588,0.1045,0.2119,2.6729977436078834e-08,4.8113959384941905e-08,"9 primary concepts, negatives (all)",0.0339,0.231
+B1,volume loss,False,"negatives, past TB",417,0.221,0.1346,0.3071,5.2406658205109216e-06,,not in family,,
+B1,volume loss,False,"negatives, no past TB",796,0.08,0.0107,0.148,0.02396379022775259,,not in family,,
+B1,volume loss,False,positives (all),139,0.1746,0.0163,0.3281,0.039848096314763326,,not in family,,
+B1,calcified granuloma,False,negatives (all),1213,-0.173,-0.2255,-0.1181,1.3136083218147504e-09,2.9556187240831884e-09,"9 primary concepts, negatives (all)",0.0003,0.231
+B1,calcified granuloma,False,"negatives, past TB",417,-0.2672,-0.3552,-0.1759,3.02090710718601e-08,,not in family,,
+B1,calcified granuloma,False,"negatives, no past TB",796,-0.1133,-0.1816,-0.0451,0.001364088955384184,,not in family,,
+B1,calcified granuloma,False,positives (all),139,-0.2347,-0.3851,-0.0742,0.005409879648293654,,not in family,,
+B1,calcification,False,negatives (all),1213,0.0507,-0.0047,0.1052,0.07778239640396069,0.08750519595445577,"9 primary concepts, negatives (all)",0.0139,0.231
+B1,calcification,False,"negatives, past TB",417,0.0821,-0.0135,0.1759,0.09400441506260128,,not in family,,
+B1,calcification,False,"negatives, no past TB",796,0.0223,-0.045,0.0902,0.5299555417631493,,not in family,,
+B1,calcification,False,positives (all),139,-0.0181,-0.1885,0.1441,0.8320841775706826,,not in family,,
+B1,focal opacity,False,negatives (all),1213,-0.0902,-0.1444,-0.0339,0.0016661905287509934,0.0021422449655369917,"9 primary concepts, negatives (all)",0.0055,0.231
+B1,focal opacity,False,"negatives, past TB",417,-0.0687,-0.1647,0.0288,0.16131228602535,,not in family,,
+B1,focal opacity,False,"negatives, no past TB",796,-0.121,-0.1882,-0.0516,0.0006252059085622709,,not in family,,
+B1,focal opacity,False,positives (all),139,-0.1507,-0.307,0.0141,0.07663783810022606,,not in family,,
+B1,consolidation,False,negatives (all),1213,-0.2933,-0.3447,-0.241,1.684907088712997e-25,5.054721266138991e-25,"9 primary concepts, negatives (all)",0.017,0.231
+B1,consolidation,False,"negatives, past TB",417,-0.3007,-0.3831,-0.2118,3.6678629291230617e-10,,not in family,,
+B1,consolidation,False,"negatives, no past TB",796,-0.2751,-0.338,-0.211,2.7502803920835885e-15,,not in family,,
+B1,consolidation,False,positives (all),139,-0.363,-0.497,-0.2125,1.1267040091091194e-05,,not in family,,
+B1,pleural thickening,False,negatives (all),1213,0.0162,-0.0387,0.0714,0.5722057767166625,0.5722057767166625,"9 primary concepts, negatives (all)",0.002,0.231
+B1,pleural thickening,False,"negatives, past TB",417,-0.0309,-0.1269,0.0641,0.5286116878155345,,not in family,,
+B1,pleural thickening,False,"negatives, no past TB",796,0.0109,-0.0578,0.0794,0.7596226280911916,,not in family,,
+B1,pleural thickening,False,positives (all),139,-0.2149,-0.3695,-0.0552,0.011078498094282322,,not in family,,
+B1,bronchiectasis,False,negatives (all),1213,0.0992,0.0448,0.1545,0.0005384580582115014,0.000807687087317252,"9 primary concepts, negatives (all)",0.0128,0.231
+B1,bronchiectasis,False,"negatives, past TB",417,-0.0688,-0.1621,0.0255,0.16097468219375152,,not in family,,
+B1,bronchiectasis,False,"negatives, no past TB",796,0.164,0.0992,0.2296,3.291055664839546e-06,,not in family,,
+B1,bronchiectasis,False,positives (all),139,-0.0964,-0.273,0.0814,0.2589447793778026,,not in family,,
+B1,scoliosis,True,negatives (all),1213,0.0114,-0.0433,0.0659,0.6915680593466199,,not in family,0.0,0.231
+B1,scoliosis,True,"negatives, past TB",417,-0.197,-0.2886,-0.1034,5.114188756659868e-05,,not in family,,
+B1,scoliosis,True,"negatives, no past TB",796,0.0762,0.0113,0.1425,0.03154502712300605,,not in family,,
+B1,scoliosis,True,positives (all),139,-0.2543,-0.402,-0.0899,0.00251739004905958,,not in family,,
+B1,degenerative changes,True,negatives (all),1213,-0.1764,-0.2311,-0.1221,6.128311606972575e-10,,not in family,0.0133,0.231
+B1,degenerative changes,True,"negatives, past TB",417,-0.0344,-0.1302,0.065,0.48382768105691637,,not in family,,
+B1,degenerative changes,True,"negatives, no past TB",796,-0.2186,-0.2841,-0.153,4.603965579401731e-10,,not in family,,
+B1,degenerative changes,True,positives (all),139,-0.1402,-0.3063,0.0334,0.09976988631579957,,not in family,,

@@ -1,0 +1,95 @@
+{
+  "manifest_version": "1.0",
+  "created": "2026-10-21",
+  "status": "WRITTEN BEFORE EXTRACTION - immutable record of the pre-specified protocol",
+  "classification": "EXPLORATORY PAIRED BENCHMARK. Not independent external validation.",
+
+  "contamination_disclosure": {
+    "statement": "Shenzhen and Montgomery informed the lungs-only masking decision (D09 revisited) that is part of the configuration being evaluated. This cannot be undone retrospectively.",
+    "evidence": "artifacts/p2/audit/provenance_table.csv row 'D09 revisited -> lung crop'; docs/p2_shortcut_does_not_transfer.md section 'This reopens D09, now on accuracy grounds'",
+    "mitigation": "Only the WITHIN-PAIR difference between pooling arms is interpreted. Both arms inherit identical contamination, so the difference remains interpretable while neither absolute value is a clean generalisation estimate.",
+    "unresolvable": "The RAD-DINO model card states the released checkpoint was selected by linear probing on validation sets it does not name. Checkpoint-level exposure to these public benchmarks cannot be excluded for any user of this backbone."
+  },
+
+  "backbone": {
+    "model_id": "microsoft/rad-dino",
+    "revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+    "frozen": true,
+    "input_px": 518,
+    "patch_grid": 37,
+    "dtype": "float16 on cuda"
+  },
+
+  "checkpoints_present_at_manifest_time": {
+    "artifacts/p2/bundle/head.npz": "sha256:14a7e6cf38a2eff2",
+    "artifacts/p2/bundle/bundle.json": "sha256:b00870d86f5ae321",
+    "artifacts/p2/bundle/bank.npz": "sha256:062289e7ec73c6a8",
+    "note": "bundle/head.npz has variant full_clahe0 - the OLD configuration (full image, all negatives). It is NOT used as the global arm, because doing so would confound pooling with masking and negative composition. It is preserved untouched."
+  },
+
+  "preprocessing": {
+    "version": "v1",
+    "steps": "greyscale -> cv2.resize INTER_AREA to 512x512 -> lungs-only masking (region outside the C05 PSPNet lung mask replaced by the per-image mean) -> RAD-DINO processor",
+    "identical_across_arms": true,
+    "lung_segmenter": "torchxrayvision chestx_det PSPNet, same network used for TBX11K and Vietnam"
+  },
+
+  "arms": {
+    "A_global_pooler": {
+      "representation": "RAD-DINO pooler_output, 768-d, L2-normalised",
+      "aggregation": "none (already global)",
+      "role": "the deployed global representation"
+    },
+    "B_patch_mean_1x1": {
+      "representation": "37x37 patch tokens -> adaptive avg pool to 12x12 -> averaged to 1x1",
+      "aggregation": "mean over regions",
+      "role": "MATCHED CONTROL. Differs from arm C only in the aggregator, so B vs C isolates pooling exactly. Mathematically equivalent to global average pooling of patch tokens."
+    },
+    "C_regional_max_12x12": {
+      "representation": "37x37 patch tokens -> adaptive avg pool to 12x12, L2-normalised per region",
+      "aggregation": "max over the 144 region logits",
+      "role": "the candidate"
+    }
+  },
+
+  "head_fitting": {
+    "fitted_on": "TBX11K core-list train split only",
+    "negatives": "healthy only (per the documented current configuration)",
+    "early_stopping": "TBX11K development split",
+    "never_fitted_on": ["Shenzhen", "Montgomery", "Vietnam TUNE", "Vietnam REPORT"],
+    "seeds": [17, 29, 43, 61, 79],
+    "optimizer": "AdamW lr 3e-3 wd 1e-4, batch 256, max 120 epochs, patience 15",
+    "loss": "binary cross-entropy with logit adjustment by the training prior",
+    "procedure_source": "scripts/p2_32_mil_sweep.py::train, unchanged"
+  },
+
+  "eligible_case_rules": {
+    "include": "every NLM image with (a) a readable source PNG, (b) a lung mask, (c) a non-empty mask, (d) a label parsable from the filename suffix",
+    "exclude_and_report": "any image failing the above, listed individually in the report",
+    "paired_requirement": "arms are scored on the INTERSECTION of cases successfully embedded in all arms; counts reported",
+    "label_mapping": "filename suffix _1 -> TB positive, _0 -> negative; shz__ prefix = Shenzhen, mcu__ prefix = Montgomery",
+    "patient_identity": "NLM sets are one image per patient; filename is the patient key"
+  },
+
+  "evaluation": {
+    "per_cohort_separately": true,
+    "no_pooled_headline": "Shenzhen and Montgomery are reported separately; Montgomery has 58 positives and pooling would hide its uncertainty",
+    "metrics": ["AUROC with 95% bootstrap CI", "AUPRC with positive prevalence",
+                "sensitivity and specificity at a threshold fixed on TBX11K development",
+                "confusion matrix at that fixed threshold",
+                "paired bootstrap CI for the AUROC difference between arms"],
+    "bootstrap": {"resamples": 4000, "seed": 0, "method": "case resampling with both classes required"},
+    "threshold_provenance": "70% specificity on the TBX11K development split, computed per arm, transferred unchanged. NEVER fitted on Shenzhen or Montgomery.",
+    "degenerate_groups": "reported as unavailable rather than imputed"
+  },
+
+  "prohibited_claims": [
+    "independent external validation",
+    "untouched test cohort",
+    "evidence of generalisation",
+    "clinical readiness",
+    "architectural novelty (see PRIOR_ART_AND_NOVELTY.md: RADAR and GLoRI cover frozen-backbone patch aggregation for TB)"
+  ],
+
+  "permitted_conclusion_shape": "Within these cohorts, under identical preprocessing, identical training data and identical seeds, aggregator X scored N points higher/lower than aggregator Y, with paired interval [lo, hi]. Absolute values are not clean generalisation estimates."
+}

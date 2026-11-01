@@ -1,0 +1,6 @@
+{
+ "knn_accepts_unseen_site": 0.013333333333333334,
+ "probe_accepts_unseen_site": 0.36666666666666664,
+ "probe_rejects_heldout_lateral": 1.0,
+ "probe_rejects_heldout_nonmedical": 1.0
+}

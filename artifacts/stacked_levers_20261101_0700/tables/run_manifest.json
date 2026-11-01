@@ -1,0 +1,31 @@
+{
+ "protocol_sha256": "a75aadb6a097545f3115ea89b6ced46c690d5a766c50d3da52ccac9e8ab44e1a",
+ "encoder_X": {
+  "model": "microsoft/rad-dino-maira-2",
+  "revision": "a6132efb9268859545e9f68be18a76a6473f174a"
+ },
+ "rad_dino_revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "n_boot": 4000,
+ "boot_seed": 0,
+ "calibration_n": 899,
+ "calibration_pos": 81,
+ "tune_n": 1352,
+ "tune_pos": 139,
+ "additivity": {
+  "sum_of_single_lever_tune_deltas": 0.0468,
+  "observed_X_minus_A_tune": 0.0286
+ },
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false
+ },
+ "production_changed": false,
+ "elapsed_s": 436.8
+}

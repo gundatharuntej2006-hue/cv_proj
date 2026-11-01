@@ -1,0 +1,383 @@
+{
+ "created": "2026-10-14",
+ "threshold": 0.5746314525604248,
+ "operating_curve": [
+  {
+   "threshold": 0.55,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.13,
+    "tb": 0.1017,
+    "healthy": 0.0133
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.5746,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.0967,
+    "tb": 0.0339,
+    "healthy": 0.0033
+   },
+   "is_fitted": true
+  },
+  {
+   "threshold": 0.575,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.0967,
+    "tb": 0.0339,
+    "healthy": 0.0033
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.6,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.06,
+    "tb": 0.0169,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.625,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.0567,
+    "tb": 0.0169,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.65,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.03,
+    "tb": 0.0169,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.675,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.02,
+    "tb": 0.0169,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.7,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.01,
+    "tb": 0.0,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.725,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.0033,
+    "tb": 0.0,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.75,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 0.998
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.0033,
+    "tb": 0.0,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.775,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 0.998
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.0033,
+    "tb": 0.0,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.8,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 0.99
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.0,
+    "tb": 0.0,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  },
+  {
+   "threshold": 0.825,
+   "caught": {
+    "non_medical": 1.0,
+    "lateral_cxr": 0.97
+   },
+   "wrongly_rejected": {
+    "sick_non_tb": 0.0,
+    "tb": 0.0,
+    "healthy": 0.0
+   },
+   "is_fitted": false
+  }
+ ],
+ "alpha": 0.05,
+ "k": 5,
+ "bank_n": 4000,
+ "by_class": [
+  {
+   "split": "train",
+   "category": "active_latent_tb",
+   "n": 21,
+   "flagged": 0,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.1546
+   ],
+   "median_score": 0.3712
+  },
+  {
+   "split": "train",
+   "category": "active_tb",
+   "n": 427,
+   "flagged": 9,
+   "rate": 0.0211,
+   "ci95": [
+    0.0111,
+    0.0396
+   ],
+   "median_score": 0.3735
+  },
+  {
+   "split": "train",
+   "category": "healthy",
+   "n": 2700,
+   "flagged": 9,
+   "rate": 0.0033,
+   "ci95": [
+    0.0018,
+    0.0063
+   ],
+   "median_score": 0.3054
+  },
+  {
+   "split": "train",
+   "category": "latent_tb",
+   "n": 93,
+   "flagged": 3,
+   "rate": 0.0323,
+   "ci95": [
+    0.011,
+    0.0906
+   ],
+   "median_score": 0.41
+  },
+  {
+   "split": "train",
+   "category": "sick_non_tb",
+   "n": 2700,
+   "flagged": 112,
+   "rate": 0.0415,
+   "ci95": [
+    0.0346,
+    0.0497
+   ],
+   "median_score": 0.3863
+  },
+  {
+   "split": "development",
+   "category": "active_latent_tb",
+   "n": 2,
+   "flagged": 0,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.6576
+   ],
+   "median_score": 0.4338
+  },
+  {
+   "split": "development",
+   "category": "active_tb",
+   "n": 47,
+   "flagged": 2,
+   "rate": 0.0426,
+   "ci95": [
+    0.0117,
+    0.1425
+   ],
+   "median_score": 0.4738
+  },
+  {
+   "split": "development",
+   "category": "healthy",
+   "n": 300,
+   "flagged": 1,
+   "rate": 0.0033,
+   "ci95": [
+    0.0006,
+    0.0186
+   ],
+   "median_score": 0.3643
+  },
+  {
+   "split": "development",
+   "category": "latent_tb",
+   "n": 10,
+   "flagged": 0,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.2775
+   ],
+   "median_score": 0.4438
+  },
+  {
+   "split": "development",
+   "category": "sick_non_tb",
+   "n": 300,
+   "flagged": 29,
+   "rate": 0.0967,
+   "ci95": [
+    0.0681,
+    0.1354
+   ],
+   "median_score": 0.4547
+  },
+  {
+   "split": "calibration",
+   "category": "active_latent_tb",
+   "n": 3,
+   "flagged": 0,
+   "rate": 0.0,
+   "ci95": [
+    0.0,
+    0.5615
+   ],
+   "median_score": 0.3801
+  },
+  {
+   "split": "calibration",
+   "category": "active_tb",
+   "n": 78,
+   "flagged": 7,
+   "rate": 0.0897,
+   "ci95": [
+    0.0442,
+    0.1738
+   ],
+   "median_score": 0.4543
+  },
+  {
+   "split": "calibration",
+   "category": "healthy",
+   "n": 400,
+   "flagged": 4,
+   "rate": 0.01,
+   "ci95": [
+    0.0039,
+    0.0254
+   ],
+   "median_score": 0.3587
+  },
+  {
+   "split": "calibration",
+   "category": "latent_tb",
+   "n": 18,
+   "flagged": 2,
+   "rate": 0.1111,
+   "ci95": [
+    0.031,
+    0.328
+   ],
+   "median_score": 0.4471
+  },
+  {
+   "split": "calibration",
+   "category": "sick_non_tb",
+   "n": 400,
+   "flagged": 49,
+   "rate": 0.1225,
+   "ci95": [
+    0.0939,
+    0.1583
+   ],
+   "median_score": 0.4591
+  }
+ ],
+ "tb_vs_non_tb_development": {
+  "tb": {
+   "n": 59,
+   "flagged": 2,
+   "rate": 0.0339,
+   "ci95": [
+    0.0093,
+    0.1154
+   ]
+  },
+  "non_tb": {
+   "n": 600,
+   "flagged": 30,
+   "rate": 0.05,
+   "ci95": [
+    0.0352,
+    0.0705
+   ]
+  },
+  "intervals_overlap": true,
+  "ratio": 0.68
+ },
+ "note": "A rejected case carries no probability, so a class-biased gate hides misses from every accuracy metric. internal_test not read."
+}

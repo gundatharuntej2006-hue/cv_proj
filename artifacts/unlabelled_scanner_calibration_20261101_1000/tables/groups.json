@@ -1,0 +1,25 @@
+{
+ "split_seed": 0,
+ "evaluation_n": 677,
+ "evaluation_pos": 70,
+ "pools": {
+  "1": {
+   "n": 102,
+   "pos": 11
+  },
+  "2": {
+   "n": 332,
+   "pos": 37
+  },
+  "3": {
+   "n": 241,
+   "pos": 21
+  }
+ },
+ "raw_within_scanner_auroc_eval": {
+  "1": 0.6843,
+  "2": 0.7872,
+  "3": 0.8283
+ },
+ "raw_pooled_auroc_eval": 0.7546
+}

@@ -1,0 +1,118 @@
+{
+ "created": "2026-10-19",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "cohort": {
+  "n": 2708,
+  "n_tb": 280
+ },
+ "results": [
+  {
+   "variant": "full",
+   "scope": "all",
+   "n": 2708,
+   "n_tb": 280,
+   "auc": 0.6151,
+   "ci95": [
+    0.5853,
+    0.6452
+   ],
+   "tbx11k_dev_auc": 0.9949
+  },
+  {
+   "variant": "lungs_only",
+   "scope": "all",
+   "n": 2708,
+   "n_tb": 280,
+   "auc": 0.643,
+   "ci95": [
+    0.6128,
+    0.6728
+   ],
+   "tbx11k_dev_auc": 0.9889
+  },
+  {
+   "variant": "border_only",
+   "scope": "all",
+   "n": 2708,
+   "n_tb": 280,
+   "auc": 0.5474,
+   "ci95": [
+    0.514,
+    0.5811
+   ],
+   "tbx11k_dev_auc": 0.9094
+  },
+  {
+   "variant": "lunit_3100",
+   "scope": "all",
+   "n": 2708,
+   "n_tb": 280,
+   "auc": 0.7633,
+   "ci95": [
+    0.7357,
+    0.7893
+   ]
+  },
+  {
+   "variant": "lunit_3901",
+   "scope": "all",
+   "n": 2708,
+   "n_tb": 280,
+   "auc": 0.7827,
+   "ci95": [
+    0.7538,
+    0.8105
+   ]
+  },
+  {
+   "variant": "full",
+   "scope": "scanner_1",
+   "n": 408,
+   "n_tb": 44,
+   "auc": 0.6515,
+   "ci95": [
+    0.5739,
+    0.7326
+   ],
+   "lunit_3901": 0.7809
+  },
+  {
+   "variant": "full",
+   "scope": "scanner_2",
+   "n": 1332,
+   "n_tb": 151,
+   "auc": 0.7133,
+   "ci95": [
+    0.6747,
+    0.7488
+   ],
+   "lunit_3901": 0.8095
+  },
+  {
+   "variant": "full",
+   "scope": "scanner_3",
+   "n": 968,
+   "n_tb": 85,
+   "auc": 0.596,
+   "ci95": [
+    0.5409,
+    0.6544
+   ],
+   "lunit_3901": 0.7422
+  }
+ ],
+ "operating_point": {
+  "t_lower": 0.9068834781646729,
+  "sensitivity": 0.8071,
+  "specificity": 0.3752,
+  "sens_at_70_spec_local": 0.3893,
+  "sens_at_95_spec_local": 0.0786
+ },
+ "note": "EXPLORATORY. Heads trained on TBX11K and applied unchanged. Xpert Ultra reference standard. internal_test untouched."
+}

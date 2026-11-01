@@ -1,0 +1,13 @@
+cohort,partition,n,used_for_training,used_for_architecture_selection,used_for_preprocessing_selection,used_for_calibration,used_for_threshold_selection,used_for_descriptive_evaluation,evidence
+TBX11K,train,5941,YES,YES,YES,no,no,YES,every head in the project is fitted here; provisional_c01.csv split=train
+TBX11K,development,659,no,"YES (early stopping, variant choice)",YES,no,YES (all thresholds),YES,"p2_33, p2_36, dadb run all early-stop and threshold here"
+TBX11K,calibration,899,no,no,no,YES,YES,no,bundle.json thresholds_fitted_on='calibration'
+TBX11K,internal_test,901,no,no,no,no,no,NO - never read,recorded untouched in vietnam_eval.json; no artifact scores it
+Vietnam,TUNE,1352,no,YES (pooling grid + aggregator),no,"YES (scanner offsets, Platt)",YES (scanner thresholds),YES,mil_sweep.json selected_on='vietnam TUNE half only'; frozen_parameters.json
+Vietnam,REPORT,1356,no,no,no,no,no,YES - read at least 4 times across runs,"mil_final.json, task_report_sealed.py, dadb-era re-reads; original read-once status is spent"
+Shenzhen,all,662,no,YES (exploratory pooling comparison),"YES (negative composition, masking)",no,no,YES,hard_negatives.json and learning_curve.json both score it
+Montgomery,all,138,no,YES (exploratory pooling comparison),"YES (negative composition, masking)",no,no,YES,same
+DA,all,72,no,no,no,no,no,"YES (once, 2026-10-21)",dadb_focal_pooling run; informed no configuration decision
+DB,all,104,no,no,no,no,no,"YES (once, 2026-10-21)",same
+CheXpert OOD pools,lateral / non-medical,,no,no,no,YES (kNN OOD threshold),YES (OOD threshold),YES,radino_ood_*.npz; bundle.json ood_threshold_rule
+RAD-DINO checkpoint,pre-training + checkpoint selection,,"YES (backbone, frozen)",UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,model card does not name the checkpoint-selection validation sets; exposure to any public TB benchmark cannot be excluded

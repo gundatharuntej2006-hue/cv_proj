@@ -1,0 +1,4 @@
+scanner,n_tune,n_tb,prevalence,auroc,auroc_lo,auroc_hi,median_score_non_tb,median_score_tb,sd_score_non_tb,pooled_platt_a,pooled_platt_b,brier_pooled,cal_slope_pooled,cal_intercept_pooled,scanner_platt_a,scanner_platt_b,brier_scanner,cal_slope_scanner,cal_intercept_scanner
+1,204,22,0.1078,0.7013,0.5886,0.8035,0.5137,2.9433,2.8943,0.297,-2.7022,0.0926,0.8869,-0.0598,0.2634,-2.4577,0.0922,1.0003,0.0015
+2,665,75,0.1128,0.7762,0.7262,0.822,-0.861,2.6192,2.778,0.297,-2.7022,0.0925,1.2591,0.9306,0.374,-2.4717,0.0907,1.0005,0.0006
+3,483,42,0.087,0.729,0.6576,0.7995,2.3452,4.4199,2.7017,0.297,-2.7022,0.0783,1.2507,-0.1244,0.3712,-3.503,0.0758,1.0012,0.0022

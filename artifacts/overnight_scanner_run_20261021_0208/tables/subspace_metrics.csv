@@ -1,0 +1,17 @@
+arm,group,n,n_tb,prevalence,auroc,auroc_lo,auroc_hi,auprc,delta_vs_baseline,delta_lo,delta_hi,paired_ci
+score_baseline,POOLED,1356,141,0.104,0.7242,0.6843,0.7618,0.2134,0.0,0.0,0.0,includes 0
+score_baseline,1,204,22,0.1078,0.719,0.6008,0.8266,0.2393,0.0,0.0,0.0,includes 0
+score_baseline,2,667,76,0.1139,0.789,0.7399,0.8353,0.3197,0.0,0.0,0.0,includes 0
+score_baseline,3,485,43,0.0887,0.6745,0.591,0.7553,0.1768,0.0,0.0,0.0,includes 0
+score_P1_projected_frozen_head,POOLED,1356,141,0.104,0.724,0.6842,0.7613,0.213,-0.0002,-0.0009,0.0004,includes 0
+score_P1_projected_frozen_head,1,204,22,0.1078,0.719,0.6011,0.8265,0.2385,0.0,-0.0019,0.0017,includes 0
+score_P1_projected_frozen_head,2,667,76,0.1139,0.7891,0.7403,0.8354,0.3179,0.0001,-0.0007,0.0009,includes 0
+score_P1_projected_frozen_head,3,485,43,0.0887,0.6745,0.5912,0.7551,0.177,0.0001,-0.0014,0.0017,includes 0
+score_P2_projected_retrained_head,POOLED,1356,141,0.104,0.724,0.6842,0.7612,0.2129,-0.0002,-0.0009,0.0005,includes 0
+score_P2_projected_retrained_head,1,204,22,0.1078,0.719,0.6011,0.8265,0.2385,0.0,-0.0019,0.0017,includes 0
+score_P2_projected_retrained_head,2,667,76,0.1139,0.7891,0.7401,0.8354,0.3168,0.0001,-0.0008,0.0011,includes 0
+score_P2_projected_retrained_head,3,485,43,0.0887,0.6747,0.5916,0.7555,0.1772,0.0003,-0.0011,0.0017,includes 0
+score_offset_corrected,POOLED,1356,141,0.104,0.7448,0.7032,0.7847,0.2636,0.0206,-0.003,0.0436,includes 0
+score_offset_corrected,1,204,22,0.1078,0.719,0.6008,0.8266,0.2393,0.0,0.0,0.0,includes 0
+score_offset_corrected,2,667,76,0.1139,0.789,0.7399,0.8353,0.3197,0.0,0.0,0.0,includes 0
+score_offset_corrected,3,485,43,0.0887,0.6745,0.591,0.7553,0.1768,0.0,0.0,0.0,includes 0

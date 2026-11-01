@@ -1,0 +1,13 @@
+kind,path,present,detail,sha256_16,note,needed_for
+images,data/processed/v1/vietnam_img512,yes,"2708 files, 346 MB",59a0975c69d4f16b,"512px PNG, named by pid",CLEAR concept audit; RayDINO feature extraction
+images,data/processed/v1/vietnam_img512_lungs,yes,"2708 files, 149 MB",477a919d0d255617,lungs-only masked variant,matched preprocessing
+images,data/raw/tbx11k/TBX11K/imgs/health,yes,"3800 files, 1285 MB",1f3f5caf81777463,TBX11K negatives,head training for both encoders
+images,data/raw/tbx11k/TBX11K/imgs/sick,yes,"3800 files, 1345 MB",766291c0438cdad4,TBX11K non-TB abnormal,head training (composition arm)
+images,data/raw/tbx11k/TBX11K/imgs/tb,yes,"800 files, 290 MB",80b8edca82517c0b,TBX11K positives,head training for both encoders
+metadata,data/raw/vietnam/Lunit_Versions_-_Dryad_Data_Set.csv,yes,0.12 MB,328ee268240f7bdd,"pid, past_tb, xpert_result, rad_system, lunit scores",subgroup analysis
+split,artifacts/p2/external/vietnam_tune_report_split.json,yes,0.03 MB,0249dcc9c8a8503c,TUNE 1352 / REPORT 1356,partition discipline
+split,artifacts/p2/dryrun/provisional_c01.csv,yes,0.57 MB,b228f85cb1009307,TBX11K train/development/calibration/internal_test,head training splits
+labels,artifacts/p2/labels_tbx11k_trainval_v1.csv,yes,0.54 MB,3d81ed2928b1f020,tb_label and active_tb_label per image,target-label semantics
+scores,artifacts/overnight_scanner_run_20261021_0208/tables/vietnam_case_scores.csv,yes,0.13 MB,e03c51cf9d2ae9f8,frozen baseline per-case scores (12x12 max focal pooling),Stage 1 score analysis
+features,artifacts/p2/regional/regional_vietnam_lungs_g12_v1.npz,yes,555.47 MB,ca787df52a37bb3d,RAD-DINO 12x12x768 float16 - NOT convertible to another encoder,RAD-DINO arm only
+features,artifacts/p2/external/radino_vietnam_lungs_only_v1.npz,yes,4.94 MB,e585d66bec2425df,RAD-DINO global 768-d,RAD-DINO arm only

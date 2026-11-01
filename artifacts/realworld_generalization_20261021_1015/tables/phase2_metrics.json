@@ -1,0 +1,294 @@
+{
+  "arms": {
+    "H_baseline_current": {
+      "n_train": 3241,
+      "n_train_pos": 541,
+      "n_dev": 359,
+      "n_dev_pos": 59,
+      "tbx11k_dev_auroc": 0.9923728813559323,
+      "threshold_at_70_spec": -4.537877082824707,
+      "positives": [
+        "active_tb",
+        "latent_tb",
+        "active_latent_tb"
+      ],
+      "negatives": [
+        "healthy"
+      ]
+    },
+    "L_latent_negative": {
+      "n_train": 3241,
+      "n_train_pos": 447,
+      "n_dev": 359,
+      "n_dev_pos": 49,
+      "tbx11k_dev_auroc": 0.9835418038183015,
+      "threshold_at_70_spec": -5.259921550750732,
+      "positives": [
+        "active_tb",
+        "active_latent_tb"
+      ],
+      "negatives": [
+        "healthy",
+        "latent_tb"
+      ]
+    },
+    "S_sick_negatives": {
+      "n_train": 5941,
+      "n_train_pos": 541,
+      "n_dev": 659,
+      "n_dev_pos": 59,
+      "tbx11k_dev_auroc": 0.9644632768361581,
+      "threshold_at_70_spec": -6.048933982849121,
+      "positives": [
+        "active_tb",
+        "latent_tb",
+        "active_latent_tb"
+      ],
+      "negatives": [
+        "healthy",
+        "sick_non_tb"
+      ]
+    },
+    "X_both_changes": {
+      "n_train": 5941,
+      "n_train_pos": 447,
+      "n_dev": 659,
+      "n_dev_pos": 49,
+      "tbx11k_dev_auroc": 0.9627634660421546,
+      "threshold_at_70_spec": -6.407292366027832,
+      "positives": [
+        "active_tb",
+        "active_latent_tb"
+      ],
+      "negatives": [
+        "healthy",
+        "latent_tb",
+        "sick_non_tb"
+      ]
+    }
+  },
+  "endpoints": {
+    "PRIMARY active_TB_vs_pastTB_negatives": {
+      "n": 1130,
+      "n_pos": 280,
+      "n_neg": 850,
+      "lunit_auroc": 0.7191554621848739,
+      "arms": {
+        "H_baseline_current": {
+          "auroc": 0.6173445378151261,
+          "ci95": [
+            0.5797055009615866,
+            0.6538408217189735
+          ],
+          "auprc": 0.3329701807678954,
+          "vs_H": null
+        },
+        "L_latent_negative": {
+          "auroc": 0.6465252100840336,
+          "ci95": [
+            0.6097157329956304,
+            0.6831797400486764
+          ],
+          "auprc": 0.37289822449797844,
+          "vs_H": {
+            "delta": 0.029180672268907526,
+            "ci95_lo": 0.02233301965280791,
+            "ci95_hi": 0.03628971301490786,
+            "excludes_zero": true,
+            "n_resamples": 4000
+          }
+        },
+        "S_sick_negatives": {
+          "auroc": 0.603718487394958,
+          "ci95": [
+            0.5651578534512112,
+            0.6425114313452174
+          ],
+          "auprc": 0.3156389762227,
+          "vs_H": {
+            "delta": -0.013626050420168068,
+            "ci95_lo": -0.03520431845630747,
+            "ci95_hi": 0.007273044547338304,
+            "excludes_zero": false,
+            "n_resamples": 4000
+          }
+        },
+        "X_both_changes": {
+          "auroc": 0.6247647058823529,
+          "ci95": [
+            0.5872707488793312,
+            0.6627249791483439
+          ],
+          "auprc": 0.3412151052967364,
+          "vs_H": {
+            "delta": 0.0074201680672267845,
+            "ci95_lo": -0.012287142959266684,
+            "ci95_hi": 0.026405285957529348,
+            "excludes_zero": false,
+            "n_resamples": 4000
+          }
+        }
+      }
+    },
+    "active_TB_vs_noPastTB_negatives": {
+      "n": 1858,
+      "n_pos": 280,
+      "n_neg": 1578,
+      "lunit_auroc": 0.8169846550787616,
+      "arms": {
+        "H_baseline_current": {
+          "auroc": 0.782217544812602,
+          "ci95": [
+            0.7558265700729715,
+            0.8083639237820733
+          ],
+          "auprc": 0.3415487208945353,
+          "vs_H": null
+        },
+        "L_latent_negative": {
+          "auroc": 0.788217454282093,
+          "ci95": [
+            0.7617187231853485,
+            0.8143997533272996
+          ],
+          "auprc": 0.3547082101289733,
+          "vs_H": {
+            "delta": 0.005999909469491027,
+            "ci95_lo": 0.0019375896071316795,
+            "ci95_hi": 0.010076373508881475,
+            "excludes_zero": true,
+            "n_resamples": 4000
+          }
+        },
+        "S_sick_negatives": {
+          "auroc": 0.7682486873076226,
+          "ci95": [
+            0.7410819492607583,
+            0.7952670940640609
+          ],
+          "auprc": 0.31438730305159274,
+          "vs_H": {
+            "delta": -0.013968857504979337,
+            "ci95_lo": -0.02857094197906519,
+            "ci95_hi": 5.549370295093605e-05,
+            "excludes_zero": false,
+            "n_resamples": 4000
+          }
+        },
+        "X_both_changes": {
+          "auroc": 0.7777306264711209,
+          "ci95": [
+            0.7512935015828879,
+            0.8041818397592013
+          ],
+          "auprc": 0.3285307027496004,
+          "vs_H": {
+            "delta": -0.004486918341481072,
+            "ci95_lo": -0.017318271036297822,
+            "ci95_hi": 0.008070758515105384,
+            "excludes_zero": false,
+            "n_resamples": 4000
+          }
+        }
+      }
+    },
+    "GUARDRAIL active_TB_vs_all_negatives": {
+      "n": 2708,
+      "n_pos": 280,
+      "n_neg": 2428,
+      "lunit_auroc": 0.7827363791480348,
+      "arms": {
+        "H_baseline_current": {
+          "auroc": 0.7244984113909156,
+          "ci95": [
+            0.6974246133674982,
+            0.7516872157814791
+          ],
+          "auprc": 0.20417188525023558,
+          "vs_H": null
+        },
+        "L_latent_negative": {
+          "auroc": 0.7386134972934808,
+          "ci95": [
+            0.7111868223594879,
+            0.7660839969021708
+          ],
+          "auprc": 0.2249753255940904,
+          "vs_H": {
+            "delta": 0.014115085902565161,
+            "ci95_lo": 0.009452478174368442,
+            "ci95_hi": 0.018826106004056962,
+            "excludes_zero": true,
+            "n_resamples": 4000
+          }
+        },
+        "S_sick_negatives": {
+          "auroc": 0.7106495646034361,
+          "ci95": [
+            0.681885361186232,
+            0.7396523996738981
+          ],
+          "auprc": 0.18729354753895866,
+          "vs_H": {
+            "delta": -0.013848846787479552,
+            "ci95_lo": -0.030082660238207916,
+            "ci95_hi": 0.002018873548403246,
+            "excludes_zero": false,
+            "n_resamples": 4000
+          }
+        },
+        "X_both_changes": {
+          "auroc": 0.7241799541068488,
+          "ci95": [
+            0.6960526535757908,
+            0.7526932227197786
+          ],
+          "auprc": 0.20112675939730815,
+          "vs_H": {
+            "delta": -0.00031845728406687535,
+            "ci95_lo": -0.014800396171192458,
+            "ci95_hi": 0.013858186129066755,
+            "excludes_zero": false,
+            "n_resamples": 4000
+          }
+        }
+      }
+    }
+  },
+  "bootstrap": {
+    "n": 4000,
+    "seed": 0
+  },
+  "by_half": {
+    "TUNE": {
+      "n": 556,
+      "n_pos": 139,
+      "H_baseline_current": 0.6159,
+      "L_latent_negative": 0.6485,
+      "S_sick_negatives": 0.5997,
+      "X_both_changes": 0.6226
+    },
+    "REPORT": {
+      "n": 574,
+      "n_pos": 141,
+      "H_baseline_current": 0.6189,
+      "L_latent_negative": 0.6454,
+      "S_sick_negatives": 0.6078,
+      "X_both_changes": 0.627
+    }
+  },
+  "decision": {
+    "minimum_effect_size": 0.05,
+    "criterion_1_effect_at_least_min": false,
+    "observed_delta": 0.0074201680672267845,
+    "criterion_2_ci_excludes_zero": false,
+    "ci95": [
+      -0.012287142959266684,
+      0.026405285957529348
+    ],
+    "criterion_3_guardrail_full_cohort_drop_le_0.02": true,
+    "full_cohort_drop": 0.00031845728406687535,
+    "VERDICT": "INCONCLUSIVE",
+    "prereg_sha256": "f748b4fc1cad44e69d401c8671bcd4e8bd22465901e973de27db0abf398c1dfa"
+  }
+}

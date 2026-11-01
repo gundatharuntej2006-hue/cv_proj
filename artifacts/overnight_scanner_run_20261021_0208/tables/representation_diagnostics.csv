@@ -1,0 +1,8 @@
+transform,rank,scanner_balanced_acc,scanner_macro_f1,tb_auroc_tune,delta_scanner_balacc,delta_tb_auroc,note
+none (baseline),0,0.9896,0.9906,0.7237,0.0,0.0,
+scanner subspace,2,0.9758,0.9792,0.7234,-0.0138,-0.0004,
+scanner subspace,3,0.9763,0.9798,0.7233,-0.0133,-0.0004,PREREGISTERED
+scanner subspace,8,0.9763,0.9798,0.7233,-0.0133,-0.0004,
+scanner subspace,16,0.9763,0.9798,0.7233,-0.0133,-0.0004,
+scanner subspace,32,0.9763,0.9798,0.7233,-0.0133,-0.0004,
+scanner subspace,64,0.9763,0.9798,0.7233,-0.0133,-0.0004,

@@ -1,0 +1,190 @@
+{
+  "run_id": "overnight_run_20261021_2340",
+  "start_utc": "2026-10-21T19:50:00Z",
+  "git": {
+    "head": "f878a6c9e9746803938463941ae1ffaa5d1fd96a",
+    "branch": "master",
+    "status_short": [
+      "?? artifacts/overnight_run_20261021_2340/"
+    ],
+    "working_tree_changes_outside_run_dir": []
+  },
+  "environment": {
+    "python": "3.13.2",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "packages": {
+      "numpy": "2.2.6",
+      "sklearn": "1.9.0",
+      "scipy": "1.17.1",
+      "pandas": "3.0.3",
+      "torch": "2.6.0+cu124"
+    },
+    "cuda": {
+      "available": true,
+      "device": "NVIDIA GeForce RTX 4050 Laptop GPU"
+    },
+    "ram_total_gb": 16.39,
+    "ram_available_gb_at_start": 0.56
+  },
+  "resource_caps": {
+    "gpu_memory_fraction_max": 0.8,
+    "note": "RAM availability was under 1 GB for the whole run; no analysis that would load a multi-GB feature cache was attempted."
+  },
+  "split_roles": {
+    "tbx11k_train": "PERMITTED for fitting",
+    "tbx11k_development": "PERMITTED for early stopping and selection; already used",
+    "tbx11k_internal_test": "RESERVED, untouched",
+    "vietnam_TUNE": "development half; used for the pooling selection",
+    "vietnam_REPORT": "RESERVED evaluation, read once",
+    "shenzhen": "EXPOSED (informed preprocessing selection) - exploratory only, never for fitting",
+    "montgomery": "EXPOSED (informed preprocessing selection) - exploratory only, never for fitting",
+    "dadb": "external, scored under the global representation only"
+  },
+  "feature_spec": {
+    "backbone": "microsoft/rad-dino ViT-B/14, frozen",
+    "revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+    "input_px": 518,
+    "dim": 768,
+    "regional_grid": "12x12 = 144 regions",
+    "dtype": "float16"
+  },
+  "seeds": [
+    17,
+    29,
+    43,
+    61,
+    79
+  ],
+  "files": {
+    "artifacts/p2/labels_tbx11k_trainval_v1.csv": {
+      "sha256": "3d81ed2928b1f020b2dd36360a51a51ec731ae5f420bd6b102fd5ea9acbd77a1",
+      "bytes": 538738,
+      "full_file": true
+    },
+    "artifacts/p2/dedup/provisional_official_splits.csv": {
+      "sha256": "402453f11634f79178654337637e65986d132a15ed03fe80ce79fc03fefc3a99",
+      "bytes": 403089,
+      "full_file": true
+    },
+    "artifacts/p2/dryrun/provisional_c01.csv": {
+      "sha256": "b228f85cb10093076e04bc082063800b2b306eb0d1f080ace6a95bd7d7026ca1",
+      "bytes": 574069,
+      "full_file": true
+    },
+    "artifacts/p2/external/vietnam_tune_report_split.json": {
+      "sha256": "0249dcc9c8a8503c9a6fdb00b6a508a742ef1e6394b0b8a33be2eaea19c8a33a",
+      "bytes": 27245,
+      "full_file": true
+    },
+    "artifacts/p2/external/vietnam_eval.json": {
+      "sha256": "8918d27b34d5d476184ce1653daba950f6a362b7c8cf28f82bcc5fef8ed4b1f3",
+      "bytes": 1868,
+      "full_file": true
+    },
+    "artifacts/p2/external/gate_operational_audit.json": {
+      "sha256": "292cfb7b66725446050863caac6f2bde84df26a5e9cba8bd71f499e57451b1be",
+      "bytes": 1174,
+      "full_file": true
+    },
+    "artifacts/p2/audit/vietnam_case_level_gate_audit.csv": {
+      "sha256": "8476113fb842f3a9c03d382fcae1c3dad23618f9f881488ab31c35a8fe45745e",
+      "bytes": 179687,
+      "full_file": true
+    },
+    "artifacts/p2/audit/cross_dataset_case_predictions.csv": {
+      "sha256": "0687a7dcf38e736a1f6bf0a6a84a18b361699b434a5fb9a3c9cd0861b0697021",
+      "bytes": 47842,
+      "full_file": true
+    },
+    "artifacts/p2/audit/cross_dataset_metrics.csv": {
+      "sha256": "1ecbcf80282c5885290113ed12c7e62b4b3ebb0aae84b078eb350150313bcec6",
+      "bytes": 1181,
+      "full_file": true
+    },
+    "artifacts/p2/audit/cross_dataset_manifest.json": {
+      "sha256": "610af8f0330af697118f3634a376f33032dc51bddbc1ee252124fbfecad768a7",
+      "bytes": 5585,
+      "full_file": true
+    },
+    "artifacts/p2/regional/mil_sweep.json": {
+      "sha256": "be16e7edc4c2d3742e9a495618bf68084829c304ae8422fdbb87d4e1d64d3ab2",
+      "bytes": 3747,
+      "full_file": true
+    },
+    "artifacts/p2/regional/mil_final.json": {
+      "sha256": "d73d06c5f48142ee809d716985d01f120ed1222b7347f6b67296169c07f032c8",
+      "bytes": 756,
+      "full_file": true
+    },
+    "artifacts/p2/regional/attention_mil.json": {
+      "sha256": "edb154e6b5b5522922877c84e70ec302ac7316ab494ba918911f656a0009d8e9",
+      "bytes": 367,
+      "full_file": true
+    },
+    "artifacts/p2/dryrun/hard_negatives.json": {
+      "sha256": "0e7c36445357b1e117467910f8c7b058612b3a9f76f3ad215ff9055b68afcac6",
+      "bytes": 3234,
+      "full_file": true
+    },
+    "artifacts/p2/dryrun/learning_curve.json": {
+      "sha256": "3a35639602900dd349be1e3d5f1712872be82cb1afbcdcc652719b6bb7555893",
+      "bytes": 1188,
+      "full_file": true
+    },
+    "artifacts/p2/bundle/head.npz": {
+      "sha256": "14a7e6cf38a2eff21aceb583759187ed9045f512f10155e448d5e6e3377c5c5d",
+      "bytes": 6900,
+      "full_file": true
+    },
+    "artifacts/p2/bundle/bank.npz": {
+      "sha256": "062289e7ec73c6a8e3a35d38d0d6da34d922a855b399cf86ef24d208c5f15971",
+      "bytes": 5680922,
+      "full_file": true
+    },
+    "artifacts/p2/bundle/bundle.json": {
+      "sha256": "b00870d86f5ae32194eb639a2688d3a6d94a83ffc0ed8ec7526ad41a8f035ed8",
+      "bytes": 1252,
+      "full_file": true
+    },
+    "data/raw/vietnam/Lunit_Versions_-_Dryad_Data_Set.csv": {
+      "sha256": "328ee268240f7bdd566a9b0a70115677c6db8eec9cfeb6ab24ee2bd5d4faf08b",
+      "bytes": 116309,
+      "full_file": true
+    },
+    "src/p2_cls/pipeline.py": {
+      "sha256": "0f7ac2876ebde3449aed5801aaf6065c97437c00065c100548a3d9ec10a657ff",
+      "bytes": 9843,
+      "full_file": true
+    },
+    "src/p2_gate/api.py": {
+      "sha256": "4d3800b89d2effe408fa02019a40f669d3613b5f711a40a0449aef2e6a3b81c8",
+      "bytes": 7543,
+      "full_file": true
+    },
+    "scripts/p2_33_mil_final.py": {
+      "sha256": "2ca1b31db6e071195c7f6724b2a33cba85db27c7b121f20b37546dbd2dfba304",
+      "bytes": 6105,
+      "full_file": true
+    },
+    "scripts/p2_36_cross_dataset_pooling.py": {
+      "sha256": "067754599bbb25bdb772ea20fbdc3afbb135eda54f24013346c92acaab11bd3f",
+      "bytes": 14768,
+      "full_file": true
+    },
+    "artifacts/p2/regional/regional_tbx11k_lungs_g12_v1.npz": {
+      "sha256": "3da5665a14433c105b38b7f1804997840520d62ae377487921638942c702845e",
+      "bytes": 1353907076,
+      "full_file": true
+    },
+    "artifacts/p2/regional/regional_vietnam_lungs_g12_v1.npz": {
+      "sha256": "ca787df52a37bb3d45f68035db67e864acbc454edd0ba6d32c0f3957df5de06e",
+      "bytes": 555473278,
+      "full_file": true
+    },
+    "artifacts/p2/regional/regional_nlm_lungs_g12_v1.npz": {
+      "sha256": "62df11dbdd984c3711b55313ce48b68e572fd108a1d202ec5e94aa36ca7a6f63",
+      "bytes": 164125807,
+      "full_file": true
+    }
+  }
+}

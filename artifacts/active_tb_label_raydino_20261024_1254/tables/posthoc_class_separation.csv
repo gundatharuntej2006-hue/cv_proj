@@ -1,0 +1,7 @@
+arm,contrast,n_pos,n_neg,auroc,status
+A,active vs latent_tb,81,18,0.7414,"POST-HOC, not preregistered"
+A,active vs sick_non_tb,81,400,0.9114,"POST-HOC, not preregistered"
+B1,active vs latent_tb,81,18,0.7524,"POST-HOC, not preregistered"
+B1,active vs sick_non_tb,81,400,0.9035,"POST-HOC, not preregistered"
+B2,active vs latent_tb,81,18,0.7414,"POST-HOC, not preregistered"
+B2,active vs sick_non_tb,81,400,0.9105,"POST-HOC, not preregistered"

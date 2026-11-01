@@ -1,0 +1,21 @@
+{
+ "repo": "peterhan91/CLEAR",
+ "revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+ "licence": "apache-2.0 (HF card metadata; repository LICENSE is Apache-2.0)",
+ "verified": "2026-10-23 via huggingface_hub HfApi.repo_info(files_metadata=True); metadata only, no download",
+ "files": {
+  "best_model.pt": {
+   "bytes": 603060057,
+   "sha256": "da1617a7d47970667a7a158eabfa4c4f3798d5d03b7f98caec150d8ee6ab6a03"
+  },
+  "concept_embeddings_368294.pt": {
+   "bytes": 1131400935,
+   "sha256": "7241c5b920c4394b507f2c4bd89f1d0b70775399caaa2f5323cb373afb1a00d6"
+  },
+  "mimic_concepts.csv": {
+   "bytes": 22208546,
+   "sha256": "93e975b722422b64f18b57161ac9894fe30ac7a04cc68b7aa8a2e01f6d0fc439"
+  }
+ },
+ "note": "The mimic_concepts.csv sha256 confirms the vocabulary that configs/concept_indices.json was mapped against."
+}

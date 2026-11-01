@@ -1,0 +1,24 @@
+{
+ "note": "why the kNN OOD gate does not transfer between sites",
+ "site_separability_1dir_auroc": 0.998415602013163,
+ "gate_raw": {
+  "chexpert_false_rejection": 0.9866666666666667,
+  "lateral_caught": 1.0,
+  "non_medical_caught": 1.0
+ },
+ "gate_after_mean_removal": {
+  "chexpert_false_rejection": 0.9733333333333334,
+  "lateral_caught": 1.0,
+  "non_medical_caught": 1.0
+ },
+ "tb_probe_auc_raw": 0.9857070974576271,
+ "tb_probe_auc_after_mean_removal": 0.985593220338983,
+ "self_dist_tbx11k": 0.39312636852264404,
+ "self_dist_chexpert": 0.7794532775878906,
+ "gate_after_whitening": {
+  "chexpert_false_rejection": 0.98,
+  "lateral_caught": 1.0,
+  "non_medical_caught": 1.0
+ },
+ "tb_probe_auc_after_whitening": 0.985656779661017
+}

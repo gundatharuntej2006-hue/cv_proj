@@ -1,0 +1,111 @@
+{
+ "task": "P2-01",
+ "date": "2026-09-29",
+ "gpu": {
+  "name": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "total_gb": 6.0,
+  "torch": "2.6.0+cu124",
+  "cuda": "12.4",
+  "python": "3.13.2"
+ },
+ "budget_gb": 5.5,
+ "model": {
+  "model_id": "microsoft/rad-dino",
+  "image_size": 518,
+  "patch_size": 14,
+  "hidden_size": 768,
+  "n_layers": 12,
+  "params_m": 86.6,
+  "tokens": 1370,
+  "revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+  "licence": "MIT, LICENSE file starts \"MIT License\""
+ },
+ "embedding": [
+  {
+   "batch": 1,
+   "peak_gb": 0.21,
+   "sec_per_batch": 0.026,
+   "img_per_sec": 39.1,
+   "minutes_for_11200": 4.8,
+   "emb_dim": 768,
+   "ok": true
+  },
+  {
+   "batch": 2,
+   "peak_gb": 0.24,
+   "sec_per_batch": 0.055,
+   "img_per_sec": 36.7,
+   "minutes_for_11200": 5.1,
+   "emb_dim": 768,
+   "ok": true
+  },
+  {
+   "batch": 4,
+   "peak_gb": 0.3,
+   "sec_per_batch": 0.113,
+   "img_per_sec": 35.4,
+   "minutes_for_11200": 5.3,
+   "emb_dim": 768,
+   "ok": true
+  },
+  {
+   "batch": 8,
+   "peak_gb": 0.42,
+   "sec_per_batch": 0.202,
+   "img_per_sec": 39.7,
+   "minutes_for_11200": 4.7,
+   "emb_dim": 768,
+   "ok": true
+  },
+  {
+   "batch": 16,
+   "peak_gb": 0.67,
+   "sec_per_batch": 0.406,
+   "img_per_sec": 39.4,
+   "minutes_for_11200": 4.7,
+   "emb_dim": 768,
+   "ok": true
+  }
+ ],
+ "gradcam": {
+  "peak_gb": 0.84,
+  "grad_captured": true,
+  "ok": true
+ },
+ "effnet_b3": [
+  {
+   "batch": 4,
+   "peak_gb": 1.87,
+   "sec_per_step": 0.186,
+   "img_per_sec": 21.6,
+   "ok": true
+  },
+  {
+   "batch": 8,
+   "peak_gb": 3.53,
+   "sec_per_step": 0.231,
+   "img_per_sec": 34.7,
+   "ok": true
+  },
+  {
+   "batch": 16,
+   "peak_gb": 6.89,
+   "sec_per_step": 2.734,
+   "img_per_sec": 5.9,
+   "ok": true
+  }
+ ],
+ "verdict": {
+  "embedding_fits": true,
+  "best_batch": 16,
+  "best_peak_gb": 0.67,
+  "minutes_for_11200": 4.7,
+  "meets_60_min": true,
+  "gradcam_fits": true,
+  "effnet_laptop_batch": 8,
+  "go": true,
+  "effnet_spilled_batches": [
+   16
+  ]
+ }
+}

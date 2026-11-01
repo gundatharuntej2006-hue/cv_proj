@@ -1,0 +1,12 @@
+quantity,value
+"B0 vs B1 Spearman (rank agreement, all 1352)",0.9893
+B0 vs B1 Pearson (scale agreement),0.9899
+B0 AUROC,0.7237
+B1 AUROC,0.7441
+B0 AUPRC,0.2007
+B1 AUPRC,0.2241
+mean rank shift (|delta rank| / n),0.0302
+max rank shift (|delta rank| / n),0.2241
+B1 after monotone recalibration onto B0 scale: Spearman vs B1,1.0
+"consolidation rho among negatives, B1 recalibrated to B0 scale",-0.2933
+"scarring rho among negatives, B1 recalibrated to B0 scale",0.5317

@@ -1,0 +1,37 @@
+{
+ "provisional": true,
+ "note": "provisional split, NOT Person 1's C01; no decision is locked from this",
+ "seed": 20260921,
+ "split_counts": {
+  "calibration": 899,
+  "development": 659,
+  "internal_test": 901,
+  "train": 5941
+ },
+ "imbalance_comparison": {
+  "weighted_sampler": {
+   "dev_auc": 0.9948,
+   "seed_auc_sd": 0.0001,
+   "sens_at_70spec": 1.0,
+   "sens_ci": [
+    0.9389,
+    1.0
+   ],
+   "n_pos": 59
+  },
+  "logit_adjusted": {
+   "dev_auc": 0.9949,
+   "seed_auc_sd": 0.0001,
+   "sens_at_70spec": 1.0,
+   "sens_ci": [
+    0.9389,
+    1.0
+   ],
+   "n_pos": 59
+  }
+ },
+ "d10_would_pick": "logit_adjusted",
+ "r2_reproduction_ok": true,
+ "r2_max_diff": 0.0,
+ "internal_test": "created and left sealed; never read in this run"
+}

@@ -1,0 +1,75 @@
+{
+ "run": {
+  "started": "<ISO8601, filled at run time>",
+  "seed": 20261023,
+  "n_boot": 10000
+ },
+ "environment": {
+  "python": "<x.y.z>",
+  "platform": "<platform string>",
+  "torch": "<version>",
+  "cuda": "<version or null>",
+  "gpu": "<device name or null>"
+ },
+ "model": {
+  "repo": "peterhan91/CLEAR",
+  "revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+  "input_px": 448,
+  "concept_embedding_rows": 368294,
+  "licence": "Apache-2.0 (code and weights); see MODEL licence notes",
+  "pinned_asset_sha256": "see configs/model_assets.json"
+ },
+ "data": {
+  "layout": "staged | repo",
+  "base": "<resolved input directory>",
+  "cohort": "vietnam_tune",
+  "n_cases": 1352,
+  "cohort_fingerprint_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+  "ordered_id_hash_sha256": "<sha256 of the newline-joined ids IN LOAD ORDER>",
+  "report_partition_used": false,
+  "tbx11k_internal_test_used": false
+ },
+ "concepts": {
+  "n_primary": 9,
+  "names": [
+   "fibrosis",
+   "scarring",
+   "volume loss",
+   "calcified granuloma",
+   "calcification",
+   "focal opacity",
+   "consolidation",
+   "pleural thickening",
+   "bronchiectasis"
+  ],
+  "excluded": [
+   "cavity",
+   "nodule",
+   "reticular opacity"
+  ],
+  "score_kind": "text-similarity to one report sentence per concept: a weakly supervised proxy, NOT a validated detector"
+ },
+ "code_sha256": {
+  "src/concept_audit.py": "<sha256>",
+  "src/paths.py": "<sha256>",
+  "src/preflight.py": "<sha256>",
+  "src/stage_kaggle_data.py": "<sha256>",
+  "configs/concept_indices.json": "<sha256>",
+  "configs/tune_cohort_fingerprint.json": "<sha256>"
+ },
+ "inference": {
+  "checkpoint": "<local hf cache path>",
+  "revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+  "checkpoint_bytes": 603060057,
+  "embeddings_bytes": 1131400935,
+  "key_mapping": "<which top-level key and prefix matched the encoder>",
+  "loaded_fraction": "<must be >= 0.90 or the run aborts>",
+  "elapsed_min": "<measured>"
+ },
+ "_notes": [
+  "Written by concept_audit.run_manifest(). Values marked <...> are filled at run time.",
+  "cohort_fingerprint_sha256 is order-independent and must equal the pinned value in configs/tune_cohort_fingerprint.json.",
+  "ordered_id_hash_sha256 is order-dependent and is what a resume is keyed to.",
+  "No patient identifier appears in this file: only hashes."
+ ]
+}

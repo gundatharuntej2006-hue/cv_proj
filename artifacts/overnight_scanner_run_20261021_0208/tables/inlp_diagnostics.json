@@ -1,0 +1,23 @@
+{
+  "rounds": 16,
+  "checked_at": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    6,
+    8,
+    12,
+    16
+  ],
+  "seed": 17,
+  "chance_balanced_accuracy": 0.336917976954321,
+  "n_permutations": 20,
+  "permutation_sd": 0.012998666941773377,
+  "probe_feature": "mean-pooled 768-d token vector per image",
+  "evaluated_on": "Vietnam TUNE only, 5-fold CV",
+  "dims_removed_per_round": 2,
+  "note": "the rank sweep in representation_diagnostics.csv was degenerate above rank 2; this file supersedes its rank>2 rows",
+  "report_touched": false
+}

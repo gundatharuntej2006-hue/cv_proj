@@ -1,0 +1,4 @@
+arm,desc,n_train,n_train_pos,cal_n,cal_pos_active,cal_prevalence_active,cal_auroc_vs_active,cal_auroc_ci_lo,cal_auroc_ci_hi,cal_auprc_vs_active,dev_threshold_at_spec0.90,cal_sensitivity_active,cal_specificity,cal_auroc_vs_tb_label_MIRROR,cal_auroc_vs_tb_label_ci,cal_prevalence_tb_label,vietnam_tune_auroc_EXPLORATORY,vietnam_tune_ci
+A,"baseline, tb_label",3241,541,899,81,0.0901,0.9498,0.9277,0.9686,0.6881,-0.5973,0.8519,0.9156,0.9368,"[0.9119, 0.9580]",0.1101,0.7237,"[0.6846, 0.7626]"
+B1,"active_tb_label, latent kept as negative",3241,447,899,81,0.0901,0.946,0.9233,0.9653,0.6689,-2.1911,0.8642,0.9071,0.934,"[0.9099, 0.9545]",0.1101,0.7441,"[0.7051, 0.7825]"
+B2,"active_tb_label, latent excluded",3147,447,899,81,0.0901,0.9493,0.9276,0.9681,0.6832,-1.198,0.8519,0.9169,0.9367,"[0.9117, 0.9575]",0.1101,0.7261,"[0.6870, 0.7651]"

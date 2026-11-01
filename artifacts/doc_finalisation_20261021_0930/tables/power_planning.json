@@ -1,0 +1,76 @@
+{
+  "source_file": "artifacts\\overnight_scanner_run_20261021_0208\\tables\\vietnam_case_scores.csv",
+  "method": "empirical SE from 4,000 paired bootstrap resamples of the committed Vietnam REPORT per-case scores, extrapolated as SE proportional to 1/sqrt(n); required n = n0 * ((z_alpha + z_beta) * SE0 / delta)^2",
+  "assumptions": [
+    "the new cohort has a case mix, negative-class spectrum and score distribution similar to the Vietnam screening cohort",
+    "one image per patient, so cases are independent",
+    "paired design: both arms scored on identical patients",
+    "two-sided alpha 0.05, power 0.80",
+    "prevalence 0.104, as observed in Vietnam REPORT",
+    "AUROC differences of this size behave approximately normally",
+    "no adjustment for multiple comparisons; add one if more than a single primary endpoint is tested"
+  ],
+  "observed": {
+    "n": 1356,
+    "n_tb": 141,
+    "prevalence": 0.104,
+    "paired_delta_auroc_offset_correction": 0.020582,
+    "se_paired_delta_auroc": 0.011929,
+    "se_paired_delta_sensitivity_at_70_spec": 0.039021
+  },
+  "auroc_sample_size": [
+    {
+      "target_delta_auroc": 0.0206,
+      "required_n": 3569,
+      "required_tb_cases": 372
+    },
+    {
+      "target_delta_auroc": 0.03,
+      "required_n": 1683,
+      "required_tb_cases": 175
+    },
+    {
+      "target_delta_auroc": 0.04,
+      "required_n": 947,
+      "required_tb_cases": 99
+    },
+    {
+      "target_delta_auroc": 0.05,
+      "required_n": 606,
+      "required_tb_cases": 63
+    },
+    {
+      "target_delta_auroc": 0.06,
+      "required_n": 421,
+      "required_tb_cases": 44
+    },
+    {
+      "target_delta_auroc": 0.08,
+      "required_n": 237,
+      "required_tb_cases": 25
+    }
+  ],
+  "sensitivity_sample_size": [
+    {
+      "target_delta_sensitivity": 0.05,
+      "required_tb_cases": 675,
+      "implied_n_at_this_prevalence": 6483
+    },
+    {
+      "target_delta_sensitivity": 0.075,
+      "required_tb_cases": 300,
+      "implied_n_at_this_prevalence": 2882
+    },
+    {
+      "target_delta_sensitivity": 0.1,
+      "required_tb_cases": 169,
+      "implied_n_at_this_prevalence": 1621
+    },
+    {
+      "target_delta_sensitivity": 0.15,
+      "required_tb_cases": 75,
+      "implied_n_at_this_prevalence": 721
+    }
+  ],
+  "caveat": "these numbers describe the power to detect a difference between two arms on the SAME cohort. They say nothing about the cohort size needed to estimate absolute performance to a given precision, which is a different and usually smaller requirement."
+}

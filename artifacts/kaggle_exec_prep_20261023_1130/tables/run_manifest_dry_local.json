@@ -1,0 +1,62 @@
+{
+ "run": {
+  "started": "2026-10-24T00:00:45",
+  "seed": 20261023,
+  "n_boot": 10000
+ },
+ "environment": {
+  "python": "3.13.2",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "torch": "2.6.0+cu124",
+  "cuda": "12.4",
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+ },
+ "model": {
+  "repo": "peterhan91/CLEAR",
+  "revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+  "input_px": 448,
+  "concept_embedding_rows": 368294,
+  "licence": "Apache-2.0 (code and weights); see MODEL licence notes"
+ },
+ "data": {
+  "layout": "staged_zip",
+  "base": "D:\\tb-triage-kaggle-staging\\concept-audit-tune.zip",
+  "cohort": "vietnam_tune",
+  "n_cases": 1352,
+  "cohort_fingerprint_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+  "ordered_id_hash_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+  "report_partition_used": false,
+  "tbx11k_internal_test_used": false
+ },
+ "concepts": {
+  "n_primary": 9,
+  "names": [
+   "fibrosis",
+   "scarring",
+   "volume loss",
+   "calcified granuloma",
+   "calcification",
+   "focal opacity",
+   "consolidation",
+   "pleural thickening",
+   "bronchiectasis"
+  ],
+  "excluded": [
+   "cavity",
+   "nodule",
+   "reticular opacity"
+  ],
+  "score_kind": "text-similarity to one report sentence per concept: a weakly supervised proxy, NOT a validated detector"
+ },
+ "code_sha256": {
+  "src/build_notebook.py": "46020a496fb5b7d85c7b8aa069ac987c61dc02f2e0e8402181d6ba1693fe2eea",
+  "src/concept_audit.py": "40112527a25587f980fe50423c26c1ba05c02282b541aeee2bfb6f2cdbba7a35",
+  "src/paths.py": "f1200e536db2e47f76c7839402c295653af50e65deafd540289d49ba46ee10c5",
+  "src/preflight.py": "542300ca91a7e9817f28aa4842a617ac5326c7e4e0b5b33e57df2aaf7925a17a",
+  "src/stage_kaggle_data.py": "d25218fe7e1fef2709011f63335db2843f984b354067758d6f22682977d8f0c8",
+  "configs/concept_indices.json": "9b8aad8b017c033115d5568180da4084f528c4c487adfaa9cad03466123bd25e",
+  "configs/model_assets.json": "f38a3d239f6124c82c17e68ed4da239438dcd93b254eae8ac1daddeee9c2f76f",
+  "configs/tune_cohort_fingerprint.json": "1e8e2de2d8900de92f58295891583deec1487453149286fcbf77e84cf529b5ac"
+ },
+ "inference": null
+}

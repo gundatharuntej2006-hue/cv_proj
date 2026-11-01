@@ -1,0 +1,135 @@
+{
+  "primary_endpoint": "between-subgroup AUROC difference for ONE model: AUROC(active TB vs negatives without previous TB) minus AUROC(active TB vs negatives with previous TB)",
+  "secondary_endpoint": "difference in differences against a commercial comparator scored on identical participants",
+  "method": "empirical SE from a 10000-replicate stratified bootstrap on the Vietnam cohort (positives shared within replicate), extrapolated as SE proportional to 1/sqrt(n) at fixed design, then inverted: n = n0 * ((z_a + z_b) * SE0 / delta)^2",
+  "design_constants_from_vietnam": {
+    "n0": 2708,
+    "prevalence": 0.1034,
+    "previous_TB_fraction_among_negatives": 0.3501,
+    "n_positives": 280,
+    "n_neg_no_past": 1578,
+    "n_neg_past": 850
+  },
+  "observed": {
+    "gap_estimate": 0.162897,
+    "se_gap": 0.013132,
+    "did_estimate": 0.065068,
+    "se_did": 0.012673
+  },
+  "assumptions": [
+    "a new cohort with a similar design: ~10% prevalence, ~35% of negatives with previous TB, one image per patient",
+    "similar class-conditional score distributions, so a similar SE at a given n",
+    "two-sided alpha 0.05, power 0.80",
+    "SE scales as 1/sqrt(n); approximate normality of the difference",
+    "NO multiplicity adjustment included in the headline numbers; see the sensitivity analysis for a Bonferroni-adjusted version",
+    "the Vietnam SE is itself estimated and carries its own uncertainty"
+  ],
+  "primary_sample_size": [
+    {
+      "minimum_detectable_gap": 0.05,
+      "required_participants": 1467,
+      "required_TB_cases": 152,
+      "required_previous_TB_negatives": 461
+    },
+    {
+      "minimum_detectable_gap": 0.075,
+      "required_participants": 652,
+      "required_TB_cases": 68,
+      "required_previous_TB_negatives": 205
+    },
+    {
+      "minimum_detectable_gap": 0.1,
+      "required_participants": 367,
+      "required_TB_cases": 38,
+      "required_previous_TB_negatives": 116
+    },
+    {
+      "minimum_detectable_gap": 0.1629,
+      "required_participants": 139,
+      "required_TB_cases": 15,
+      "required_previous_TB_negatives": 44
+    }
+  ],
+  "secondary_sample_size": [
+    {
+      "minimum_detectable_did": 0.05,
+      "required_participants": 1366,
+      "required_TB_cases": 142
+    },
+    {
+      "minimum_detectable_did": 0.065,
+      "required_participants": 808,
+      "required_TB_cases": 84
+    },
+    {
+      "minimum_detectable_did": 0.075,
+      "required_participants": 607,
+      "required_TB_cases": 63
+    },
+    {
+      "minimum_detectable_did": 0.1,
+      "required_participants": 342,
+      "required_TB_cases": 36
+    }
+  ],
+  "sensitivity_analyses": {
+    "previous_TB_fraction": [
+      {
+        "fraction_of_negatives_with_previous_TB": 0.35,
+        "required_participants_for_gap_0.05": 1467
+      },
+      {
+        "fraction_of_negatives_with_previous_TB": 0.24,
+        "required_participants_for_gap_0.05": 2139
+      },
+      {
+        "fraction_of_negatives_with_previous_TB": 0.15,
+        "required_participants_for_gap_0.05": 3422
+      },
+      {
+        "fraction_of_negatives_with_previous_TB": 0.1,
+        "required_participants_for_gap_0.05": 5133
+      }
+    ],
+    "note_previous_TB_fraction": "Kagujje et al. observed 24%; Vietnam has 35%. The scaling shown is approximate: it assumes the SE is driven by the size of the smaller negative stratum.",
+    "prevalence": [
+      {
+        "prevalence": 0.103,
+        "required_participants_for_gap_0.05": 1472
+      },
+      {
+        "prevalence": 0.05,
+        "required_participants_for_gap_0.05": 3032
+      },
+      {
+        "prevalence": 0.03,
+        "required_participants_for_gap_0.05": 5054
+      }
+    ],
+    "note_prevalence": "the positives are shared by both subgroup AUROCs, so they drive the SE; halving prevalence roughly doubles the requirement.",
+    "larger_SE_in_a_new_setting": [
+      {
+        "SE_multiplier": 1.0,
+        "required_participants_for_gap_0.05": 1467
+      },
+      {
+        "SE_multiplier": 1.25,
+        "required_participants_for_gap_0.05": 2291
+      },
+      {
+        "SE_multiplier": 1.5,
+        "required_participants_for_gap_0.05": 3299
+      },
+      {
+        "SE_multiplier": 2.0,
+        "required_participants_for_gap_0.05": 5865
+      }
+    ],
+    "multiplicity_bonferroni_5_subgroup_variables": {
+      "alpha": 0.01,
+      "z_alpha": 2.575829,
+      "required_participants_for_gap_0.05": 2182,
+      "rationale": "five clinical variables were screened before previous TB was selected, so a confirmatory study should budget for that."
+    }
+  }
+}

@@ -1,0 +1,4 @@
+contrast,primary,cal_delta,cal_ci,cal_halfwidth,excludes_zero,meets_0.02,verdict,tune_delta_EXPLORATORY,tune_ci
+R - B1,True,0.0019,"[-0.0019, +0.0061]",0.004,False,False,REJECT,-0.0108,"[-0.0182, -0.0037]"
+R - A,False,-0.0019,"[-0.0059, +0.0023]",0.0041,False,False,,0.0095,"[+0.0036, +0.0158]"
+B1 - A,False,-0.0037,"[-0.0081, +0.0002]",0.0041,False,False,,0.0203,"[+0.0127, +0.0279]"

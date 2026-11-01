@@ -1,0 +1,10 @@
+dataset,partition,allowed_role,how_it_was_actually_used,previously_exposed_in_model_selection,evidence
+TBX11K,train (official),FITTING ALLOWED,used for every head fit,yes - all heads,"labels_tbx11k_trainval_v1.csv, official_split=train (6,600 rows)"
+TBX11K,development,SELECTION ALLOWED,early stopping and variant selection,yes - repeatedly,659 cases used as dev in p2_33 and p2_36
+TBX11K,internal_test,RESERVED,never read,no,recorded untouched in the vietnam_eval.json note
+Vietnam (Dryad),"TUNE (1,352)",DEVELOPMENT,pooling grid and aggregator chosen here,yes - the 18-config sweep,"vietnam_tune_report_split.json, seed 20261020"
+Vietnam (Dryad),"REPORT (1,356)",RESERVED EVALUATION,read once at the end,no - read once,mil_final.json; selection optimism -0.0005
+Shenzhen,all 662,EXPOSED,informed preprocessing and negative-composition selection,yes,hard_negatives.json and learning_curve.json both score it
+Montgomery,all 138,EXPOSED,informed preprocessing and negative-composition selection,yes,hard_negatives.json and learning_curve.json both score it
+DA/DB,all 176,"EXTERNAL, scored once under global pooling",not used for any choice,no,dadb_third_site.json
+CheXpert OOD pools,lateral / non-medical,OOD GATE CALIBRATION,used to set the kNN OOD threshold,yes,"radino_ood_lateral_v1.npz, radino_ood_nonmedical_v1.npz"

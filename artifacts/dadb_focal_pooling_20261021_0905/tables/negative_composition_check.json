@@ -1,0 +1,24 @@
+{
+  "purpose": "verify that the published DA/DB lungs-only numbers come from a DIFFERENT negative composition, not from the pooling arm",
+  "p2_26_replica_all_negatives": {
+    "n_train": 5941,
+    "tbx11k_dev_auc": 0.9889,
+    "DA+DB": 0.7791,
+    "DA": 0.8691,
+    "DB": 0.7973
+  },
+  "published_dadb_third_site_json": {
+    "DA+DB": 0.7791,
+    "DA": 0.8691,
+    "DB": 0.7973
+  },
+  "reproduces_exactly": true,
+  "matched_healthy_only_arm_A": {
+    "n_train": 3241,
+    "tbx11k_dev_auc": 0.957,
+    "DA+DB": 0.9172,
+    "DA": 0.9764,
+    "DB": 0.8791
+  },
+  "interpretation": "the published 0.7791 was fitted with all negatives (healthy + sick_non_tb); the matched arm A here uses healthy-only negatives, the current configuration. The 0.7791 -> 0.9172 difference is negative composition, NOT pooling."
+}

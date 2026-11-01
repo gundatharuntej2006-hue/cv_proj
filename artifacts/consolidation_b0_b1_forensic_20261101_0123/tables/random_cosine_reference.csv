@@ -1,0 +1,12 @@
+concept,random_cosine_median,random_cosine_p95,random_cosine_max
+fibrosis,0.3945,0.6308,0.9478
+scarring,0.4875,0.7695,0.8818
+volume loss,0.4895,0.8199,0.9428
+calcified granuloma,0.4668,0.7601,0.9185
+calcification,0.5034,0.8296,0.9319
+focal opacity,0.5143,0.8306,0.9191
+consolidation,0.4121,0.7709,0.8974
+pleural thickening,0.4754,0.7545,0.8722
+bronchiectasis,0.3469,0.6242,0.7782
+scoliosis,0.3807,0.6157,0.9074
+degenerative changes,0.4518,0.7523,0.8526

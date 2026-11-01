@@ -1,0 +1,12 @@
+concept_label_used_in_reports,exact_vocabulary_phrase,phrase_is_label_verbatim,concept_idx,csv_row_index_0based,n_vocabulary_entries_with_this_exact_text,role,representation,embedding_row,embedding_l2_norm_raw
+fibrosis,fibrosis,True,835,835,1,primary,"single phrase; no pooling, expansion or template",835,1.0
+scarring,scarring,True,96952,96952,1,primary,"single phrase; no pooling, expansion or template",96952,1.0
+volume loss,volume loss,True,368164,368164,1,primary,"single phrase; no pooling, expansion or template",368164,1.0
+calcified granuloma,calcified granuloma,True,209383,209383,1,primary,"single phrase; no pooling, expansion or template",209383,1.0
+calcification,calcification,True,77874,77874,1,primary,"single phrase; no pooling, expansion or template",77874,1.0
+focal opacity,focal opacity,True,281312,281312,1,primary,"single phrase; no pooling, expansion or template",281312,1.0
+consolidation,consolidation,True,123742,123742,1,primary,"single phrase; no pooling, expansion or template",123742,1.0
+pleural thickening,pleural thickening,True,341471,341471,1,primary,"single phrase; no pooling, expansion or template",341471,1.0
+bronchiectasis,bronchiectasis,True,57870,57870,1,primary,"single phrase; no pooling, expansion or template",57870,1.0
+scoliosis,scoliosis,True,82734,82734,1,negative control,"single phrase; no pooling, expansion or template",82734,1.0
+degenerative changes,degenerative changes,True,339316,339316,1,negative control,"single phrase; no pooling, expansion or template",339316,1.0

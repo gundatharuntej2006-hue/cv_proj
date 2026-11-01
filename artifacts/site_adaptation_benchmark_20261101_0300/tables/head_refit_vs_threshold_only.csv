@@ -1,0 +1,31 @@
+site,n_local,draw,delta_sens_A2_minus_A1,delta_sens_ci95,delta_spec_A2_minus_A1,delta_auroc_A2_minus_A1,sens_and_spec_both_not_worse,sens_ci_excludes_zero,protocol_verdict
+Shenzhen,10,0,0.0,"[0.0, 0.0]",0.0,0.0004,True,False,no clear benefit
+Shenzhen,10,1,0.0,"[0.0, 0.0]",-0.0184,-0.0,False,False,no clear benefit
+Shenzhen,10,2,0.0,"[0.0, 0.0]",0.0,0.0001,True,False,no clear benefit
+Shenzhen,25,0,0.0,"[0.0, 0.0]",-0.0123,0.0002,False,False,no clear benefit
+Shenzhen,25,1,0.0,"[0.0, 0.0]",0.0,-0.0001,True,False,no clear benefit
+Shenzhen,25,2,0.0,"[0.0, 0.0]",0.0307,0.0004,True,False,no clear benefit
+Shenzhen,50,0,0.0,"[0.0, 0.0]",0.0123,0.0001,True,False,no clear benefit
+Shenzhen,50,1,0.0,"[0.0, 0.0]",0.0061,0.0009,True,False,no clear benefit
+Shenzhen,50,2,0.0,"[0.0, 0.0]",-0.0123,-0.0001,False,False,no clear benefit
+Shenzhen,100,0,0.0,"[0.0, 0.0]",0.0245,0.0015,True,False,no clear benefit
+Shenzhen,100,1,-0.006,"[-0.0191, 0.0]",0.0123,0.0015,False,False,no clear benefit
+Shenzhen,100,2,0.006,"[0.0, 0.0186]",-0.0307,0.0016,False,False,harm
+Shenzhen,200,0,0.0,"[0.0, 0.0]",0.0123,0.0011,True,False,no clear benefit
+Shenzhen,200,1,0.0,"[0.0, 0.0]",0.0123,0.0026,True,False,no clear benefit
+Shenzhen,200,2,0.0,"[0.0, 0.0]",-0.0245,0.0023,False,False,harm
+Shenzhen,331,0,0.0,"[0.0, 0.0]",0.0307,0.0031,True,False,no clear benefit
+Shenzhen,331,1,0.0,"[0.0, 0.0]",0.0307,0.0031,True,False,no clear benefit
+Shenzhen,331,2,0.0,"[0.0, 0.0]",0.0307,0.0031,True,False,no clear benefit
+Montgomery,10,0,0.0,"[0.0, 0.0]",0.0,0.0009,True,False,no clear benefit
+Montgomery,10,1,0.0,"[0.0, 0.0]",-0.025,0.0009,False,False,harm
+Montgomery,10,2,0.0,"[0.0, 0.0]",0.0,0.0017,True,False,no clear benefit
+Montgomery,25,0,0.0,"[0.0, 0.0]",0.025,0.0017,True,False,no clear benefit
+Montgomery,25,1,0.0,"[0.0, 0.0]",0.025,0.0026,True,False,no clear benefit
+Montgomery,25,2,0.0,"[0.0, 0.0]",0.0,0.0017,True,False,no clear benefit
+Montgomery,50,0,0.0,"[0.0, 0.0]",-0.025,0.0017,False,False,harm
+Montgomery,50,1,0.0,"[0.0, 0.0]",0.0,0.0009,True,False,no clear benefit
+Montgomery,50,2,0.0,"[0.0, 0.0]",0.025,0.0009,True,False,no clear benefit
+Montgomery,69,0,0.0,"[0.0, 0.0]",0.025,0.0017,True,False,no clear benefit
+Montgomery,69,1,0.0,"[0.0, 0.0]",0.025,0.0017,True,False,no clear benefit
+Montgomery,69,2,0.0,"[0.0, 0.0]",0.025,0.0017,True,False,no clear benefit

@@ -1,0 +1,128 @@
+{
+  "cohort_consecutive_hits_for_review": [
+    {
+      "file": "docs/p2_vietnam_result.md",
+      "text": "A consecutive screening cohort is overwhelmingly the second case and then some: its Xpert-negatives include old healed tuberculosis, COPD and other chronic disease, and its positives are **screen-dete",
+      "corrective_text": false,
+      "authorised_for_edit_this_run": false
+    },
+    {
+      "file": "report/paper_draft.md",
+      "text": "A consecutive screening cohort is the second case and more: its Xpert-negatives include healed tuberculosis, COPD and other chronic disease, and its cases are screen-detected rather than the lesion-an",
+      "corrective_text": false,
+      "authorised_for_edit_this_run": false
+    }
+  ],
+  "generic_or_corrective_statements": [
+    {
+      "file": "docs/p2_focal_pooling_final.md",
+      "text": "Recruitment was **risk-based programmatic active case > finding** (contacts, adults \u226555 and symptomatic people mobilised ahead of 127 mobile > screening events), so it is not an unselected consecutive",
+      "corrective_text": true,
+      "authorised_for_edit_this_run": true
+    },
+    {
+      "file": "docs/p2_focal_pooling_final.md",
+      "text": "- Our evaluation adds a screening cohort \u2014 risk-based programmatic active case finding, not unselected consecutive enrolment \u2014 with an Xpert reference standard and a commercial comparator on identical",
+      "corrective_text": true,
+      "authorised_for_edit_this_run": true
+    },
+    {
+      "file": "docs/p2_vietnam_result.md",
+      "text": "And the > enrolment is better described as **programmatic active case finding with risk-based > mobilisation** \u2014 the paper describes people at increased risk (contacts, adults \u226555, > people with sympt",
+      "corrective_text": true,
+      "authorised_for_edit_this_run": false
+    },
+    {
+      "file": "docs/p2_vietnam_result.md",
+      "text": "The contrast with curated > case-control sets stands; the word \"consecutive\" overstates it.",
+      "corrective_text": true,
+      "authorised_for_edit_this_run": false
+    },
+    {
+      "file": "report/p2_00_abstract_intro.md",
+      "text": "Their size is their limitation: 394 cases between them cannot support a confidence interval tight enough to separate competing methods, and both are curated case-control collections rather than consec",
+      "corrective_text": false,
+      "authorised_for_edit_this_run": false
+    },
+    {
+      "file": "report/p2_00_abstract_intro.md",
+      "text": "Enrolment was risk-based mobilisation ahead of 127 mobile screening events, not unselected consecutive enrolment.",
+      "corrective_text": true,
+      "authorised_for_edit_this_run": false
+    },
+    {
+      "file": "report/p2_99_conclusion.md",
+      "text": "One consecutive cohort is worth more than three case-control sets, and if none is available that should be stated as prominently as the number that is.",
+      "corrective_text": false,
+      "authorised_for_edit_this_run": false
+    },
+    {
+      "file": "report/paper_draft.md",
+      "text": "Enrolment was **risk-based mobilisation** \u2014 contacts, adults \u226555 and symptomatic people invited ahead of 127 mobile screening events, March 2019 to March 2021 \u2014 so it is not unselected consecutive enr",
+      "corrective_text": true,
+      "authorised_for_edit_this_run": false
+    },
+    {
+      "file": "report/paper_draft.md",
+      "text": "At least one consecutive cohort, or an explicit statement that none was tested.** Our curated external sets overstate screening performance by 0.18\u20130.32 AUC.",
+      "corrective_text": false,
+      "authorised_for_edit_this_run": false
+    },
+    {
+      "file": "report/slides/p2_slides_outline.md",
+      "text": "Do not call it an unselected consecutive cohort.",
+      "corrective_text": true,
+      "authorised_for_edit_this_run": true
+    },
+    {
+      "file": "report/slides/p2_slides_outline.md",
+      "text": "**One consecutive cohort beats three case-control sets.** If you don't have one, say so as prominently as you say your AUC.",
+      "corrective_text": false,
+      "authorised_for_edit_this_run": true
+    }
+  ],
+  "novelty_or_overclaim_hits": [
+    {
+      "file": "docs/p2_focal_pooling_final.md",
+      "claim": "architectural novelty",
+      "excerpt": "ed measurement* of the aggregation choice > under one pipeline, not a new method. ## Protocol, because the number depends on it Searching aggregators "
+    }
+  ],
+  "citation_presence": [
+    {
+      "file": "docs/p2_vietnam_result.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "docs/p2_external_validation.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "report/paper_draft.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "report/p2_00_abstract_intro.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "report/slides/p2_slides_outline.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "docs/p2_focal_pooling_final.md",
+      "missing": [],
+      "pass": true
+    }
+  ],
+  "protected_artifacts": {
+    "checked": 173,
+    "changed": [],
+    "all_unchanged": true
+  }
+}

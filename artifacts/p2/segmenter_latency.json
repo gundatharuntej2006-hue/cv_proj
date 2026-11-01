@@ -1,0 +1,12 @@
+{
+ "n_images": 16,
+ "segmenter_device_served": "cuda",
+ "mask_agreement_min": 0.999966,
+ "mask_agreement_mean": 0.999984,
+ "mask_iou_min": 0.999898,
+ "segmenter_ms_cpu_median": 2066.8,
+ "segmenter_ms_served_median": 325.5,
+ "end_to_end_ms_median": 134.4,
+ "end_to_end_ms_p90": 148.1,
+ "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+}

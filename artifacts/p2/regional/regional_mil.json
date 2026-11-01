@@ -1,0 +1,57 @@
+{
+ "created": "2026-10-20",
+ "grid": 6,
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "results": [
+  {
+   "aggregator": "mean",
+   "tbx11k_dev": 0.7764,
+   "external": {
+    "Vietnam": [
+     0.6456,
+     0.6125,
+     0.6785
+    ]
+   }
+  },
+  {
+   "aggregator": "max",
+   "tbx11k_dev": 0.9043,
+   "external": {
+    "Vietnam": [
+     0.7058,
+     0.6768,
+     0.7333
+    ]
+   }
+  },
+  {
+   "aggregator": "top3",
+   "tbx11k_dev": 0.9092,
+   "external": {
+    "Vietnam": [
+     0.6928,
+     0.6641,
+     0.7207
+    ]
+   }
+  },
+  {
+   "aggregator": "logsumexp",
+   "tbx11k_dev": 0.8718,
+   "external": {
+    "Vietnam": [
+     0.66,
+     0.6289,
+     0.6897
+    ]
+   }
+  }
+ ]
+}

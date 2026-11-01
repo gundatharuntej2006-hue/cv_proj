@@ -1,0 +1,22 @@
+{
+ "protocol_sha256": "c35288d01450f701e36353cc7c82f0846f203d130c10da42ac78103fdac2706a",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "n_boot": 4000,
+ "boot_seed": 0,
+ "calibration_n": 899,
+ "calibration_pos": 81,
+ "tune_n": 1352,
+ "tune_pos": 139,
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false
+ },
+ "production_changed": false,
+ "elapsed_s": 270.7
+}

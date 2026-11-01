@@ -1,0 +1,59 @@
+{
+ "run": "active_tb_label_raydino_20261024_1254",
+ "finished_utc": "2026-10-24T07:42:31Z",
+ "elapsed_s": 164.7,
+ "protocol_sha256": "b88a637c3146f5822f577750902f24d7d338fc84995f75f3fca456d3df5e2f1b",
+ "git_head": "f878a6c9e9746803938463941ae1ffaa5d1fd96a",
+ "config": {
+  "grid": 12,
+  "agg": "max",
+  "seeds": [
+   17,
+   29,
+   43,
+   61,
+   79
+  ],
+  "n_boot": 4000,
+  "boot_seed": 0,
+  "min_effect": 0.05,
+  "spec_target": 0.9
+ },
+ "inputs": {
+  "embeddings_tbx11k": "artifacts\\p2\\regional\\regional_tbx11k_lungs_g12_v1.npz",
+  "embeddings_vietnam": "artifacts\\p2\\regional\\regional_vietnam_lungs_g12_v1.npz",
+  "splits": "artifacts\\p2\\dryrun\\provisional_c01.csv",
+  "embeddings_calibration": "artifacts\\active_tb_label_raydino_20261024_1254\\outputs\\regional_tbx11k_calibration_lungs_g12_v1.npz"
+ },
+ "partitions_accessed": [
+  "tbx11k train",
+  "tbx11k development",
+  "tbx11k calibration",
+  "vietnam TUNE (exploratory)"
+ ],
+ "internal_test_loaded": false,
+ "vietnam_report_loaded": false,
+ "primary_endpoint": {
+  "comparison": "B1 minus A",
+  "endpoint": "calibration AUROC vs active_tb_label (PRIMARY)",
+  "delta": -0.0037,
+  "ci_lo": -0.0081,
+  "ci_hi": 0.0002,
+  "ci_halfwidth": 0.0041,
+  "excludes_zero": false,
+  "meets_min_effect_0.05": false,
+  "halfwidth_within_0.05": true,
+  "delta_no_near_duplicates_n876": -0.004,
+  "ci_no_near_duplicates": "[-0.0082, -0.0001]",
+  "delta_MIRROR_vs_tb_label": -0.0029,
+  "ci_MIRROR": "[-0.0071, 0.0015]",
+  "delta_vietnam_tune_EXPLORATORY": 0.0203,
+  "ci_vietnam_tune": "[0.0127, 0.0279]",
+  "active_tb_sensitivity_A": 0.8519,
+  "active_tb_sensitivity_arm": 0.8642,
+  "sensitivity_delta": 0.0123,
+  "sensitivity_guardrail_ok": true
+ },
+ "verdict": "REJECT",
+ "note": "EXPLORATORY. The label change was already measured once as arm L (+0.0292 on Vietnam). This is not independent confirmation."
+}

@@ -1,0 +1,78 @@
+{
+ "created": "2026-10-14",
+ "model_id": "radino_full_clahe0_bin",
+ "variant": "full_clahe0",
+ "stated_tolerance": 0.0001,
+ "claim_a_head_on_stored_embedding": {
+  "worst_abs_diff": 1.9143250629127806e-07,
+  "n": 8400,
+  "passes_1e-4": true
+ },
+ "claim_b_end_to_end": {
+  "n": 48,
+  "median": 8.303672075271606e-05,
+  "p95": 0.00034468024969100945,
+  "worst": 0.0005710124969482422,
+  "passes_1e-4": false,
+  "float16_storage_alone_worst": 0.0,
+  "examples": [
+   {
+    "image_id": "s0806",
+    "runtime": 0.315553,
+    "exported": 0.316124,
+    "abs_diff": 0.0005710124969482422
+   },
+   {
+    "image_id": "h1377",
+    "runtime": 0.079842,
+    "exported": 0.080211,
+    "abs_diff": 0.0003693103790283203
+   },
+   {
+    "image_id": "h4461",
+    "runtime": 0.261063,
+    "exported": 0.261429,
+    "abs_diff": 0.0003656148910522461
+   },
+   {
+    "image_id": "s4535",
+    "runtime": 0.200499,
+    "exported": 0.200805,
+    "abs_diff": 0.0003058016300201416
+   },
+   {
+    "image_id": "h0349",
+    "runtime": 0.119894,
+    "exported": 0.119621,
+    "abs_diff": 0.00027304887771606445
+   },
+   {
+    "image_id": "h3072",
+    "runtime": 0.156535,
+    "exported": 0.156802,
+    "abs_diff": 0.00026732683181762695
+   },
+   {
+    "image_id": "h1935",
+    "runtime": 0.099349,
+    "exported": 0.099534,
+    "abs_diff": 0.00018487870693206787
+   },
+   {
+    "image_id": "h0030",
+    "runtime": 0.070815,
+    "exported": 0.071,
+    "abs_diff": 0.00018453598022460938
+   }
+  ]
+ },
+ "claim_c_decision_impact": {
+  "margin_used": 0.001158758818110779,
+  "cases_within_margin_of_threshold": {
+   "t_lower": 5,
+   "t_upper": 5
+  },
+  "n_cases": 8400
+ },
+ "note": "C07 was exported in float16 from a float16 GPU forward pass; the runtime path is float32 on CPU. Claim B's floor is set by that, not by the head."
+}

@@ -1,0 +1,98 @@
+{
+  "banned_claim_hits": [],
+  "citation_presence": [
+    {
+      "file": "docs/p2_vietnam_result.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "docs/p2_external_validation.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "report/paper_draft.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "report/p2_00_abstract_intro.md",
+      "missing": [],
+      "pass": true
+    }
+  ],
+  "qualifiers": [
+    {
+      "qualifier": "statistical reproduction not ID matching",
+      "present_in_p2_vietnam_result": true
+    },
+    {
+      "qualifier": "DiD includes zero / inconclusive",
+      "present_in_p2_vietnam_result": true
+    }
+  ],
+  "consecutive_mentions": [
+    {
+      "file": "report\\p2_00_abstract_intro.md",
+      "text": "consecutive cohorts"
+    },
+    {
+      "file": "report\\p2_00_abstract_intro.md",
+      "text": "consecutive enrolment"
+    },
+    {
+      "file": "report\\p2_99_conclusion.md",
+      "text": "One consecutive cohort is worth more than three case-control sets,"
+    },
+    {
+      "file": "report\\paper_draft.md",
+      "text": "events, March 2019 to March 2021 \u2014 so it is not unselected consecutive enrolment,"
+    },
+    {
+      "file": "report\\paper_draft.md",
+      "text": "A consecutive screening cohort is the second case and more: its Xpert-negatives include"
+    },
+    {
+      "file": "report\\paper_draft.md",
+      "text": "At least one consecutive cohort, or an explicit statement that none was tested"
+    },
+    {
+      "file": "report\\slides\\p2_slides_outline.md",
+      "text": "| **Vietnam** | **consecutive screening cohort** | **0"
+    },
+    {
+      "file": "report\\slides\\p2_slides_outline.md",
+      "text": "6151** on 2,708 consecutive screening attendees, Xpert Ultra on every one"
+    },
+    {
+      "file": "report\\slides\\p2_slides_outline.md",
+      "text": "**One consecutive cohort beats three case-control sets"
+    },
+    {
+      "file": "docs\\p2_focal_pooling_final.md",
+      "text": "scores** raises performance on a consecutive TB screening cohort from **0"
+    },
+    {
+      "file": "docs\\p2_focal_pooling_final.md",
+      "text": "- Our evaluation adds a consecutive screening cohort with an Xpert reference standard and a"
+    },
+    {
+      "file": "docs\\p2_vietnam_result.md",
+      "text": "> March 2021 \u2014 rather than unselected consecutive enrolment"
+    },
+    {
+      "file": "docs\\p2_vietnam_result.md",
+      "text": "> case-control sets stands; the word \"consecutive\" overstates it"
+    },
+    {
+      "file": "docs\\p2_vietnam_result.md",
+      "text": "A consecutive"
+    }
+  ],
+  "protected_artifacts": {
+    "checked": 173,
+    "changed": [],
+    "all_unchanged": true
+  }
+}

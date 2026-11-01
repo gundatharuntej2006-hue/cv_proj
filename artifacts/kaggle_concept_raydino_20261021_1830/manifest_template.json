@@ -1,0 +1,69 @@
+{
+  "manifest_version": 1,
+  "filled_by": "<your name>",
+  "date": "<YYYY-MM-DD>",
+  "licences": {
+    "vietnam_images": {
+      "source": "Dryad 10.5061/dryad.5tb2rbpcv",
+      "terms_url": "https://datadryad.org/dataset/doi:10.5061/dryad.5tb2rbpcv",
+      "stated_licence": "UNVERIFIED - the Dryad record names no specific licence",
+      "kaggle_use_permitted": "unknown",
+      "notes": "unknown == BLOCKED. Resolve with the depositors before uploading any image."
+    },
+    "tbx11k_images": {
+      "source": "TBX11K archive",
+      "terms_url": "<fill>",
+      "stated_licence": "<fill>",
+      "kaggle_use_permitted": "unknown",
+      "notes": "check redistribution terms before upload"
+    },
+    "raddino_weights": {
+      "source": "https://huggingface.co/microsoft/rad-dino",
+      "stated_licence": "MIT",
+      "kaggle_use_permitted": "yes",
+      "notes": "downloadable with internet enabled"
+    },
+    "raydino_weights": {
+      "source": "https://ai.meta.com/resources/models-and-libraries/raydino-downloads/",
+      "stated_licence": "FAIR Noncommercial Research License",
+      "kaggle_use_permitted": "unknown",
+      "notes": "GATED. Request access; link is temporary. Redistribution via a Kaggle dataset is NOT established - confirm before attaching."
+    },
+    "clear_weights": {
+      "source": "https://huggingface.co/peterhan91/CLEAR",
+      "stated_licence": "Apache-2.0",
+      "kaggle_use_permitted": "yes",
+      "notes": "code at github.com/peterhan91/CLEAR, also Apache-2.0"
+    }
+  },
+  "checkpoints": {
+    "raddino_revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+    "raydino_revision": "<fill from the downloaded checkpoint>",
+    "clear_revision": "<fill - pin a commit>"
+  },
+  "expected_inputs": {
+    "vietnam_img512": {
+      "n_files": 2708,
+      "ext": "png",
+      "named_by": "pid"
+    },
+    "vietnam_case_scores.csv": {
+      "rows": 2708
+    },
+    "provisional_c01.csv": {
+      "usable_splits": [
+        "train",
+        "development",
+        "calibration"
+      ],
+      "locked": "internal_test"
+    },
+    "Lunit_Versions_-_Dryad_Data_Set.csv": {
+      "rows": 2708
+    }
+  },
+  "locked_partition": {
+    "name": "internal_test",
+    "policy": "never attached, never enumerated, never loaded"
+  }
+}

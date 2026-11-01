@@ -1,0 +1,45 @@
+{
+  "device": "cuda",
+  "repeats": 20,
+  "warmup": 5,
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "scope": "read-out over cached frozen features only; excludes RAD-DINO inference",
+  "streaming_load": {
+    "n_cases": 1356,
+    "seconds": 4.805,
+    "vram_after_gb": 0.3,
+    "vram_peak_gb": 0.488,
+    "host_rss_increase_mb": 184.6,
+    "npz_on_disk_gb": 0.555
+  },
+  "regional_readout": {
+    "mean_ms": 9.762,
+    "sd_ms": 0.65,
+    "min_ms": 8.889,
+    "per_case_us": 7.2
+  },
+  "global_readout": {
+    "mean_ms": 0.834,
+    "sd_ms": 0.148,
+    "min_ms": 0.661,
+    "per_case_us": 0.61
+  },
+  "regional_over_global_latency_ratio": 11.71,
+  "vram_peak_total_gb": 0.536,
+  "vram_budget_gb": {
+    "total": 6.44,
+    "cap_80pct": 5.15
+  },
+  "within_80pct_cap": true,
+  "artifact_sizes_gb": {
+    "regional_tbx11k_g12": 1.354,
+    "regional_vietnam_g12": 0.555,
+    "global_vietnam": 0.0049
+  },
+  "feature_size_ratio_regional_over_global": 113.3,
+  "host_ram_at_measurement": {
+    "available_gb": 1.85,
+    "total_gb": 16.39,
+    "percent_used": 88.7
+  }
+}

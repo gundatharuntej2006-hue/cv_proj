@@ -1,0 +1,22 @@
+{
+ "shz": {
+  "adaptation_n": 331,
+  "adaptation_tb": 168,
+  "evaluation_n": 331,
+  "evaluation_tb": 168,
+  "split_seed": 20261101,
+  "stratified": true,
+  "patient_disjoint": true,
+  "note": "one image per patient in NLM"
+ },
+ "mcu": {
+  "adaptation_n": 69,
+  "adaptation_tb": 29,
+  "evaluation_n": 69,
+  "evaluation_tb": 29,
+  "split_seed": 20261101,
+  "stratified": true,
+  "patient_disjoint": true,
+  "note": "one image per patient in NLM"
+ }
+}

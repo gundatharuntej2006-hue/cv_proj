@@ -1,0 +1,112 @@
+{
+ "runtime": {
+  "python": "3.13.2",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "ram_available_gb": 0.71,
+  "ram_total_gb": 16.39,
+  "ram_percent_used": 95.6,
+  "gpu": "probe skipped (TB_AUDIT_NO_GPU_PROBE=1)",
+  "vram_free_gb": null,
+  "disk_free_gb": 184.7
+ },
+ "dependencies": {
+  "numpy": "2.2.6",
+  "pandas": "3.0.3",
+  "scipy": "1.17.1",
+  "sklearn": "1.9.0",
+  "torch": "2.6.0+cu124",
+  "torchvision": "0.21.0+cu124",
+  "PIL": "12.3.0",
+  "huggingface_hub": "1.21.0",
+  "psutil": "7.2.2"
+ },
+ "pinned_requirements": {
+  "numpy": "2.2.6",
+  "pandas": "3.0.3",
+  "scikit-learn": "1.9.0",
+  "scipy": "1.17.1",
+  "torch": "2.6.0"
+ },
+ "layout": {
+  "img_dir": "D:\\tb-triage\\data\\processed\\v1\\vietnam_img512",
+  "scores": "D:\\tb-triage\\artifacts\\overnight_scanner_run_20261021_0208\\tables\\vietnam_case_scores.csv",
+  "meta": "D:\\tb-triage\\data\\raw\\vietnam\\Lunit_Versions_-_Dryad_Data_Set.csv",
+  "split": "D:\\tb-triage\\artifacts\\p2\\external\\vietnam_tune_report_split.json",
+  "manifest": "D:\\tb-triage\\artifacts\\kaggle_exec_prep_20261023_1130\\tables\\tune_manifest.json",
+  "layout": "repo",
+  "base": "D:\\tb-triage",
+  "out_dir": "D:\\tb-triage\\artifacts\\kaggle_exec_prep_20261023_1130",
+  "writable": "True"
+ },
+ "cohort": {
+  "n_cases": 1352,
+  "n_tb_positive": 139,
+  "n_previous_tb": 466,
+  "cohort_fingerprint_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+  "fingerprint_matches_pinned": true,
+  "images_missing": 0,
+  "images_present_not_approved": 1356,
+  "n_concepts_primary": 9,
+  "expected_similarity_shape": [
+   1352,
+   9
+  ]
+ },
+ "partition_scan_scope": [
+  "none (repo layout: enforcement is the allow-list, not a filesystem scan)"
+ ],
+ "forbidden_paths_visible": [],
+ "model": {
+  "repo": "peterhan91/CLEAR",
+  "pinned_revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+  "input_px": 448,
+  "expected_concept_rows": 368294,
+  "revision_is_a_commit": true,
+  "resolved": {
+   "sha": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+   "files": {
+    "best_model.pt": {
+     "bytes": 603060057,
+     "sha256": "da1617a7d47970667a7a158eabfa4c4f3798d5d03b7f98caec150d8ee6ab6a03"
+    },
+    "concept_embeddings_368294.pt": {
+     "bytes": 1131400935,
+     "sha256": "7241c5b920c4394b507f2c4bd89f1d0b70775399caaa2f5323cb373afb1a00d6"
+    },
+    "mimic_concepts.csv": {
+     "bytes": 22208546,
+     "sha256": "93e975b722422b64f18b57161ac9894fe30ac7a04cc68b7aa8a2e01f6d0fc439"
+    }
+   }
+  },
+  "pinned_assets": {
+   "best_model.pt": {
+    "bytes": 603060057,
+    "sha256": "da1617a7d47970667a7a158eabfa4c4f3798d5d03b7f98caec150d8ee6ab6a03"
+   },
+   "concept_embeddings_368294.pt": {
+    "bytes": 1131400935,
+    "sha256": "7241c5b920c4394b507f2c4bd89f1d0b70775399caaa2f5323cb373afb1a00d6"
+   },
+   "mimic_concepts.csv": {
+    "bytes": 22208546,
+    "sha256": "93e975b722422b64f18b57161ac9894fe30ac7a04cc68b7aa8a2e01f6d0fc439"
+   }
+  }
+ },
+ "network_required": {
+  "required": true,
+  "why": [
+   "the pinned CLEAR assets are fetched from huggingface.co at run time",
+   "torch.hub fetches the DINOv2 ViT-B/14-reg architecture from github.com"
+  ],
+  "offline_possible": "only if both are pre-attached as Kaggle datasets and the loaders are pointed at them; that is not how this package is written, so a fully offline run is NOT currently possible"
+ },
+ "blockers": [
+  "host RAM available is 0.71 GB, below the 3.0 GB needed to hold the CLEAR checkpoint and a slice of the concept tensor. Run on Kaggle, or free memory. Do NOT reduce the image resolution or swap the architecture to fit."
+ ],
+ "warnings": [
+  "1356 images are present that are not on the allow-list; they will never be read, but a TUNE-only upload would not contain them. First: ['1003034', '1010560', '1010618', '2003910', '2011399']"
+ ],
+ "verdict": "STOP"
+}

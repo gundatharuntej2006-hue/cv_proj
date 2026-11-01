@@ -1,0 +1,89 @@
+{
+ "run": "box_supervised_head_20261101_0400",
+ "protocol_sha256": "68406c49c2ea53ba5aa3bd11aaf31e235b109eb0e5970988b08de58e3cf2a7a1",
+ "lambda": 1.0,
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "n_boot": 4000,
+ "geometry": {
+  "patch_grid": 37,
+  "pooled_grid": 12,
+  "patch_px": 14,
+  "input_px": 518,
+  "source_px": 512,
+  "scale": 1.01171875,
+  "bins_37_to_12": [
+   [
+    0,
+    4
+   ],
+   [
+    3,
+    7
+   ],
+   [
+    6,
+    10
+   ],
+   [
+    9,
+    13
+   ],
+   [
+    12,
+    16
+   ],
+   [
+    15,
+    19
+   ],
+   [
+    18,
+    22
+   ],
+   [
+    21,
+    25
+   ],
+   [
+    24,
+    28
+   ],
+   [
+    27,
+    31
+   ],
+   [
+    30,
+    34
+   ],
+   [
+    33,
+    37
+   ]
+  ],
+  "train_region_labels": {
+   "labelled": 404067,
+   "positive": 12697,
+   "masked": 62637
+  },
+  "localisation_n": 49
+ },
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false
+ },
+ "production_changed": false,
+ "elapsed_min": 3.71,
+ "primary_verdict": "REJECT",
+ "environment": {
+  "python": "3.13.2",
+  "torch": "2.6.0+cu124",
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU"
+ }
+}

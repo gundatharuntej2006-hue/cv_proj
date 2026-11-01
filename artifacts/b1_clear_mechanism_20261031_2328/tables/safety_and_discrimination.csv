@@ -1,0 +1,4 @@
+arm,n,n_positive,prevalence,auroc,auprc,note,locked_threshold,threshold_origin,sensitivity_at_locked_threshold,specificity_at_locked_threshold,referral_rate
+baseline_production,1352,139,0.1028,0.7237,0.2007,TUNE is exposed; descriptive only,,,,,
+B0,1352,139,0.1028,0.7237,0.2007,TUNE is exposed; descriptive only,-0.5973,"TBX11K development, >=0.90 specificity; not TUNE",0.9424,0.3759,0.6568
+B1,1352,139,0.1028,0.7441,0.2241,TUNE is exposed; descriptive only,-2.1911,"TBX11K development, >=0.90 specificity; not TUNE",0.9281,0.3792,0.6524

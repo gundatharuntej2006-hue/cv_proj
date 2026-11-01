@@ -1,0 +1,249 @@
+{
+  "vocabulary": {
+    "file": "mimic_concepts.csv",
+    "hf_repo": "peterhan91/CLEAR",
+    "pinned_revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+    "n_entries": 368294,
+    "kind": "free-text report-derived observations (sentences), NOT a curated finding label set",
+    "examples": [
+      "et tube and left subclavian catheter are in standard placements",
+      "no pathological parenchymal process",
+      "unremarkable cardiomediastinal and hilar silhouettes"
+    ]
+  },
+  "preregistered_concepts": [
+    "fibrosis",
+    "scarring",
+    "volume loss",
+    "calcified granuloma",
+    "calcification",
+    "cavity",
+    "focal opacity",
+    "consolidation",
+    "pleural thickening",
+    "nodule",
+    "reticular opacity",
+    "bronchiectasis"
+  ],
+  "mapping": [
+    {
+      "concept": "fibrosis",
+      "n_matching_entries": 677,
+      "n_affirmative": 562,
+      "n_negated": 52,
+      "n_uncertain": 63,
+      "pct_negated": 7.7,
+      "exact_single_output_exists": true,
+      "mapping_type": "EXACT",
+      "example_affirmative": [
+        "strand of fibrosis or atelectasis left costophrenic angle",
+        "fibrosis"
+      ],
+      "example_negated": [
+        "no detectable progression in severe pulmonary fibrosis",
+        "severe pulmonary fibrosis has not improved"
+      ]
+    },
+    {
+      "concept": "scarring",
+      "n_matching_entries": 4204,
+      "n_affirmative": 3769,
+      "n_negated": 63,
+      "n_uncertain": 372,
+      "pct_negated": 1.5,
+      "exact_single_output_exists": true,
+      "mapping_type": "EXACT",
+      "example_affirmative": [
+        "linear atelectasis or scarring within the right middle lobe",
+        "platelike scarring in the left midlung"
+      ],
+      "example_negated": [
+        "no change in the biapical, right more than left areas of scarring",
+        "density seen in the right base which is not changed from the previous examination likely represents scarring"
+      ]
+    },
+    {
+      "concept": "volume loss",
+      "n_matching_entries": 2300,
+      "n_affirmative": 2086,
+      "n_negated": 40,
+      "n_uncertain": 174,
+      "pct_negated": 1.7,
+      "exact_single_output_exists": true,
+      "mapping_type": "EXACT",
+      "example_affirmative": [
+        "poor definition of the hemidiaphragm on the left is consistent with volume loss in the left lower lobe",
+        "significant volume loss of the right hemithorax"
+      ],
+      "example_negated": [
+        "consolidation has improved but volume loss has not",
+        "no obvious consolidation, mass, or volume loss"
+      ]
+    },
+    {
+      "concept": "calcified granuloma",
+      "n_matching_entries": 808,
+      "n_affirmative": 746,
+      "n_negated": 15,
+      "n_uncertain": 47,
+      "pct_negated": 1.9,
+      "exact_single_output_exists": true,
+      "mapping_type": "EXACT",
+      "example_affirmative": [
+        "calcified granuloma in the medial right lung base",
+        "calcified granuloma projects over the left lung laterally"
+      ],
+      "example_negated": [
+        "calcified granuloma in the right midzone of no active concern",
+        "no right calcified granulomas"
+      ]
+    },
+    {
+      "concept": "calcification",
+      "n_matching_entries": 4117,
+      "n_affirmative": 3827,
+      "n_negated": 125,
+      "n_uncertain": 165,
+      "pct_negated": 3.0,
+      "exact_single_output_exists": true,
+      "mapping_type": "EXACT",
+      "example_affirmative": [
+        "large calcifications in the right pleura",
+        "few foci of calcifications"
+      ],
+      "example_negated": [
+        "no calcification",
+        "projection of the lateral margin of the thoracic aorta extending laterally beyond the curvilinear calcifications at the arch is not clearly evaluated"
+      ]
+    },
+    {
+      "concept": "cavity",
+      "n_matching_entries": 203,
+      "n_affirmative": 175,
+      "n_negated": 18,
+      "n_uncertain": 10,
+      "pct_negated": 8.9,
+      "exact_single_output_exists": false,
+      "mapping_type": "PROXY - aggregate over many entries",
+      "example_affirmative": [
+        "large ap dimension of the thoracic cavity",
+        "ongoing filling of the left pneumectomy cavity with fluid"
+      ],
+      "example_negated": [
+        "no picc line entering the thoracic cavity",
+        "left apical cavity with a far thinner rim and no obvious contents"
+      ]
+    },
+    {
+      "concept": "focal opacity",
+      "n_matching_entries": 730,
+      "n_affirmative": 486,
+      "n_negated": 179,
+      "n_uncertain": 65,
+      "pct_negated": 24.5,
+      "exact_single_output_exists": true,
+      "mapping_type": "EXACT",
+      "example_affirmative": [
+        "focal opacity at the left lung base",
+        "slight interval increase in the left lateral lung focal opacity"
+      ],
+      "example_negated": [
+        "well-aerated lungs without focal opacity",
+        "previously noted focal opacity not clearly visualized"
+      ]
+    },
+    {
+      "concept": "consolidation",
+      "n_matching_entries": 13977,
+      "n_affirmative": 8860,
+      "n_negated": 3993,
+      "n_uncertain": 1124,
+      "pct_negated": 28.6,
+      "exact_single_output_exists": true,
+      "mapping_type": "EXACT",
+      "example_affirmative": [
+        "atelectasis or consolidation at the right lung base",
+        "consolidation or atelectasis projects over the medial aspect of the right hilus"
+      ],
+      "example_negated": [
+        "no focal consolidation, pleural effusion, pulmonary edema, or pneumothorax",
+        "no evidence of pneumothorax, pneumomediastinum, or consolidation"
+      ]
+    },
+    {
+      "concept": "pleural thickening",
+      "n_matching_entries": 1986,
+      "n_affirmative": 1756,
+      "n_negated": 43,
+      "n_uncertain": 187,
+      "pct_negated": 2.2,
+      "exact_single_output_exists": true,
+      "mapping_type": "EXACT",
+      "example_affirmative": [
+        "biapical pleural thickening is re-demonstrated",
+        "right lateral pleural thickening unchanged"
+      ],
+      "example_negated": [
+        "no lung nodules, consolidation or pleural thickening or pleural effusion",
+        "no obvious pleural thickening"
+      ]
+    },
+    {
+      "concept": "nodule",
+      "n_matching_entries": 3546,
+      "n_affirmative": 2555,
+      "n_negated": 697,
+      "n_uncertain": 294,
+      "pct_negated": 19.7,
+      "exact_single_output_exists": false,
+      "mapping_type": "PROXY - aggregate over many entries",
+      "example_affirmative": [
+        "7-mm nodule in the retrocardiac region",
+        "calcified nodule projects over the right upper lung"
+      ],
+      "example_negated": [
+        "no new lung nodules identified",
+        "no nodules large enough to raise concern for malignancy"
+      ]
+    },
+    {
+      "concept": "reticular opacity",
+      "n_matching_entries": 40,
+      "n_affirmative": 40,
+      "n_negated": 0,
+      "n_uncertain": 0,
+      "pct_negated": 0.0,
+      "exact_single_output_exists": false,
+      "mapping_type": "PROXY - aggregate over many entries",
+      "example_affirmative": [
+        "subpleural reticular opacity",
+        "faint reticular opacity at the right base"
+      ],
+      "example_negated": []
+    },
+    {
+      "concept": "bronchiectasis",
+      "n_matching_entries": 614,
+      "n_affirmative": 520,
+      "n_negated": 13,
+      "n_uncertain": 81,
+      "pct_negated": 2.1,
+      "exact_single_output_exists": true,
+      "mapping_type": "EXACT",
+      "example_affirmative": [
+        "bronchiectasis in the right lung base",
+        "bronchiectasis and scarring in the right upper lobe"
+      ],
+      "example_negated": [
+        "no significant change in right upper lobe post-radiation treatment fibrosis and traction bronchiectasis",
+        "no appreciable atelectasis or bronchiectasis"
+      ]
+    }
+  ],
+  "summary": {
+    "concepts_absent_from_vocabulary": 0,
+    "concepts_with_an_exact_single_output": 9,
+    "concepts_requiring_proxy_aggregation": 3,
+    "conclusion": "CLEAR exposes a similarity over 368,294 free-text observations, not a curated finding vocabulary. No preregistered concept is a single model output. Every concept would have to be constructed by aggregating over many matching sentences, a large share of which are NEGATED assertions of the same finding. That aggregation rule is a modelling choice this project has not preregistered, it is not specified by CLEAR's documentation, and choosing it after seeing associations would be exactly the post-hoc selection the protocol forbids."
+  }
+}

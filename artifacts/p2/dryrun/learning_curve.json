@@ -1,0 +1,88 @@
+{
+ "created": "2026-10-20",
+ "config": "lungs_only + healthy_only",
+ "draws": 3,
+ "seeds": [
+  17,
+  29,
+  43
+ ],
+ "curve": [
+  {
+   "fraction": 0.25,
+   "n_train": 810,
+   "tbx11k_dev": 0.9525,
+   "external": {
+    "Vietnam": [
+     0.6862,
+     0.0038
+    ],
+    "Shenzhen": [
+     0.9278,
+     0.0061
+    ],
+    "Montgomery": [
+     0.9186,
+     0.006
+    ]
+   }
+  },
+  {
+   "fraction": 0.5,
+   "n_train": 1620,
+   "tbx11k_dev": 0.9526,
+   "external": {
+    "Vietnam": [
+     0.6787,
+     0.0031
+    ],
+    "Shenzhen": [
+     0.9356,
+     0.0029
+    ],
+    "Montgomery": [
+     0.927,
+     0.0036
+    ]
+   }
+  },
+  {
+   "fraction": 0.75,
+   "n_train": 2431,
+   "tbx11k_dev": 0.9554,
+   "external": {
+    "Vietnam": [
+     0.6817,
+     0.0005
+    ],
+    "Shenzhen": [
+     0.9387,
+     0.0015
+    ],
+    "Montgomery": [
+     0.9269,
+     0.0025
+    ]
+   }
+  },
+  {
+   "fraction": 1.0,
+   "n_train": 3241,
+   "tbx11k_dev": 0.957,
+   "external": {
+    "Vietnam": [
+     0.6742,
+     0.0
+    ],
+    "Shenzhen": [
+     0.941,
+     0.0
+    ],
+    "Montgomery": [
+     0.9289,
+     0.0
+    ]
+   }
+  }
+ ]
+}

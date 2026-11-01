@@ -1,0 +1,42 @@
+{
+ "protocol_sha256": "52318063144011a27e5c10866d27d53affda29cfec068b232cda26fcc0bac5fe",
+ "cohort_fingerprint": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+ "n": 1352,
+ "positives": 139,
+ "sizes": [
+  25,
+  50,
+  100,
+  200
+ ],
+ "draws": 50,
+ "refer_fraction": 0.3,
+ "shift_scanner": 2,
+ "rule": {
+  "min_fraction_of_B_gain": 0.5,
+  "max_sens_move": 0.1,
+  "max_burden_move": 0.1
+ },
+ "verdict": {
+  "C": {
+   "gain_vs_A_n100": 0.0272,
+   "B_gain_vs_A_n100": 0.024,
+   "worst_scanner2_sens_move": 0.1221,
+   "worst_scanner2_burden_move": 0.1031,
+   "usable": false
+  },
+  "D": {
+   "gain_vs_A_n100": 0.0271,
+   "B_gain_vs_A_n100": 0.024,
+   "worst_scanner2_sens_move": 0.1079,
+   "worst_scanner2_burden_move": 0.0901,
+   "usable": false
+  }
+ },
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false
+ },
+ "production_changed": false,
+ "elapsed_s": 103.7
+}

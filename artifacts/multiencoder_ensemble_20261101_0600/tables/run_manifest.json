@@ -1,0 +1,33 @@
+{
+ "protocol_sha256": "57ecae4f66851bddb8149c0d9f094257c2362bf991ef411bf87796fbf45c83fa",
+ "encoders": {
+  "D2": {
+   "model": "microsoft/rad-dino-maira-2",
+   "revision": "a6132efb9268859545e9f68be18a76a6473f174a"
+  },
+  "S": {
+   "model": "StanfordAIMI/XraySigLIP__vit-b-16-siglip-512__webli",
+   "revision": "e2ad64eee3c2a2ec746f4c0934b018c718917714"
+  }
+ },
+ "rad_dino_revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "n_boot": 4000,
+ "boot_seed": 0,
+ "calibration_n": 899,
+ "calibration_pos": 81,
+ "tune_n": 1352,
+ "tune_pos": 139,
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false
+ },
+ "production_changed": false,
+ "fit_elapsed_s": 403.2
+}

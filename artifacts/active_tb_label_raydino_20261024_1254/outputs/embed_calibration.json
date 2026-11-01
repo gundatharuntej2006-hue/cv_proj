@@ -1,0 +1,26 @@
+{
+ "backbone": "microsoft/rad-dino",
+ "revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+ "patch_grid": 37,
+ "pooled_grid": 12,
+ "device": "cuda",
+ "half_precision": true,
+ "verification": {
+  "n_images": 24,
+  "mean_abs_diff": 0.0,
+  "max_abs_diff": 0.0,
+  "mean_cosine_to_cache": 1.0,
+  "tolerance": 0.002,
+  "shape_match": true
+ },
+ "n_calibration": 899,
+ "shape": [
+  899,
+  144,
+  768
+ ],
+ "dtype": "float16",
+ "elapsed_min": 1.07,
+ "output": "artifacts\\active_tb_label_raydino_20261024_1254\\outputs\\regional_tbx11k_calibration_lungs_g12_v1.npz",
+ "internal_test_embedded": false
+}

@@ -1,0 +1,268 @@
+diff --git a/docs/p2_external_validation.md b/docs/p2_external_validation.md
+index dc525bf..838bc80 100644
+--- a/docs/p2_external_validation.md
++++ b/docs/p2_external_validation.md
+@@ -145,6 +145,12 @@ DA and DB ship inside the TBX11K archive under `imgs/extra/da+db/`, referenced o
+ Shenzhen and Montgomery. They arrive already standardised to 512x512, removing the
+ preprocessing mismatch that contaminated two earlier comparisons here.
+ 
++> **Superseded in part (2026-10-21).** Every number in the table below was produced under
++> the **all-negatives** training configuration (healthy + sick_non_tb, 5,941 rows), which is
++> no longer the configuration in use. The table is retained as the record of that run — it
++> reproduces exactly — but **the DA/DB figures below are not the current ones.** See
++> "DA/DB under the current configuration" after this section.
++
+ | site | n | TB | full image | lungs only | border only |
+ |---|---|---|---|---|---|
+ | TBX11K (home) | 659 | 59 | 0.9949 | 0.9889 | 0.9094 |
+@@ -156,9 +162,12 @@ preprocessing mismatch that contaminated two earlier comparisons here.
+ 
+ **Three things, in order of importance.**
+ 
+-**Performance degrades further.** 0.9382 at Shenzhen, 0.8183 at Montgomery, **0.7932** at
+-DA+DB. An AUC of 0.79 is a mediocre screening number, and it is the most distant site we have
+-measured. The headline external figure should not be quoted without this one beside it: the
++**Performance degrades further** *under this configuration*. 0.9382 at Shenzhen, 0.8183 at
++Montgomery, **0.7932** at DA+DB. An AUC of 0.79 is a mediocre screening number, and it was
++the most distant site measured at the time. The general claim survives the configuration
++change and is the one to keep: transfer is **site-dependent**, not uniformly good. The
++specific ordering does not survive — see the new section below. The headline external
++figure should not be quoted without this one beside it: the
+ system's transfer is **site-dependent and sometimes poor**, not uniformly good.
+ 
+ **The shortcut stays dead at a third site.** Border-only is 0.6240 against its home 0.9094.
+@@ -174,6 +183,45 @@ collections, which is why they are reported separately as well as pooled. Both a
+ 22 and 52 positives, so the intervals are wide and only large effects are visible.
+ 
+ One segmentation sanity failure in 176 images (0.6%), against 0 of 800 for the NLM sets.
++It is case `px4`: the segmenter found a single lung field of at least 1% of the frame where
++two are expected. **It was counted but not excluded** — `dadb_third_site.json` reports
++n = 176 for the lungs-only variant — so every figure in this section includes it.
++
++### DA/DB under the current configuration (added 2026-10-21)
++
++Lungs-only masking, **healthy-only negatives** (3,241 rows), seeds 17/29/43/61/79, heads
++fitted on TBX11K train alone, thresholds fixed on TBX11K development and transferred
++unchanged. Protocol, integrity record and per-case predictions:
++`artifacts/dadb_focal_pooling_20261021_0905/`.
++
++| cohort | n | TB | prevalence | matched global | regional max 12×12 | paired Δ (B−A) | 95% CI |
++|---|---|---|---|---|---|---|---|
++| **DA** | 72 | 22 | 0.306 | **0.9764** | **0.9755** | **−0.0009** | [−0.0357, +0.0299] |
++| **DB** | 104 | 52 | 0.500 | **0.8780** | **0.9497** | **+0.0717** | [+0.0159, +0.1328] |
++| *DA+DB pooled* | *176* | *74* | *0.420* | *0.9171* | *0.9636* | *+0.0465* | *[+0.0091, +0.0888]* |
++
++**Read DA and DB separately.** On DB, regional pooling gains 0.072 with an interval
++excluding zero. On DA it gains nothing, and the matched baseline already sits at 0.976 with
++almost no headroom. **The pooled row is supplementary only**: DA and DB have different
++prevalence and different score distributions, so pooling them can shift AUROC through
++cross-cohort ranking effects alone, independently of discrimination within either site. It
++is not a single-site result and must not be quoted as one.
++
++Excluding `px4` under the pre-existing label-blind validity rule changes the pooled Δ to
+++0.0454 and DB to +0.0701 — no qualitative change.
++
++**Most of the movement from 0.7791 to 0.9171 is the training negatives, not the pooling.**
++Refitting the global head with this section's original all-negatives rows reproduces
++0.7791 / 0.8691 / 0.7973 **exactly**; switching to healthy-only negatives takes the same
++cohort to 0.9172, about **+0.138**. Pooling adds +0.0465 on top. Both sides of that
++comparison use the seed-17 head
++(`dadb_focal_pooling_20261021_0905/tables/negative_composition_check.json`).
++
++Healthy-only negatives remove sick-but-not-TB patients from training, which makes a curated
++case-control benchmark easier without representing the negatives a screening clinic
++actually sends. **The screening-cohort figure under the same configuration is 0.7242**
++(Vietnam REPORT, n = 1,356, 141 TB). The gap this document exists to describe is not
++closed by any of this.
+ 
+ Evidence: `artifacts/p2/external/dadb_third_site.json`, via
+ `scripts/p2_26_dadb_third_site.py`.
+diff --git a/docs/p2_vietnam_result.md b/docs/p2_vietnam_result.md
+index 8a95aaf..cc6e1db 100644
+--- a/docs/p2_vietnam_result.md
++++ b/docs/p2_vietnam_result.md
+@@ -24,6 +24,12 @@ simply not good enough for it. That gap is not explainable by the data being har
+ 
+ Against the four sites measured before:
+ 
++> **Configuration notice (added 2026-10-21).** The table below is the **original
++> configuration**: global pooling, **all negatives** (healthy + sick_non_tb, 5,941 training
++> rows). It is kept because it is what those runs measured, and because the *shape* of the
++> ladder is the finding. It is **not** the current configuration, and the DA/DB row in
++> particular is superseded — see the second table.
++
+ | site | type | full | lungs-only | border-only |
+ |---|---|---|---|---|
+ | TBX11K (home) | curated benchmark | 0.9949 | 0.9889 | 0.9094 |
+@@ -32,6 +38,47 @@ Against the four sites measured before:
+ | DA+DB, India | curated case-control | 0.7932 | 0.7791 | 0.6240 |
+ | **Vietnam** | **consecutive screening cohort** | **0.6151** | 0.6430 | 0.5474 |
+ 
++### The same cohorts under the current configuration
++
++Lungs-only masking, **healthy-only negatives** (3,241 training rows), seeds 17/29/43/61/79,
++every head fitted on TBX11K train alone. Sources are given per row; nothing was re-scored
++to build this table.
++
++| cohort | n | TB | matched global pooling | regional max 12×12 | source |
++|---|---|---|---|---|---|
++| TBX11K development | 659 | 59 | 0.9570 | 0.9368 | `dadb_focal_pooling_20261021_0905/tables/experiment_manifest.json` |
++| Shenzhen | 662 | 336 | 0.9411 | 0.9690 | `artifacts/p2/audit/cross_dataset_metrics.csv` |
++| Montgomery | 138 | 58 | 0.9289 | 0.9690 | same |
++| **DA** | 72 | 22 | **0.9764** | **0.9755** | `dadb_focal_pooling_20261021_0905/tables/metrics.json` |
++| **DB** | 104 | 52 | **0.8780** | **0.9497** | same |
++| *DA+DB pooled* | *176* | *74* | *0.9171* | *0.9636* | *supplementary only — see below* |
++| Vietnam, full cohort | 2,708 | 280 | 0.6743 | — | `artifacts/p2/dryrun/hard_negatives.json` |
++| **Vietnam REPORT** | **1,356** | **141** | — | **0.7242** | `artifacts/p2/regional/mil_final.json` |
++
++Two cautions. The two Vietnam rows have **different denominators** — the full cohort against
++the reserved REPORT half — and are not a paired comparison. And the **DA+DB pooled row is
++supplementary**: DA and DB are separate collections with prevalence 0.306 and 0.500, so
++pooling them can move AUROC through cross-cohort ranking effects alone, independently of
++discrimination within either site.
++
++**The DA and DB results differ and must not be merged into one claim.** Regional
++max-pooling gains **+0.0717** [+0.0159, +0.1328] on DB and **−0.0009** [−0.0357, +0.0299]
++on DA, where the matched baseline already sits at 0.976 with almost no headroom. One site
++shows a gain; the other shows nothing.
++
++**Why the India figure moved from 0.7932 to 0.9171/0.9636.** Almost all of it is the change
++of training negatives, not pooling. Refitting the global head with the original
++all-negatives rows reproduces the published lungs-only 0.7791 **exactly** (DA 0.8691, DB
++0.7973); switching to healthy-only negatives moves the same cohort to 0.9172 — about
++**+0.138**, roughly three times the +0.0465 that pooling adds on top. Both sides of that
++comparison use the seed-17 head. Evidence:
++`dadb_focal_pooling_20261021_0905/tables/negative_composition_check.json`.
++
++**This does not mean the system got better at screening.** Healthy-only negatives remove
++sick-but-not-TB patients from training, which makes a curated case-control benchmark easier
++without representing the negatives a screening clinic actually sends. The Vietnam
++screening figure under the same configuration is **0.7242** on the REPORT half.
++
+ At the TBX11K-fitted threshold, installation without recalibration gives **sensitivity
+ 0.8071 at specificity 0.3752** — it would refer nearly two-thirds of healthy attendees. With
+ local recalibration, **sensitivity at 70% specificity is 0.3893**: it would miss three TB
+diff --git a/report/p2_00_abstract_intro.md b/report/p2_00_abstract_intro.md
+index 7a159a8..e6d11cd 100644
+--- a/report/p2_00_abstract_intro.md
++++ b/report/p2_00_abstract_intro.md
+@@ -32,6 +32,20 @@ curated controls does not prepare a model for a population in which most chests
+ A nearest-neighbour out-of-distribution gate does not detect the problem, passing 99.2% of
+ the cohort on which the system fails.
+ 
++> **Configuration note (2026-10-21).** The five figures above are one internally consistent
++> configuration: full-image input, global pooling, **all negatives** (healthy + sick_non_tb).
++> Under the configuration later adopted — lungs-only masking, **healthy-only negatives**,
++> regional 12×12 max-pooling — the curated sites rise substantially (Shenzhen 0.9690,
++> Montgomery 0.9690, DA 0.9755, DB 0.9497) while the screening cohort reaches only **0.7242**
++> (Vietnam REPORT, n = 1,356, 141 TB). **The ladder is steeper under the newer configuration,
++> not shallower**, so the argument of this paper is unaffected. Most of the DA/DB movement is
++> the change of training negatives rather than the pooling: refitting with all negatives
++> reproduces the original 0.7791 exactly, and healthy-only negatives alone move that cohort
++> by about +0.138. Healthy-only negatives make a curated case-control task easier without
++> representing the negatives a screening clinic sends. Per-cohort figures, intervals and
++> provenance: `docs/p2_external_validation.md` and
++> `artifacts/dadb_focal_pooling_20261021_0905/`.
++
+ We report the engineering as specified and working — the gate rejects 100% of non-chest and
+ lateral inputs at a 0.2% false-flag cost, the runtime reproduces exported scores, and
+ held-out evaluation is enforced by a one-shot sealing procedure — but we do not claim the
+diff --git a/report/p2_99_conclusion.md b/report/p2_99_conclusion.md
+index 20478ca..835c16c 100644
+--- a/report/p2_99_conclusion.md
++++ b/report/p2_99_conclusion.md
+@@ -39,6 +39,12 @@ against **0.7827 for a certified commercial product on identical images**. At 90
+ we detect 12% of cases where it detects 45%. We fail on radiographically obvious disease, not
+ only subtle disease.
+ 
++Those four figures are one configuration (full image, global pooling, all negatives). Under
++the configuration later adopted — lungs-only, healthy-only negatives, regional 12×12 max —
++the rungs are **further apart, not closer**: Shenzhen 0.9690, Montgomery 0.9690, DA 0.9755,
++DB 0.9497, against **0.7242** on the screening cohort. The ladder is the finding, and it
++holds in both configurations.
++
+ **The cause is the negative class.** We assign a median score of 0.886 to screening-cohort
+ negatives against 0.953 to cases. TB-versus-healthy on the benchmark is AUC 1.0000 — a
+ completely saturated, uninformative metric — while TB-versus-sick is 0.9861. A screening queue
+diff --git a/report/paper_draft.md b/report/paper_draft.md
+index 8dede3d..d629a2b 100644
+--- a/report/paper_draft.md
++++ b/report/paper_draft.md
+@@ -185,6 +185,11 @@ active disease. On the Vietnam cohort, self-reported weight loss separates cases
+ 
+ ## 4. The shortcut does not transfer; lung signal does
+ 
++All three rows below use **all negatives** (healthy + sick_non_tb) in training, which is
++the configuration in which the shortcut comparison was run. Section 5.0 gives the same
++cohorts under the healthy-only configuration adopted later; the dissociation this section
++reports is unaffected by that change.
++
+ | model | TBX11K | Shenzhen | Montgomery | DA+DB | Vietnam |
+ |---|---|---|---|---|---|
+ | full image | 0.9949 | 0.9382 | 0.8183 | 0.7932 | 0.6151 |
+@@ -221,6 +226,47 @@ This is the paper's central result.
+ | **screening cohort** | **Vietnam** | **0.6151** | **[0.5853, 0.6452]** |
+ | *same patients, commercial system* | *Lunit INSIGHT 3.9.0.1* | *0.7827* | *[0.7538, 0.8105]* |
+ 
++### 5.0 The same ladder under the configuration finally adopted
++
++The rungs above are the **full-image, all-negatives** model. Under the configuration this
++paper ends up recommending — lungs-only masking, **healthy-only negatives**, regional
++12×12 max-pooling — every rung moves, and **the ladder gets steeper, not shallower**:
++
++| rung | cohort | n | TB | matched global | regional max 12×12 |
++|---|---|---|---|---|---|
++| benchmark | TBX11K development | 659 | 59 | 0.9570 | 0.9368 |
++| curated external | Shenzhen | 662 | 336 | 0.9411 | **0.9690** |
++| curated external | Montgomery | 138 | 58 | 0.9289 | **0.9690** |
++| curated external | **DA** | 72 | 22 | 0.9764 | **0.9755** |
++| curated external | **DB** | 104 | 52 | 0.8780 | **0.9497** |
++| *curated external* | *DA + DB pooled* | *176* | *74* | *0.9171* | *0.9636* |
++| **screening cohort** | **Vietnam REPORT** | **1,356** | **141** | — | **0.7242** |
++| *screening cohort, full* | *Vietnam, all* | *2,708* | *280* | *0.6743* | *—* |
++
++Three things must be read carefully here.
++
++**DA and DB are reported separately because they disagree.** Regional max-pooling gains
++**+0.0717** [+0.0159, +0.1328] on DB and **−0.0009** [−0.0357, +0.0299] on DA, where the
++matched baseline already sits at 0.976. It is **not** the case that regional pooling
++improves every cohort: it helps at three sites and is neutral at the fourth.
++
++**The DA+DB pooled row is supplementary.** The two collections have prevalence 0.306 and
++0.500 and different score distributions, so pooling them can move AUROC through
++cross-cohort ranking effects alone, independently of discrimination within either site. It
++is not a single-site result and must not be quoted as one.
++
++**The two Vietnam rows have different denominators** — the reserved REPORT half against the
++full cohort — and are not a paired comparison.
++
++Most of the DA/DB movement away from 0.7932 is the **training negative composition**, not
++the pooling: refitting the global head with all negatives reproduces the original
++lungs-only 0.7791 exactly, and switching to healthy-only negatives alone moves that cohort
++by about **+0.138**, roughly three times the +0.0465 pooling adds on top. Healthy-only
++negatives remove sick-but-not-TB patients from training, which makes a curated
++case-control task easier **without** representing the negatives a screening clinic sends —
++which is why the screening rung barely moves. Evidence:
++`artifacts/dadb_focal_pooling_20261021_0905/`.
++
+ Performance degrades monotonically, and the gap between the benchmark and the clinic is
+ **0.38 AUC**. Crucially, the commercial comparator shows the screening task is attainable at
+ 0.78 on these very images, so the collapse is a property of our model and not of the data
+diff --git a/report/slides/p2_slides_outline.md b/report/slides/p2_slides_outline.md
+index 33f4126..da12c35 100644
+--- a/report/slides/p2_slides_outline.md
++++ b/report/slides/p2_slides_outline.md
+@@ -126,6 +126,13 @@ a measurement, not an argument.*
+ | DA+DB, India | curated case-control | 0.7932 |
+ | **Vietnam** | **consecutive screening cohort** | **0.6151** |
+ 
++*Speaker note (2026-10-21): this slide shows the full-image, all-negatives configuration.
++Under the configuration finally adopted the gap is **wider**, not narrower — Shenzhen
++0.9690, Montgomery 0.9690, DA 0.9755, DB 0.9497, Vietnam REPORT **0.7242**. Report DA and
++DB separately: regional pooling gains +0.072 on DB and nothing on DA, so do not say it
++improves every cohort. If asked why India moved, the answer is the training negatives
++(about +0.138), not the pooling (+0.047).*
++
+ **"External validation" is not one thing.** The sets the field uses are near the easy end.
+ 
+ ---

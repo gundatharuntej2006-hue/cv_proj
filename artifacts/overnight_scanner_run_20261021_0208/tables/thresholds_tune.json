@@ -1,0 +1,18 @@
+{
+  "target_specificity": 0.7,
+  "pooled_threshold": 2.4765999999999995,
+  "scanner_thresholds": {
+    "1": 2.0070363999999996,
+    "2": 1.3887346999999999,
+    "3": 3.707496
+  },
+  "scanners": [
+    1,
+    2,
+    3
+  ],
+  "n_boot": 2000,
+  "seed": 17,
+  "quantile_method": "numpy.quantile, linear interpolation, on TUNE non-TB scores",
+  "report_touched": false
+}

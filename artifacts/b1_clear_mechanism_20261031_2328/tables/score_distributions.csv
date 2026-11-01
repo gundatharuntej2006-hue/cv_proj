@@ -1,0 +1,13 @@
+arm,group,n,mean,sd,p25,median,p75,note
+baseline_production,"negatives, no past TB",796,-0.0966,2.9801,-2.7134,-0.3475,2.2379,
+baseline_production,"negatives, past TB",417,1.8966,2.4639,0.197,2.0509,3.7075,
+baseline_production,"positives, no past TB",90,2.9231,2.2027,1.4991,3.1505,4.5278,
+baseline_production,"positives, past TB",49,2.865,2.2581,1.4533,3.0858,4.464,
+B0,"negatives, no past TB",796,-0.0966,2.9801,-2.7134,-0.3475,2.2379,
+B0,"negatives, past TB",417,1.8966,2.4639,0.197,2.0509,3.7075,
+B0,"positives, no past TB",90,2.9231,2.2027,1.4991,3.1505,4.5278,
+B0,"positives, past TB",49,2.865,2.2581,1.4533,3.0858,4.464,
+B1,"negatives, no past TB",796,-1.8118,2.1861,-3.7389,-1.9735,-0.1601,
+B1,"negatives, past TB",417,-0.4509,1.7682,-1.6097,-0.3216,0.8079,
+B1,"positives, no past TB",90,0.5613,1.6347,-0.4753,0.6606,1.7933,
+B1,"positives, past TB",49,0.3708,1.68,-0.529,0.5541,1.4953,

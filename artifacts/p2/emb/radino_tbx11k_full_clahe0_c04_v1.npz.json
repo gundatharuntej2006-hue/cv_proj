@@ -1,0 +1,15 @@
+{
+ "task": "P2-03",
+ "contract": "C07",
+ "variant": "full_clahe0",
+ "model_id": "microsoft/rad-dino@110cbc18d5133582e320b43d53bf5c44e410c936",
+ "preproc_version": "v1",
+ "n_images": 8400,
+ "emb_dim": 768,
+ "dtype": "float16",
+ "l2_normalised": true,
+ "input_fingerprint": "16ba17b3dccc1b4b",
+ "seconds": 268.1,
+ "minutes_per_11200": 6.0,
+ "rerun_worst_cosine": null
+}

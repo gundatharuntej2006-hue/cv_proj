@@ -1,0 +1,132 @@
+{
+ "created": "2026-10-19",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "n_images": 176,
+ "n_tb": 74,
+ "results": [
+  {
+   "variant": "full",
+   "site": "DA+DB",
+   "n": 176,
+   "n_tb": 74,
+   "auc": 0.7932,
+   "ci95": [
+    0.7172,
+    0.864
+   ],
+   "tbx11k_dev_auc": 0.9949,
+   "segmentation_sanity_failures": 0
+  },
+  {
+   "variant": "full",
+   "site": "DA",
+   "n": 72,
+   "n_tb": 22,
+   "auc": 0.8973,
+   "ci95": [
+    0.7808,
+    0.9858
+   ],
+   "tbx11k_dev_auc": 0.9949,
+   "segmentation_sanity_failures": 0
+  },
+  {
+   "variant": "full",
+   "site": "DB",
+   "n": 104,
+   "n_tb": 52,
+   "auc": 0.7788,
+   "ci95": [
+    0.6814,
+    0.8686
+   ],
+   "tbx11k_dev_auc": 0.9949,
+   "segmentation_sanity_failures": 0
+  },
+  {
+   "variant": "lungs_only",
+   "site": "DA+DB",
+   "n": 176,
+   "n_tb": 74,
+   "auc": 0.7791,
+   "ci95": [
+    0.6957,
+    0.852
+   ],
+   "tbx11k_dev_auc": 0.9889,
+   "segmentation_sanity_failures": 1
+  },
+  {
+   "variant": "lungs_only",
+   "site": "DA",
+   "n": 72,
+   "n_tb": 22,
+   "auc": 0.8691,
+   "ci95": [
+    0.7574,
+    0.9619
+   ],
+   "tbx11k_dev_auc": 0.9889,
+   "segmentation_sanity_failures": 1
+  },
+  {
+   "variant": "lungs_only",
+   "site": "DB",
+   "n": 104,
+   "n_tb": 52,
+   "auc": 0.7973,
+   "ci95": [
+    0.7051,
+    0.8799
+   ],
+   "tbx11k_dev_auc": 0.9889,
+   "segmentation_sanity_failures": 1
+  },
+  {
+   "variant": "border_only",
+   "site": "DA+DB",
+   "n": 176,
+   "n_tb": 74,
+   "auc": 0.624,
+   "ci95": [
+    0.5357,
+    0.7095
+   ],
+   "tbx11k_dev_auc": 0.9094,
+   "segmentation_sanity_failures": 0
+  },
+  {
+   "variant": "border_only",
+   "site": "DA",
+   "n": 72,
+   "n_tb": 22,
+   "auc": 0.6773,
+   "ci95": [
+    0.5167,
+    0.8178
+   ],
+   "tbx11k_dev_auc": 0.9094,
+   "segmentation_sanity_failures": 0
+  },
+  {
+   "variant": "border_only",
+   "site": "DB",
+   "n": 104,
+   "n_tb": 52,
+   "auc": 0.5969,
+   "ci95": [
+    0.4873,
+    0.7128
+   ],
+   "tbx11k_dev_auc": 0.9094,
+   "segmentation_sanity_failures": 0
+  }
+ ],
+ "note": "DA/DB ship inside the TBX11K archive under imgs/extra/, referenced only by all_*.txt, so they are absent from our core-list training set. Already 512x512 as distributed. EXPLORATORY; the reportable external number must be a sealed run."
+}

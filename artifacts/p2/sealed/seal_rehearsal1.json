@@ -1,0 +1,20 @@
+{
+ "seal_id": "rehearsal1",
+ "created_utc": "2026-10-14T12:26:39Z",
+ "model_id": "radino_full_clahe0_bin",
+ "variant": "full_clahe0",
+ "weight_sha256": "14a7e6cf38a2eff21aceb583759187ed9045f512f10155e448d5e6e3377c5c5d",
+ "head_type": "binary",
+ "backbone": "microsoft/rad-dino@110cbc18",
+ "thresholds": {
+  "temperature": 0.4927794188260948,
+  "t_lower": 0.9068834781646729,
+  "t_upper": 0.9068834781646729,
+  "ood_threshold": 0.5746314525604248,
+  "alpha_fnr": 0.1,
+  "ood_alpha": 0.05
+ },
+ "split_sha256": "00417da6c84cbda9bd21825a7154a61fcedf0ae523f07d686746d90df5890f55",
+ "config_sha": "f43469ddc4f46a1b0b501263111b40a54a868a16550928c43431cbe1f95b079f",
+ "note": "rehearsal on provisional C01; not the real one-shot read"
+}

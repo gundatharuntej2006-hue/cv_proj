@@ -1,0 +1,4 @@
+check,expected,here,pass
+X raw,0.7585,0.7585,True
+full,0.7941,0.7941,True
+comparator full,0.7778,0.7778,True

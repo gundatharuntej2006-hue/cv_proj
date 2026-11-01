@@ -1,0 +1,209 @@
+{
+ "created": "2026-10-16",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "n_dev": 659,
+ "n_dev_tb": 59,
+ "clean_dev_auc": 0.9949,
+ "fixed_threshold": 0.469141,
+ "threshold_specificity": 0.95,
+ "results": [
+  {
+   "perturbation": "clean",
+   "auc": 0.995,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.95
+  },
+  {
+   "perturbation": "rot_+5",
+   "auc": 0.9942,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.945,
+   "delta_auc": -0.0008,
+   "ci95": [
+    -0.0023,
+    0.0002
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "rot_-5",
+   "auc": 0.9953,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.9483,
+   "delta_auc": 0.0003,
+   "ci95": [
+    -0.0003,
+    0.0014
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "rot_+10",
+   "auc": 0.9933,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.9433,
+   "delta_auc": -0.0017,
+   "ci95": [
+    -0.004,
+    0.0001
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "rot_-10",
+   "auc": 0.9949,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.9433,
+   "delta_auc": -0.0001,
+   "ci95": [
+    -0.0016,
+    0.0017
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "noise_5",
+   "auc": 0.9924,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.895,
+   "delta_auc": -0.0026,
+   "ci95": [
+    -0.0064,
+    -0.0
+   ],
+   "verdict": "worse"
+  },
+  {
+   "perturbation": "noise_10",
+   "auc": 0.9854,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.6767,
+   "delta_auc": -0.0096,
+   "ci95": [
+    -0.0228,
+    -0.0008
+   ],
+   "verdict": "worse"
+  },
+  {
+   "perturbation": "noise_20",
+   "auc": 0.9663,
+   "sensitivity_at_fixed_threshold": 0.9831,
+   "specificity_at_fixed_threshold": 0.2583,
+   "delta_auc": -0.0287,
+   "ci95": [
+    -0.061,
+    -0.0071
+   ],
+   "verdict": "worse"
+  },
+  {
+   "perturbation": "jpeg_90",
+   "auc": 0.9948,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.9467,
+   "delta_auc": -0.0002,
+   "ci95": [
+    -0.0006,
+    0.0001
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "jpeg_70",
+   "auc": 0.9945,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.9417,
+   "delta_auc": -0.0005,
+   "ci95": [
+    -0.0015,
+    0.0001
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "jpeg_50",
+   "auc": 0.9937,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.9283,
+   "delta_auc": -0.0013,
+   "ci95": [
+    -0.0034,
+    0.0002
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "gamma_0.8",
+   "auc": 0.9943,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.945,
+   "delta_auc": -0.0007,
+   "ci95": [
+    -0.0021,
+    0.0002
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "gamma_1.25",
+   "auc": 0.9945,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.94,
+   "delta_auc": -0.0005,
+   "ci95": [
+    -0.0016,
+    0.0004
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "blur_1.0",
+   "auc": 0.9949,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.9517,
+   "delta_auc": -0.0001,
+   "ci95": [
+    -0.0006,
+    0.0004
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "blur_2.0",
+   "auc": 0.9948,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.9517,
+   "delta_auc": -0.0002,
+   "ci95": [
+    -0.0009,
+    0.0005
+   ],
+   "verdict": "no difference"
+  },
+  {
+   "perturbation": "hflip",
+   "auc": 0.9951,
+   "sensitivity_at_fixed_threshold": 0.9661,
+   "specificity_at_fixed_threshold": 0.9483,
+   "delta_auc": 0.0001,
+   "ci95": [
+    -0.0005,
+    0.001
+   ],
+   "verdict": "no difference"
+  }
+ ],
+ "significantly_worse": [
+  "noise_5",
+  "noise_10",
+  "noise_20"
+ ],
+ "note": "Head trained once on clean data and frozen; only the input varies, as in deployment. Threshold fixed on clean development. Provisional split, development only; internal_test untouched."
+}

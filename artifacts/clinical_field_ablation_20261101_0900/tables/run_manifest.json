@@ -1,0 +1,192 @@
+{
+ "protocol_sha256": "ee12d8102d5a98e632cae6a986f6ef320485514db22091d9645760b30a207d50",
+ "cohort_fingerprint": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+ "n": 1352,
+ "positives": 139,
+ "previous_tb": 466,
+ "arms": {
+  "full": [
+   "sex",
+   "age_group",
+   "c",
+   "f",
+   "wl",
+   "ns",
+   "contact",
+   "past_tb",
+   "dm",
+   "dm_unknown",
+   "scan1",
+   "scan2"
+  ],
+  "without sex": [
+   "age_group",
+   "c",
+   "f",
+   "wl",
+   "ns",
+   "contact",
+   "past_tb",
+   "dm",
+   "dm_unknown",
+   "scan1",
+   "scan2"
+  ],
+  "without age_group": [
+   "sex",
+   "c",
+   "f",
+   "wl",
+   "ns",
+   "contact",
+   "past_tb",
+   "dm",
+   "dm_unknown",
+   "scan1",
+   "scan2"
+  ],
+  "without c": [
+   "sex",
+   "age_group",
+   "f",
+   "wl",
+   "ns",
+   "contact",
+   "past_tb",
+   "dm",
+   "dm_unknown",
+   "scan1",
+   "scan2"
+  ],
+  "without f": [
+   "sex",
+   "age_group",
+   "c",
+   "wl",
+   "ns",
+   "contact",
+   "past_tb",
+   "dm",
+   "dm_unknown",
+   "scan1",
+   "scan2"
+  ],
+  "without wl": [
+   "sex",
+   "age_group",
+   "c",
+   "f",
+   "ns",
+   "contact",
+   "past_tb",
+   "dm",
+   "dm_unknown",
+   "scan1",
+   "scan2"
+  ],
+  "without ns": [
+   "sex",
+   "age_group",
+   "c",
+   "f",
+   "wl",
+   "contact",
+   "past_tb",
+   "dm",
+   "dm_unknown",
+   "scan1",
+   "scan2"
+  ],
+  "without contact": [
+   "sex",
+   "age_group",
+   "c",
+   "f",
+   "wl",
+   "ns",
+   "past_tb",
+   "dm",
+   "dm_unknown",
+   "scan1",
+   "scan2"
+  ],
+  "without past_tb": [
+   "sex",
+   "age_group",
+   "c",
+   "f",
+   "wl",
+   "ns",
+   "contact",
+   "dm",
+   "dm_unknown",
+   "scan1",
+   "scan2"
+  ],
+  "without dm": [
+   "sex",
+   "age_group",
+   "c",
+   "f",
+   "wl",
+   "ns",
+   "contact",
+   "past_tb",
+   "scan1",
+   "scan2"
+  ],
+  "without scanner": [
+   "sex",
+   "age_group",
+   "c",
+   "f",
+   "wl",
+   "ns",
+   "contact",
+   "past_tb",
+   "dm",
+   "dm_unknown"
+  ],
+  "image + past_tb": [
+   "past_tb"
+  ],
+  "image + scanner": [
+   "scan1",
+   "scan2"
+  ],
+  "image + symptoms": [
+   "c",
+   "f",
+   "wl",
+   "ns"
+  ],
+  "image + demographics": [
+   "sex",
+   "age_group"
+  ],
+  "questionnaire only": [
+   "sex",
+   "age_group",
+   "c",
+   "f",
+   "wl",
+   "ns",
+   "contact",
+   "past_tb",
+   "dm",
+   "dm_unknown"
+  ]
+ },
+ "cv": {
+  "folds": 10,
+  "repeats": 20
+ },
+ "n_boot": 2000,
+ "boot_seed": 20261101,
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false
+ },
+ "production_changed": false,
+ "elapsed_s": 315.5
+}

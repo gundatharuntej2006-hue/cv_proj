@@ -1,0 +1,11 @@
+dataset,source_group,n,n_positive,n_negative,prevalence,n_missing_source,n_missing_label,n_in_TUNE,n_in_REPORT,source_evidence
+Vietnam (Dryad),rad_system=1,408,44,364,0.1078,0,0,204,204,Dryad metadata column rad_system
+Vietnam (Dryad),rad_system=2,1332,151,1181,0.1134,0,0,665,667,Dryad metadata column rad_system
+Vietnam (Dryad),rad_system=3,968,85,883,0.0878,0,0,483,485,Dryad metadata column rad_system
+Vietnam (Dryad),ALL,2708,280,2428,0.1034,0,0,1352,1356,Dryad metadata
+TBX11K,SOURCE NOT RECORDED (official_split=train),6600,600,6000,0.0909,6600,0,0,0,label CSV has no scanner/source column
+TBX11K,SOURCE NOT RECORDED (official_split=val),1800,200,1600,0.1111,1800,0,0,0,label CSV has no scanner/source column
+Montgomery,single site (source == cohort),138,58,80,0.4203,0,0,0,0,"NLM distribution, one site per set"
+Shenzhen,single site (source == cohort),662,336,326,0.5076,0,0,0,0,"NLM distribution, one site per set"
+DA/DB (TBX11K extra),site=DA,72,22,50,0.3056,0,0,0,0,site split recorded in dadb_third_site.json
+DA/DB (TBX11K extra),site=DB,104,52,52,0.5,0,0,0,0,site split recorded in dadb_third_site.json

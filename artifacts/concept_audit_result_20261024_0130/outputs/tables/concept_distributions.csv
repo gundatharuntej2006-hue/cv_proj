@@ -1,0 +1,37 @@
+concept,group,mean,median,n,note,p25,p75,sd
+fibrosis,"negatives, no past TB",0.3077,0.30021,796,,0.22511,0.37895,0.11711
+fibrosis,"negatives, past TB",0.35428,0.36425,417,,0.256,0.45255,0.13118
+fibrosis,"positives, no past TB",0.36122,0.3481,90,,0.24833,0.47106,0.14445
+fibrosis,"positives, past TB",0.37142,0.36358,49,,0.27526,0.45108,0.14466
+scarring,"negatives, no past TB",0.37663,0.3785,796,,0.33234,0.41974,0.06606
+scarring,"negatives, past TB",0.4081,0.41522,417,,0.36891,0.45498,0.06557
+scarring,"positives, no past TB",0.37831,0.38898,90,,0.33842,0.42269,0.06585
+scarring,"positives, past TB",0.39624,0.39839,49,,0.36748,0.44343,0.06852
+volume loss,"negatives, no past TB",0.00044,-0.00812,796,,-0.03698,0.03157,0.0511
+volume loss,"negatives, past TB",0.01197,0.00843,417,,-0.02642,0.04502,0.0532
+volume loss,"positives, no past TB",0.01686,0.02025,90,,-0.01663,0.0435,0.04902
+volume loss,"positives, past TB",0.02399,0.02984,49,,-0.00293,0.05425,0.04643
+calcified granuloma,"negatives, no past TB",0.33359,0.33712,796,,0.30147,0.37441,0.06223
+calcified granuloma,"negatives, past TB",0.32601,0.33376,417,,0.2902,0.36871,0.06439
+calcified granuloma,"positives, no past TB",0.30026,0.30421,90,,0.2602,0.34331,0.07569
+calcified granuloma,"positives, past TB",0.31161,0.32795,49,,0.26272,0.36918,0.0763
+calcification,"negatives, no past TB",0.20574,0.20456,796,,0.17854,0.23274,0.04086
+calcification,"negatives, past TB",0.20673,0.20547,417,,0.18242,0.23286,0.04096
+calcification,"positives, no past TB",0.19057,0.19132,90,,0.17009,0.21468,0.03836
+calcification,"positives, past TB",0.19872,0.20286,49,,0.17528,0.22297,0.0393
+focal opacity,"negatives, no past TB",0.18503,0.17903,796,,0.14927,0.21787,0.05071
+focal opacity,"negatives, past TB",0.18435,0.18141,417,,0.15132,0.2154,0.04764
+focal opacity,"positives, no past TB",0.18135,0.17764,90,,0.14814,0.20902,0.04369
+focal opacity,"positives, past TB",0.19397,0.1919,49,,0.17012,0.21734,0.03561
+consolidation,"negatives, no past TB",0.11192,0.10373,796,,0.07086,0.14458,0.05353
+consolidation,"negatives, past TB",0.10158,0.09609,417,,0.06495,0.12918,0.04978
+consolidation,"positives, no past TB",0.09823,0.08453,90,,0.06374,0.12499,0.0474
+consolidation,"positives, past TB",0.10564,0.10645,49,,0.08047,0.12546,0.03168
+pleural thickening,"negatives, no past TB",0.32454,0.3241,796,,0.2908,0.35935,0.0543
+pleural thickening,"negatives, past TB",0.32946,0.32878,417,,0.29565,0.36761,0.05559
+pleural thickening,"positives, no past TB",0.28422,0.28999,90,,0.25237,0.32233,0.06203
+pleural thickening,"positives, past TB",0.30673,0.30712,49,,0.26359,0.34828,0.06102
+bronchiectasis,"negatives, no past TB",0.21554,0.21387,796,,0.14948,0.27175,0.08734
+bronchiectasis,"negatives, past TB",0.22382,0.22357,417,,0.16488,0.28504,0.09151
+bronchiectasis,"positives, no past TB",0.25994,0.27011,90,,0.20322,0.32057,0.08908
+bronchiectasis,"positives, past TB",0.24574,0.24251,49,,0.15713,0.30949,0.09143

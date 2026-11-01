@@ -1,0 +1,14 @@
+{
+ "models": [
+  {
+   "model_id": "radino_full_clahe0_bin",
+   "head_type": "binary",
+   "variant": "full_clahe0",
+   "backbone": "microsoft/rad-dino@110cbc18",
+   "weight_path": "D:\\tb-triage\\artifacts\\p2\\dryrun\\head_logit_adjusted.npz",
+   "weight_sha256": "14a7e6cf38a2eff21aceb583759187ed9045f512f10155e448d5e6e3377c5c5d",
+   "n_classes": 2,
+   "is_primary": true
+  }
+ ]
+}

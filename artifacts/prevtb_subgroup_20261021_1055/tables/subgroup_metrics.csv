@@ -1,0 +1,5 @@
+model,subgroup,n,n_tb,n_negative,prevalence,auroc,ci95_lo,ci95_hi,auprc
+ours_regional_max_12x12,negatives_without_previous_TB,1858,280,1578,0.1507,0.781061,0.755291,0.80526,0.339547
+ours_regional_max_12x12,negatives_with_previous_TB,1130,280,850,0.2478,0.618164,0.581201,0.654416,0.334857
+lunit_3.9.0.1,negatives_without_previous_TB,1858,280,1578,0.1507,0.816985,0.790145,0.841952,0.480679
+lunit_3.9.0.1,negatives_with_previous_TB,1130,280,850,0.2478,0.719155,0.681569,0.754517,0.530051

@@ -1,0 +1,58 @@
+{
+ "created": "2026-11-01",
+ "bundle_version": 2,
+ "model": {
+  "model_id": "radino_regional_g12_max_bin",
+  "head_type": "regional_max",
+  "grid": 12,
+  "aggregator": "max",
+  "seeds": [
+   17,
+   29,
+   43,
+   61,
+   79
+  ],
+  "trainable_parameters": 3845,
+  "weight_path": "head.npz",
+  "weight_sha256": "03546031bcfc73dea0d47730676ea5db15258d6b4ebdd16ecb28815baa4093cf"
+ },
+ "backbone": "microsoft/rad-dino@110cbc18d5133582e320b43d53bf5c44e410c936",
+ "features": "512px lungs-masked -> 518 -> 37x37 patches -> 12x12 adaptive-avg regions, L2 per region",
+ "training_rows": {
+  "split": "train",
+  "n": 3241,
+  "positives": 541,
+  "categories": [
+   "active_tb",
+   "latent_tb",
+   "active_latent_tb",
+   "healthy"
+  ],
+  "sick_non_tb_excluded": true
+ },
+ "dev_auc": 0.9368,
+ "dev_auc_per_seed": [
+  0.9363,
+  0.937,
+  0.9374,
+  0.937,
+  0.9365
+ ],
+ "thresholds": {
+  "logit_at_spec_0.70": -3.3368,
+  "logit_at_spec_0.90": -0.9052,
+  "fitted_on": "TBX11K development (659) - never Vietnam, never calibration"
+ },
+ "known_external": {
+  "vietnam_report_auroc": 0.7242,
+  "vietnam_tune_auroc": 0.7237,
+  "shenzhen_auroc": 0.969,
+  "montgomery_auroc": 0.969,
+  "note": "from mil_final.json and p2/audit/cross_dataset_metrics.csv"
+ },
+ "fusion": "fusion.json (optional; EXPLORATORY)",
+ "attribution": "image logit = max over 144 regions of the region logit; the arg-max region is exactly the decision region",
+ "provisional": true,
+ "note": "v2 bundle. Split is the provisional C01; internal_test never read; Vietnam REPORT never read for any threshold or coefficient. Not clinically validated."
+}

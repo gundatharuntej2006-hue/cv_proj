@@ -1,0 +1,28 @@
+{
+  "host_ram": {
+    "available_gb": 4.32,
+    "total_gb": 16.39,
+    "percent_used": 73.7
+  },
+  "vram": {
+    "free_gb": 5.32,
+    "total_gb": 6.44,
+    "cap_80pct_gb": 5.15,
+    "peak_allocated_gb": 0.94,
+    "within_cap": true
+  },
+  "streaming_load_2708_cases": {
+    "seconds": 4.6,
+    "host_rss_increase_mb": 94.0,
+    "npz_on_disk_gb": 0.555
+  },
+  "regional_readout_2708_cases": {
+    "mean_ms": 17.732,
+    "sd_ms": 0.242,
+    "per_case_us": 6.55,
+    "warmup": 5,
+    "repeats": 20
+  },
+  "phase2_total_runtime_s": 440.2,
+  "note": "read-out over cached frozen features only; excludes RAD-DINO inference"
+}

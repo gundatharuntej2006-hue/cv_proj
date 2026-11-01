@@ -1,0 +1,42 @@
+{
+ "created": "2026-10-20",
+ "cohort": "Vietnam screening",
+ "n": 2708,
+ "n_tb": 280,
+ "gate": {
+  "k": 5,
+  "threshold": 0.7,
+  "bank_n": 4000,
+  "provenance": "alien_margin_100pct_both_pools",
+  "caveat": "threshold set against lateral/non-medical pools only"
+ },
+ "operating_threshold": {
+  "value": 2.476599,
+  "chosen_on": "TBX11K development at 70% specificity"
+ },
+ "mode_a": {
+  "sensitivity": 0.6214,
+  "specificity": 0.689,
+  "referrals": 929
+ },
+ "mode_b": {
+  "coverage": 0.8951,
+  "deferral_rate": 0.1049,
+  "tb_deferred": 21,
+  "non_tb_deferred": 263,
+  "tb_deferred_ci95": [
+   0.0496,
+   0.1119
+  ]
+ },
+ "mode_c_per_1000": {
+  "classifier_referrals": 324,
+  "deferred_for_review": 105,
+  "total_human_review": 429,
+  "tb_flagged": 62,
+  "tb_deferred": 8,
+  "tb_missed_outright": 34
+ },
+ "verdict": "The gate defers 21 tuberculosis cases. Those are not caught by the system; they depend on a human pathway whose outcomes we cannot measure.",
+ "note": "A deferred case is not a negative and not a caught case. No end-to-end clinical sensitivity is estimated, because downstream human-review outcomes are unavailable."
+}

@@ -1,0 +1,37 @@
+TUNE 1352, 139 positive, 466 previous TB, fingerprint 1aa55cd5c0eb2088 (pinned)
+  full                     12 fields AUROC 0.7941 ±0.0023 | prevTB 0.7349 | AUPRC 0.300 | sens 0.741
+  without sex              11 fields AUROC 0.7917 ±0.0022 | prevTB 0.7277 | AUPRC 0.297 | sens 0.740
+  without age_group        11 fields AUROC 0.7847 ±0.0022 | prevTB 0.7216 | AUPRC 0.290 | sens 0.733
+  without c                11 fields AUROC 0.7958 ±0.0023 | prevTB 0.7372 | AUPRC 0.303 | sens 0.743
+  without f                11 fields AUROC 0.7920 ±0.0022 | prevTB 0.7261 | AUPRC 0.296 | sens 0.733
+  without wl               11 fields AUROC 0.7922 ±0.0020 | prevTB 0.7334 | AUPRC 0.296 | sens 0.742
+  without ns               11 fields AUROC 0.7952 ±0.0021 | prevTB 0.7364 | AUPRC 0.304 | sens 0.742
+  without contact          11 fields AUROC 0.7948 ±0.0024 | prevTB 0.7340 | AUPRC 0.304 | sens 0.744
+  without past_tb          11 fields AUROC 0.7902 ±0.0022 | prevTB 0.7394 | AUPRC 0.283 | sens 0.757
+  without dm               10 fields AUROC 0.7956 ±0.0024 | prevTB 0.7314 | AUPRC 0.302 | sens 0.736
+  without scanner          10 fields AUROC 0.7803 ±0.0027 | prevTB 0.6941 | AUPRC 0.297 | sens 0.718
+  image + past_tb           1 fields AUROC 0.7591 ±0.0012 | prevTB 0.6443 | AUPRC 0.270 | sens 0.683
+  image + scanner           2 fields AUROC 0.7788 ±0.0011 | prevTB 0.7102 | AUPRC 0.267 | sens 0.717
+  image + symptoms          4 fields AUROC 0.7623 ±0.0016 | prevTB 0.6639 | AUPRC 0.267 | sens 0.668
+  image + demographics      2 fields AUROC 0.7692 ±0.0015 | prevTB 0.6676 | AUPRC 0.269 | sens 0.675
+  questionnaire only       10 fields AUROC 0.7803 ±0.0027 | prevTB 0.6941 | AUPRC 0.297 | sens 0.718
+  comparator full          12 fields AUROC 0.7778 ±0.0019 | prevTB 0.7144 | AUPRC 0.306 | sens 0.745
+gate X raw            expected 0.7585 here 0.7585 pass
+gate full             expected 0.7941 here 0.7941 pass
+gate comparator full  expected 0.7778 here 0.7778 pass
+without sex - full           -0.0026 [-0.0101, +0.0058] | prevTB -0.0080 [-0.0223, +0.0082]
+without age_group - full     -0.0096 [-0.0208, +0.0011] | prevTB -0.0130 [-0.0401, +0.0129]
+without c - full             +0.0014 [+0.0010, +0.0019] | prevTB +0.0016 [+0.0003, +0.0030]
+without f - full             -0.0023 [-0.0088, +0.0030] | prevTB -0.0091 [-0.0262, +0.0061]
+without wl - full            -0.0022 [-0.0089, +0.0041] | prevTB -0.0014 [-0.0192, +0.0130]
+without ns - full            +0.0011 [+0.0006, +0.0017] | prevTB +0.0016 [+0.0002, +0.0032]
+without contact - full       +0.0005 [-0.0028, +0.0033] | prevTB -0.0019 [-0.0101, +0.0058]
+without past_tb - full       -0.0040 [-0.0137, +0.0059] | prevTB +0.0042 [-0.0016, +0.0102]
+without dm - full            +0.0014 [-0.0022, +0.0054] | prevTB -0.0042 [-0.0128, +0.0038]
+without scanner - full       -0.0138 [-0.0250, -0.0029] | prevTB -0.0429 [-0.0702, -0.0180]  <- carries
+image + past_tb - full       -0.0358 [-0.0584, -0.0138] | prevTB -0.0929 [-0.1478, -0.0408]
+image + scanner - full       -0.0163 [-0.0335, +0.0002] | prevTB -0.0268 [-0.0736, +0.0164]
+image + symptoms - full      -0.0325 [-0.0513, -0.0129] | prevTB -0.0721 [-0.1119, -0.0314]
+image + demographics - full  -0.0256 [-0.0438, -0.0068] | prevTB -0.0689 [-0.1067, -0.0303]
+questionnaire only - full    -0.0138 [-0.0250, -0.0029] | prevTB -0.0429 [-0.0702, -0.0180]
+done in 315.5 s

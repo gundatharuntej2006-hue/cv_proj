@@ -1,0 +1,37 @@
+arm,concept,group,n,role,spearman_rho
+B0,consolidation,negatives (all),1213,audited concept,-0.3
+B0,consolidation,positives (all),139,audited concept,-0.3853
+B0,no consolidation,negatives (all),1213,diagnostic probe,-0.5339
+B0,no consolidation,positives (all),139,diagnostic probe,-0.3572
+B0,scarring,negatives (all),1213,audited concept,0.5661
+B0,scarring,positives (all),139,audited concept,0.2375
+B0,no scarring,negatives (all),1213,diagnostic probe,0.3009
+B0,no scarring,positives (all),139,diagnostic probe,0.0674
+B0,clear lungs,negatives (all),1213,diagnostic probe,-0.4694
+B0,clear lungs,positives (all),139,diagnostic probe,-0.3278
+B0,lungs are clear,negatives (all),1213,diagnostic probe,-0.4107
+B0,lungs are clear,positives (all),139,diagnostic probe,-0.2802
+B0,no acute cardiopulmonary process,negatives (all),1213,diagnostic probe,-0.6012
+B0,no acute cardiopulmonary process,positives (all),139,diagnostic probe,-0.4016
+B0,normal chest,negatives (all),1213,diagnostic probe,-0.4348
+B0,normal chest,positives (all),139,diagnostic probe,-0.3589
+B1,consolidation,negatives (all),1213,audited concept,-0.2933
+B1,consolidation,positives (all),139,audited concept,-0.363
+B1,no consolidation,negatives (all),1213,diagnostic probe,-0.5358
+B1,no consolidation,positives (all),139,diagnostic probe,-0.3589
+B1,scarring,negatives (all),1213,audited concept,0.5317
+B1,scarring,positives (all),139,audited concept,0.189
+B1,no scarring,negatives (all),1213,diagnostic probe,0.2665
+B1,no scarring,positives (all),139,diagnostic probe,0.0259
+B1,clear lungs,negatives (all),1213,diagnostic probe,-0.4685
+B1,clear lungs,positives (all),139,diagnostic probe,-0.3237
+B1,lungs are clear,negatives (all),1213,diagnostic probe,-0.4127
+B1,lungs are clear,positives (all),139,diagnostic probe,-0.2811
+B1,no acute cardiopulmonary process,negatives (all),1213,diagnostic probe,-0.5994
+B1,no acute cardiopulmonary process,positives (all),139,diagnostic probe,-0.4007
+B1,normal chest,negatives (all),1213,diagnostic probe,-0.4305
+B1,normal chest,positives (all),139,diagnostic probe,-0.3516
+-,consolidation  vs  no consolidation,"image-side, all 1352",1352,concept-to-concept,0.342
+-,scarring  vs  no scarring,"image-side, all 1352",1352,concept-to-concept,0.7381
+-,consolidation  vs  clear lungs,"image-side, all 1352",1352,concept-to-concept,0.1773
+-,consolidation  vs  normal chest,"image-side, all 1352",1352,concept-to-concept,-0.1723

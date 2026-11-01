@@ -1,0 +1,34 @@
+seed: 17
+head:
+  type: standardise + logistic regression
+  C_grid: [0.01, 0.1, 1.0, 10.0]
+  C_selected_on: development          # never on TUNE, REPORT or internal_test
+  max_iter: 4000
+primary_comparison: matched global heads
+secondary_comparison: regional, via pool_to_grid to a common 12x12 grid
+pooling_harmonisation: adaptive_avg_pool2d then L2 normalise, declared in advance
+threshold:
+  target_specificity: 0.70
+  fitted_on: development
+bootstrap:
+  n: 4000
+  seed: 0
+  paired: true
+  patient_level: when patient ids exist
+encoders:
+  raddino:
+    hf_id: microsoft/rad-dino
+    revision: 110cbc18d5133582e320b43d53bf5c44e410c936
+    licence: MIT
+    dim: 768
+    input_px: 518
+    patch_grid: 37
+  raydino:
+    source: facebookresearch/dinov2
+    entrypoint: xray_dino_vitl16
+    licence: FAIR Noncommercial Research License (weights); Apache-2.0 (code)
+    weights: gated - user must request access and supply the path
+    dim: 1024            # expected for ViT-L; assert at runtime
+    input_px: UNKNOWN    # read from the model card; do not guess
+    patch_grid: UNKNOWN
+locked_partition: internal_test

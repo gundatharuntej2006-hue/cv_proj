@@ -1,0 +1,179 @@
+{
+ "created": "2026-10-16",
+ "t_lower": 0.9068834781646729,
+ "temperature": 0.4927794188260948,
+ "active_vs_latent_separability": {
+  "development": {
+   "auc_active_vs_latent": 0.5532,
+   "n_active": 47,
+   "n_latent": 10
+  },
+  "calibration": {
+   "auc_active_vs_latent": 0.5794,
+   "n_active": 78,
+   "n_latent": 18
+  }
+ },
+ "latent_share_of_tb_positives": 0.2089,
+ "dev_auc": 0.9949,
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "by_subtype": [
+  {
+   "split": "development",
+   "subtype": "active_tb",
+   "n": 47,
+   "median_p": 0.9998,
+   "sens_at_t_lower": 0.9574,
+   "ci_at_t_lower": [
+    0.8575,
+    0.9883
+   ],
+   "sens_at_95_spec": 0.9787,
+   "ci_at_95_spec": [
+    0.8889,
+    0.9962
+   ],
+   "threshold_95": 0.437648
+  },
+  {
+   "split": "development",
+   "subtype": "latent_tb",
+   "n": 10,
+   "median_p": 0.9989,
+   "sens_at_t_lower": 0.9,
+   "ci_at_t_lower": [
+    0.5958,
+    0.9821
+   ],
+   "sens_at_95_spec": 0.9,
+   "ci_at_95_spec": [
+    0.5958,
+    0.9821
+   ],
+   "threshold_95": 0.437648
+  },
+  {
+   "split": "development",
+   "subtype": "active_latent_tb",
+   "n": 2,
+   "median_p": 0.9998,
+   "sens_at_t_lower": 1.0,
+   "ci_at_t_lower": [
+    0.3424,
+    1.0
+   ],
+   "sens_at_95_spec": 1.0,
+   "ci_at_95_spec": [
+    0.3424,
+    1.0
+   ],
+   "threshold_95": 0.437648
+  },
+  {
+   "split": "development",
+   "subtype": "ALL_TB_blended",
+   "n": 59,
+   "median_p": 0.9997,
+   "sens_at_t_lower": 0.9492,
+   "ci_at_t_lower": [
+    0.8608,
+    0.9826
+   ],
+   "sens_at_95_spec": 0.9661,
+   "ci_at_95_spec": null,
+   "threshold_95": 0.437648
+  },
+  {
+   "split": "calibration",
+   "subtype": "active_tb",
+   "n": 78,
+   "median_p": 0.9998,
+   "sens_at_t_lower": 0.9103,
+   "ci_at_t_lower": [
+    0.8262,
+    0.9558
+   ],
+   "sens_at_95_spec": 1.0,
+   "ci_at_95_spec": [
+    0.9531,
+    1.0
+   ],
+   "threshold_95": 0.384077
+  },
+  {
+   "split": "calibration",
+   "subtype": "latent_tb",
+   "n": 18,
+   "median_p": 0.9992,
+   "sens_at_t_lower": 0.8889,
+   "ci_at_t_lower": [
+    0.672,
+    0.969
+   ],
+   "sens_at_95_spec": 0.9444,
+   "ci_at_95_spec": [
+    0.7424,
+    0.9901
+   ],
+   "threshold_95": 0.384077
+  },
+  {
+   "split": "calibration",
+   "subtype": "active_latent_tb",
+   "n": 3,
+   "median_p": 1.0,
+   "sens_at_t_lower": 1.0,
+   "ci_at_t_lower": [
+    0.4385,
+    1.0
+   ],
+   "sens_at_95_spec": 1.0,
+   "ci_at_95_spec": [
+    0.4385,
+    1.0
+   ],
+   "threshold_95": 0.384077
+  },
+  {
+   "split": "calibration",
+   "subtype": "ALL_TB_blended",
+   "n": 99,
+   "median_p": 0.9997,
+   "sens_at_t_lower": 0.9091,
+   "ci_at_t_lower": [
+    0.8362,
+    0.9514
+   ],
+   "sens_at_95_spec": 0.9899,
+   "ci_at_95_spec": null,
+   "threshold_95": 0.384077
+  }
+ ],
+ "pooled_active_vs_latent": {
+  "active_tb": {
+   "n": 125,
+   "detected": 116,
+   "sens": 0.928,
+   "ci95": [
+    0.8688,
+    0.9617
+   ]
+  },
+  "latent_tb": {
+   "n": 28,
+   "detected": 25,
+   "sens": 0.8929,
+   "ci95": [
+    0.728,
+    0.9629
+   ]
+  }
+ },
+ "note": "binary_labels maps every TB subtype to positive, so the headline sensitivity blends active and latent disease. Provisional split; internal_test untouched. Calibration was used to fit the thresholds, so its rows are in-sample for t_lower."
+}

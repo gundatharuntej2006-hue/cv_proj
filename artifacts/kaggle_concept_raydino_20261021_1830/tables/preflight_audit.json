@@ -1,0 +1,111 @@
+{
+  "generated": "2026-10-21",
+  "locked_partition": "internal_test",
+  "locked_partition_policy": "row count read from the split manifest only; no image path, label, score or ID is loaded",
+  "tbx11k_splits_usable": {
+    "train": 5941,
+    "calibration": 899,
+    "development": 659
+  },
+  "n_internal_test_rows_from_manifest_only": 901,
+  "locked_rows_dropped_before_any_use": true,
+  "vietnam_splits": {
+    "TUNE": 1352,
+    "REPORT": 1356,
+    "overlap": 0
+  },
+  "vietnam_REPORT_policy": "NOT READ in this run. Not used for selection, tuning, thresholds or evaluation.",
+  "target_label_semantics": {
+    "rows": [
+      {
+        "tbx11k_category": "active_latent_tb",
+        "tb_label": 1,
+        "active_tb_label": 1,
+        "n": 30
+      },
+      {
+        "tbx11k_category": "active_tb",
+        "tb_label": 1,
+        "active_tb_label": 1,
+        "n": 631
+      },
+      {
+        "tbx11k_category": "healthy",
+        "tb_label": 0,
+        "active_tb_label": 0,
+        "n": 3800
+      },
+      {
+        "tbx11k_category": "latent_tb",
+        "tb_label": 1,
+        "active_tb_label": 0,
+        "n": 139
+      },
+      {
+        "tbx11k_category": "sick_non_tb",
+        "tb_label": 0,
+        "active_tb_label": 0,
+        "n": 3800
+      }
+    ],
+    "reference_pipeline_target": "tb_label == 1, i.e. positives = active_tb + latent_tb + active_latent_tb",
+    "known_mismatch": "latent_tb has tb_label=1 but active_tb_label=0. The frozen baseline trains on tb_label. BOTH encoders in Stage 2 must use this same mapping so the comparison is fair; the mapping is a documented limitation, not something to fix in one arm only.",
+    "alternative_if_rejected": "an active-only target (active_tb + active_latent_tb positive, latent_tb negative) was measured in an earlier run as a prespecified secondary arm and gave +0.0292 on a past-TB subgroup endpoint; it is NOT adopted and must not be mixed into this comparison."
+  },
+  "encoder_comparability": {
+    "RAD-DINO": {
+      "arch": "ViT-B/14",
+      "dim": 768,
+      "input_px": 518,
+      "patch_grid": 37,
+      "revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+      "cached_features_available": true
+    },
+    "RayDINO (XRay-DINO)": {
+      "arch": "ViT-L/16",
+      "dim": "1024 (expected for ViT-L)",
+      "input_px": "UNKNOWN - read from the model card after access is granted",
+      "patch_grid": "UNKNOWN - depends on input px; 16 does not divide 518",
+      "cached_features_available": false
+    },
+    "consequence": "patch grids and embedding dimensions differ, so the cached RAD-DINO tokens CANNOT be reused for RayDINO. Images must be re-encoded. Per the protocol the PRIMARY comparison is matched GLOBAL heads; a regional comparison requires a declared deterministic pooling to a common GxG grid and is secondary."
+  },
+  "stage1_score_only_TUNE": {
+    "cohort": "Vietnam TUNE only (n=1352). REPORT not read.",
+    "classification": "EXPLORATORY - TUNE has been used repeatedly in prior experiments and is not independent validation.",
+    "groups": {
+      "negative_past_tb": {
+        "n": 417,
+        "median_score": 2.0509
+      },
+      "negative_no_past_tb": {
+        "n": 796,
+        "median_score": -0.3475
+      },
+      "positive_past_tb": {
+        "n": 49,
+        "median_score": 3.0858
+      },
+      "positive_no_past_tb": {
+        "n": 90,
+        "median_score": 3.1505
+      }
+    },
+    "negatives_median_score_difference_pastTB_minus_noPastTB": {
+      "estimate": 2.3984,
+      "ci95": [
+        1.9685,
+        3.1057
+      ],
+      "excludes_zero": true,
+      "method": "10,000-replicate bootstrap of the difference in medians, seed 20261021"
+    },
+    "score_separates_pastTB_among_negatives_auroc": 0.6957,
+    "score_separates_pastTB_among_positives_auroc": 0.4973,
+    "interpretation_limits": [
+      "past_tb is a CLINICAL HISTORY variable, not a radiologist annotation of fibrosis or scarring. No image-visible finding may be inferred from it.",
+      "a score difference by history is an association, not evidence that the classifier uses any particular visual cue.",
+      "no concept score was computed: see the licence and asset blockers."
+    ]
+  }
+}

@@ -1,0 +1,116 @@
+# Unified diff, documentation only, 2026-10-21
+# Apply from the repo root: patch -p1 -i CHANGES.diff
+
+--- a/docs/p2_vietnam_result.md
++++ b/docs/p2_vietnam_result.md
+@@ -159,8 +159,8 @@
+ 
+ This follows directly from a result we already had and did not join up.
+ `p2_control_group.md` found that TB versus *healthy* is AUC 1.0000 while TB versus
+-*sick-but-not-TB* is 0.9861 — on TBX11K, where "sick" is a curated category. A consecutive
+-screening cohort is overwhelmingly the second case and then some: its Xpert-negatives include
++*sick-but-not-TB* is 0.9861 — on TBX11K, where "sick" is a curated category. A screening
++cohort is overwhelmingly the second case and then some: its Xpert-negatives include
+ old healed tuberculosis, COPD and other chronic disease, and its positives are
+ **screen-detected** — often early, minimally symptomatic, with subtle radiographic change —
+ rather than the florid, lesion-annotated cases TBX11K is built from.
+
+--- a/docs/p2_focal_pooling_final.md
++++ b/docs/p2_focal_pooling_final.md
+@@ -6,8 +6,12 @@
+ ## Headline
+ 
+ Replacing RAD-DINO's globally pooled output with **max-pooling over a 12×12 grid of region
+-scores** raises performance on a TB screening cohort from **0.6151 to 0.7242**, using the
+-same backbone, the same training data, and no fine-tuning.
++scores** reaches **0.7242 [0.6843, 0.7618]** on the reserved Vietnam **REPORT** half
++(n = 1,356, 141 TB), using the same backbone, the same training data, and no fine-tuning.
++The earlier configurations on this cohort scored **0.6151** and **0.6743**, but both were
++measured on the **full 2,708-participant cohort**, so **0.6151 → 0.7242 is not a
++like-for-like before/after** and must not be quoted as one improvement. The table below
++states each figure with its own evaluation set.
+ 
+ > **Cohort provenance (added 2026-10-21).** The screening cohort is the Dryad test library
+ > [10.5061/dryad.5tb2rbpcv](https://doi.org/10.5061/dryad.5tb2rbpcv), identified on the
+@@ -22,16 +26,30 @@
+ > screening population rather than a curated case-control set. The Lunit comparator figure
+ > below is that paper's published comparator, not a benchmark assembled here.
+ 
+-| | Vietnam (screening cohort) |
+-|---|---|
+-| original global model | 0.6151 |
+-| + healthy-only negatives, lungs-only masking | 0.6744 |
+-| **+ focal pooling (12×12, max)** | **0.7242 [0.6843, 0.7618]** |
+-| *commercial comparator (Lunit INSIGHT 3.9.0.1)* | *0.7862* |
+-
+-**The gap to a certified commercial product narrowed from 0.171 to 0.062**, a two-thirds
+-reduction, from an aggregation change requiring no new data, no fine-tuning and no
+-additional parameters.
++> **These rows are not a like-for-like before/after.** Two things change down the table,
++> not one: the configuration *and* the evaluation set. The first two rows are the **full
++> 2,708-participant cohort**; the last two are the **reserved REPORT half (n = 1,356, 141
++> TB)**. A global-pooling score on the REPORT half alone was never computed, so the
++> progression cannot be put on one denominator, and **the 0.6151 → 0.7242 difference must
++> not be quoted as a single improvement.** Each row is stated with its own evaluation set
++> below.
++
++| configuration | evaluation set | n | TB | AUROC | source |
++|---|---|---|---|---|---|
++| full image, all negatives, global pooling | full cohort | 2,708 | 280 | 0.6151 | `vietnam_eval.json`, variant `full`, scope `all` |
++| lungs-only masking, healthy-only negatives, global pooling | full cohort | 2,708 | 280 | **0.6743** [0.6443, 0.7039] | `hard_negatives.json`, `lungs_only` × `healthy_only`, 5 seeds |
++| lungs-only, healthy-only, **focal pooling (12×12, max)** | **REPORT half** | **1,356** | **141** | **0.7242** [0.6843, 0.7618] | `mil_final.json`, Vietnam REPORT |
++| *commercial comparator, Lunit INSIGHT 3.9.0.1* | *REPORT half* | *1,356* | *141* | *0.7862* | *`mil_final.json`* |
++| *commercial comparator, Lunit INSIGHT 3.9.0.1* | *full cohort* | *2,708* | *280* | *0.7827* | *`vietnam_eval.json`, `lunit_3901`* |
++
++**What can be said on one denominator.** On the **full cohort**, the configuration change
++from the first row to the second is **+0.059** (0.6151 → 0.6743), and the gap to the
++commercial comparator there is **0.168** (0.7827 − 0.6151). On the **REPORT half**, the
++gap to the comparator is **0.062** (0.7862 − 0.7242). **These two gaps are measured on
++different populations and the narrowing from 0.168 to 0.062 therefore conflates the
++configuration change with the change of evaluation set.** The focal-pooling contribution
++on its own is established not by this table but by the pre-registered TUNE/REPORT protocol
++and the matched `mean` control in §"The sweep" below.
+ 
+ > **This architecture is not novel.** Patch-level aggregation over a frozen chest-radiograph
+ > foundation model for tuberculosis is established prior art — see §"Relation to prior work"
+@@ -147,7 +165,7 @@
+ | adding sick negatives | better | worse |
+ | more training data | flat / better | flat / worse |
+ | attention + MLP capacity | 0.9495, best | 0.6416, worst |
+-| focal pooling | 0.9889 → 0.9368 | 0.6744 → 0.7242 |
++| focal pooling | 0.9889 → 0.9368 | 0.6743 (full cohort) → 0.7242 (REPORT half) — different denominators, see the Headline note |
+ 
+ On this benchmark, **fitting it better makes you transfer worse**. That is now the clearest
+ regularity in the project and arguably its most useful single sentence: TBX11K development
+
+--- a/report/paper_draft.md
++++ b/report/paper_draft.md
+@@ -309,7 +309,7 @@
+ Our model calls nearly everything tuberculosis. This follows from a property of the benchmark
+ that is visible internally once looked for: TB-versus-healthy on TBX11K is **AUC 1.0000**
+ (interval [1.0000, 1.0000] — a completely saturated metric), while TB-versus-sick is 0.9861.
+-A consecutive screening cohort is the second case and more: its Xpert-negatives include
++A screening cohort is the second case and more: its Xpert-negatives include
+ healed tuberculosis, COPD and other chronic disease, and its cases are screen-detected rather
+ than the lesion-annotated examples a detection benchmark is built from. The model learned to
+ recognise abnormality; in a screening queue, abnormality is the base rate.
+@@ -325,8 +325,17 @@
+ 
+ Global average pooling summarises the whole radiograph in one vector. Tuberculosis is focal.
+ Replacing it with a maximum over a 12×12 grid of region scores, on the same frozen backbone
+-with the same training data and seeds, moves the screening-cohort figure from 0.6151 to
+-**0.7242 [0.6843, 0.7618]**, against the commercial comparator's 0.7862.
++with the same training data and seeds, reaches **0.7242 [0.6843, 0.7618]** on the reserved
++**REPORT half** (n = 1,356, 141 TB), against the commercial comparator's **0.7862** on the
++same half — a gap of 0.062.
++
++**The earlier figures on this cohort are not on the same denominator.** The 0.6151
++full-image model and the 0.6743 lungs-only global model were both scored on the **full
++2,708-participant cohort**, where the comparator scores 0.7827 — a gap of 0.168. A
++global-pooling score on the REPORT half alone was never computed, so **0.6151 → 0.7242
++cannot be read as a single before/after improvement**: it mixes a configuration change
++with a change of evaluation set. What the pre-registration does establish is the
++aggregator's effect *within* the REPORT half, via the matched `mean` control below.
+ 
+ Selection was pre-registered: the cohort was split 1,352 / 1,356 before any sweep, the
+ scoring script was committed before results existed, and **selection optimism was −0.0005**.

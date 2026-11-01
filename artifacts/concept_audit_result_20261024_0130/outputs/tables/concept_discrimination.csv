@@ -1,0 +1,10 @@
+auprc,auroc,auroc_ci95_hi,auroc_ci95_lo,concept,n_neg,n_pos,note,prevalence
+0.1686,0.5794,0.6358,0.5281,fibrosis,1213,139,a concept score is not a TB classifier; descriptive only,0.1028
+0.0995,0.4941,0.5422,0.4454,scarring,1213,139,a concept score is not a TB classifier; descriptive only,0.1028
+0.1285,0.5993,0.648,0.5535,volume loss,1213,139,a concept score is not a TB classifier; descriptive only,0.1028
+0.0858,0.3921,0.4502,0.3428,calcified granuloma,1213,139,a concept score is not a TB classifier; descriptive only,0.1028
+0.083,0.419,0.4665,0.3724,calcification,1213,139,a concept score is not a TB classifier; descriptive only,0.1028
+0.1006,0.5153,0.5606,0.4681,focal opacity,1213,139,a concept score is not a TB classifier; descriptive only,0.1028
+0.0912,0.4694,0.5146,0.4234,consolidation,1213,139,a concept score is not a TB classifier; descriptive only,0.1028
+0.0741,0.3358,0.3829,0.288,pleural thickening,1213,139,a concept score is not a TB classifier; descriptive only,0.1028
+0.1511,0.6202,0.6694,0.5701,bronchiectasis,1213,139,a concept score is not a TB classifier; descriptive only,0.1028

@@ -1,0 +1,115 @@
+{
+ "runtime": {
+  "python": "3.13.15",
+  "platform": "Linux-6.18.55+-x86_64-with-glibc2.39",
+  "ram_available_gb": 31.66,
+  "ram_total_gb": 33.66,
+  "ram_percent_used": 5.9,
+  "gpu": "Tesla T4",
+  "vram_free_gb": 15.53,
+  "disk_free_gb": 20.9
+ },
+ "dependencies": {
+  "numpy": "2.1.3",
+  "pandas": "2.3.3",
+  "scipy": "1.16.3",
+  "sklearn": "1.6.1",
+  "torch": "2.11.0+cu128",
+  "torchvision": "0.26.0+cu128",
+  "PIL": "13.0.0",
+  "huggingface_hub": "1.29.0",
+  "psutil": "5.9.5"
+ },
+ "pinned_requirements": {
+  "numpy": "2.2.6",
+  "pandas": "3.0.3",
+  "scikit-learn": "1.9.0",
+  "scipy": "1.17.1",
+  "torch": "2.6.0"
+ },
+ "layout": {
+  "img_dir": "/kaggle/input/datasets/atuldhull13/tb-triage-vietnam-tune-concept-audit/concept-audit-tune/concept-audit-tune/vietnam_img512_tune",
+  "scores": "/kaggle/input/datasets/atuldhull13/tb-triage-vietnam-tune-concept-audit/concept-audit-tune/concept-audit-tune/vietnam_case_scores_tune.csv",
+  "meta": "/kaggle/input/datasets/atuldhull13/tb-triage-vietnam-tune-concept-audit/concept-audit-tune/concept-audit-tune/vietnam_meta_tune.csv",
+  "split": "/kaggle/input/datasets/atuldhull13/tb-triage-vietnam-tune-concept-audit/concept-audit-tune/concept-audit-tune/vietnam_tune_report_split.json",
+  "manifest": "/kaggle/input/datasets/atuldhull13/tb-triage-vietnam-tune-concept-audit/concept-audit-tune/concept-audit-tune/tune_manifest.json",
+  "layout": "staged",
+  "base": "/kaggle/input/datasets/atuldhull13/tb-triage-vietnam-tune-concept-audit/concept-audit-tune/concept-audit-tune",
+  "out_dir": "/kaggle/working",
+  "writable": "True"
+ },
+ "cohort": {
+  "n_cases": 1352,
+  "n_tb_positive": 139,
+  "n_previous_tb": 466,
+  "cohort_fingerprint_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+  "fingerprint_matches_pinned": true,
+  "images_missing": 0,
+  "images_present_not_approved": 0,
+  "n_concepts_primary": 9,
+  "expected_similarity_shape": [
+   1352,
+   9
+  ]
+ },
+ "partition_scan_scope": [
+  "/kaggle/input",
+  "/kaggle/input/datasets/atuldhull13/tb-triage-vietnam-tune-concept-audit/concept-audit-tune/concept-audit-tune"
+ ],
+ "forbidden_paths_visible": [],
+ "model": {
+  "repo": "peterhan91/CLEAR",
+  "pinned_revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+  "input_px": 448,
+  "expected_concept_rows": 368294,
+  "revision_is_a_commit": true,
+  "resolved": {
+   "sha": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+   "files": {
+    "best_model.pt": {
+     "bytes": 603060057,
+     "sha256": "da1617a7d47970667a7a158eabfa4c4f3798d5d03b7f98caec150d8ee6ab6a03"
+    },
+    "concept_embeddings_368294.pt": {
+     "bytes": 1131400935,
+     "sha256": "7241c5b920c4394b507f2c4bd89f1d0b70775399caaa2f5323cb373afb1a00d6"
+    },
+    "mimic_concepts.csv": {
+     "bytes": 22208546,
+     "sha256": "93e975b722422b64f18b57161ac9894fe30ac7a04cc68b7aa8a2e01f6d0fc439"
+    }
+   }
+  },
+  "pinned_assets": {
+   "best_model.pt": {
+    "bytes": 603060057,
+    "sha256": "da1617a7d47970667a7a158eabfa4c4f3798d5d03b7f98caec150d8ee6ab6a03"
+   },
+   "concept_embeddings_368294.pt": {
+    "bytes": 1131400935,
+    "sha256": "7241c5b920c4394b507f2c4bd89f1d0b70775399caaa2f5323cb373afb1a00d6"
+   },
+   "mimic_concepts.csv": {
+    "bytes": 22208546,
+    "sha256": "93e975b722422b64f18b57161ac9894fe30ac7a04cc68b7aa8a2e01f6d0fc439"
+   }
+  }
+ },
+ "network_required": {
+  "required": true,
+  "why": [
+   "the pinned CLEAR assets are fetched from huggingface.co at run time",
+   "torch.hub fetches the DINOv2 ViT-B/14-reg architecture from github.com"
+  ],
+  "offline_possible": "only if both are pre-attached as Kaggle datasets and the loaders are pointed at them; that is not how this package is written, so a fully offline run is NOT currently possible"
+ },
+ "blockers": [],
+ "warnings": [
+  "numpy is 2.1.3, pinned 2.2.6. Results may differ slightly; this is recorded, not silently accepted.",
+  "pandas is 2.3.3, pinned 3.0.3. Results may differ slightly; this is recorded, not silently accepted.",
+  "scikit-learn is 1.6.1, pinned 1.9.0. Results may differ slightly; this is recorded, not silently accepted.",
+  "scipy is 1.16.3, pinned 1.17.1. Results may differ slightly; this is recorded, not silently accepted.",
+  "torch is 2.11.0+cu128, pinned 2.6.0. Results may differ slightly; this is recorded, not silently accepted."
+ ],
+ "verdict": "GO"
+}

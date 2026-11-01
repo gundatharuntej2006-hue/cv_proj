@@ -1,0 +1,11 @@
+encoder,set,n,s_per_img
+D2,tbx_train,3241,0.0482
+D2,tbx_dev,659,0.0462
+D2,tbx_cal,899,0.0543
+D2,vie_tune,1352,0.0445
+D2,peak_gpu_gb,0,0.686
+S,tbx_train,3241,0.0352
+S,tbx_dev,659,0.0352
+S,tbx_cal,899,0.0352
+S,vie_tune,1352,0.0352
+S,peak_gpu_gb,0,0.531

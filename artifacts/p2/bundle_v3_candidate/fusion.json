@@ -1,0 +1,83 @@
+{
+ "status": "EXPLORATORY - fitted on Vietnam TUNE (exposed); optional at inference; scanner columns are site calibration, not clinical context (R23)",
+ "source_run": "artifacts/fusion_on_stacked_head_20261101_0800",
+ "model": "logistic regression, L2, C=1.0, on standardised image score + 12 fields",
+ "cv_result": {
+  "auroc_image_only": 0.7585,
+  "auroc_fused": 0.7941,
+  "delta": 0.0365,
+  "ci95": [
+   0.0154,
+   0.0576
+  ],
+  "prev_tb_auroc_image_only": 0.6501,
+  "prev_tb_auroc_fused": 0.7349,
+  "vs_comparator_raw_0.7780": {
+   "delta": 0.017,
+   "ci95": [
+    -0.0193,
+    0.0527
+   ]
+  }
+ },
+ "field_decomposition_R23": {
+  "questionnaire_only_10_fields": 0.7803,
+  "image_plus_scanner_only": 0.7788,
+  "cost_of_dropping_scanner": {
+   "delta": -0.0138,
+   "ci95": [
+    -0.025,
+    -0.0029
+   ],
+   "prev_tb_delta": -0.0429
+  },
+  "note": "the scanner term is fitted to the two Dryad scanners and has no meaning at another site; a new site needs its own term fitted on local labelled data"
+ },
+ "features_order": [
+  "image_score_std",
+  "sex",
+  "age_group",
+  "c",
+  "f",
+  "wl",
+  "ns",
+  "contact",
+  "past_tb",
+  "dm",
+  "dm_unknown",
+  "scan1",
+  "scan2"
+ ],
+ "feature_definitions": {
+  "sex": "0/1 as in the Dryad CSV",
+  "age_group": "1 if Dryad age_group == 2 else 0",
+  "c": "cough 0/1",
+  "f": "fever 0/1",
+  "wl": "weight loss 0/1",
+  "ns": "night sweats 0/1",
+  "contact": "TB contact 0/1",
+  "past_tb": "self-reported previous TB 0/1",
+  "dm": "1 if diabetes == 1 else 0",
+  "dm_unknown": "1 if diabetes field == 99 else 0",
+  "scan1": "1 if scanner == 1",
+  "scan2": "1 if scanner == 2 (scanner 3 is reference)"
+ },
+ "intercept": -2.857102335314596,
+ "image_score_std": 1.1471985300346388,
+ "score_mean": -1.2237621545791626,
+ "score_sd": 2.1078810691833496,
+ "clinical": {
+  "sex": 0.513721805788727,
+  "age_group": -0.7299787869984504,
+  "c": -0.002581948705389243,
+  "f": 0.7482834428038587,
+  "wl": 0.6820186820711254,
+  "ns": 0.12790581818646476,
+  "contact": 0.3146394372870411,
+  "past_tb": -0.5562580866565142,
+  "dm": 0.19793016453769804,
+  "dm_unknown": -0.2505484692368054,
+  "scan1": 0.7689638976373285,
+  "scan2": 0.7777453292767085
+ }
+}

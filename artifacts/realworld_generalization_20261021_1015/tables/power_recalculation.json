@@ -1,0 +1,61 @@
+{
+  "endpoint": "AUROC, active TB vs Xpert-negative participants with past TB",
+  "observed": {
+    "n": 1130,
+    "n_tb": 280,
+    "n_neg": 850,
+    "prevalence_within_subgroup": 0.2478,
+    "arm_H_auroc": 0.6173,
+    "arm_L_auroc": 0.6465,
+    "paired_delta_L_minus_H": 0.0292,
+    "se_paired_delta": 0.00355,
+    "se_single_arm_auroc": 0.01912
+  },
+  "paired_sample_size": [
+    {
+      "target_delta": 0.029,
+      "required_subgroup_n": 134,
+      "required_tb_cases": 33
+    },
+    {
+      "target_delta": 0.05,
+      "required_subgroup_n": 45,
+      "required_tb_cases": 12
+    },
+    {
+      "target_delta": 0.075,
+      "required_subgroup_n": 20,
+      "required_tb_cases": 5
+    },
+    {
+      "target_delta": 0.1,
+      "required_subgroup_n": 12,
+      "required_tb_cases": 3
+    }
+  ],
+  "precision_sample_size": [
+    {
+      "target_ci_halfwidth": 0.05,
+      "required_subgroup_n": 635
+    },
+    {
+      "target_ci_halfwidth": 0.04,
+      "required_subgroup_n": 992
+    },
+    {
+      "target_ci_halfwidth": 0.03,
+      "required_subgroup_n": 1763
+    },
+    {
+      "target_ci_halfwidth": 0.02,
+      "required_subgroup_n": 3967
+    }
+  ],
+  "assumptions": [
+    "case mix, negative spectrum and score distributions resembling the Vietnam cohort",
+    "one image per patient; paired design; two-sided alpha 0.05, power 0.80",
+    "past-TB prevalence among negatives 35.0% as observed in Vietnam",
+    "SE scales as 1/sqrt(n); approximate normality",
+    "NO multiplicity adjustment - three endpoints were examined in Phase 2, so add one"
+  ]
+}

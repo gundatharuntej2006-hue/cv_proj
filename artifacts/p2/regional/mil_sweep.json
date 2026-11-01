@@ -1,0 +1,225 @@
+{
+ "created": "2026-10-20",
+ "seeds": [
+  17,
+  29,
+  43
+ ],
+ "selected_on": "vietnam TUNE half only",
+ "results": [
+  {
+   "grid": 12,
+   "agg": "max",
+   "regions": 144,
+   "tbx11k_dev": 0.9369,
+   "tune_auc": 0.7239
+  },
+  {
+   "grid": 12,
+   "agg": "lse",
+   "regions": 144,
+   "tbx11k_dev": 0.9322,
+   "tune_auc": 0.7229
+  },
+  {
+   "grid": 12,
+   "agg": "top3",
+   "regions": 144,
+   "tbx11k_dev": 0.9328,
+   "tune_auc": 0.7189
+  },
+  {
+   "grid": 12,
+   "agg": "top5",
+   "regions": 144,
+   "tbx11k_dev": 0.9287,
+   "tune_auc": 0.7108
+  },
+  {
+   "grid": 6,
+   "agg": "max",
+   "regions": 36,
+   "tbx11k_dev": 0.9173,
+   "tune_auc": 0.6888
+  },
+  {
+   "grid": 6,
+   "agg": "top3",
+   "regions": 36,
+   "tbx11k_dev": 0.9192,
+   "tune_auc": 0.6858
+  },
+  {
+   "grid": 6,
+   "agg": "lse",
+   "regions": 36,
+   "tbx11k_dev": 0.9184,
+   "tune_auc": 0.6821
+  },
+  {
+   "grid": 2,
+   "agg": "max",
+   "regions": 4,
+   "tbx11k_dev": 0.8554,
+   "tune_auc": 0.6808
+  },
+  {
+   "grid": 2,
+   "agg": "lse",
+   "regions": 4,
+   "tbx11k_dev": 0.8532,
+   "tune_auc": 0.6779
+  },
+  {
+   "grid": 6,
+   "agg": "top5",
+   "regions": 36,
+   "tbx11k_dev": 0.9166,
+   "tune_auc": 0.6771
+  },
+  {
+   "grid": 4,
+   "agg": "lse",
+   "regions": 16,
+   "tbx11k_dev": 0.9157,
+   "tune_auc": 0.6721
+  },
+  {
+   "grid": 3,
+   "agg": "top5",
+   "regions": 9,
+   "tbx11k_dev": 0.8748,
+   "tune_auc": 0.6682
+  },
+  {
+   "grid": 4,
+   "agg": "top3",
+   "regions": 16,
+   "tbx11k_dev": 0.9045,
+   "tune_auc": 0.6674
+  },
+  {
+   "grid": 4,
+   "agg": "max",
+   "regions": 16,
+   "tbx11k_dev": 0.9124,
+   "tune_auc": 0.6649
+  },
+  {
+   "grid": 3,
+   "agg": "top3",
+   "regions": 9,
+   "tbx11k_dev": 0.8683,
+   "tune_auc": 0.6589
+  },
+  {
+   "grid": 4,
+   "agg": "top5",
+   "regions": 16,
+   "tbx11k_dev": 0.8926,
+   "tune_auc": 0.6588
+  },
+  {
+   "grid": 2,
+   "agg": "top3",
+   "regions": 4,
+   "tbx11k_dev": 0.8494,
+   "tune_auc": 0.6561
+  },
+  {
+   "grid": 3,
+   "agg": "lse",
+   "regions": 9,
+   "tbx11k_dev": 0.8713,
+   "tune_auc": 0.6559
+  },
+  {
+   "grid": 3,
+   "agg": "max",
+   "regions": 9,
+   "tbx11k_dev": 0.8707,
+   "tune_auc": 0.65
+  },
+  {
+   "grid": 3,
+   "agg": "mean",
+   "regions": 9,
+   "tbx11k_dev": 0.8378,
+   "tune_auc": 0.6422
+  },
+  {
+   "grid": 4,
+   "agg": "mean",
+   "regions": 16,
+   "tbx11k_dev": 0.8347,
+   "tune_auc": 0.6419
+  },
+  {
+   "grid": 2,
+   "agg": "mean",
+   "regions": 4,
+   "tbx11k_dev": 0.8372,
+   "tune_auc": 0.6395
+  },
+  {
+   "grid": 2,
+   "agg": "top5",
+   "regions": 4,
+   "tbx11k_dev": 0.8372,
+   "tune_auc": 0.6395
+  },
+  {
+   "grid": 6,
+   "agg": "mean",
+   "regions": 36,
+   "tbx11k_dev": 0.827,
+   "tune_auc": 0.639
+  },
+  {
+   "grid": 1,
+   "agg": "mean",
+   "regions": 1,
+   "tbx11k_dev": 0.8391,
+   "tune_auc": 0.6381
+  },
+  {
+   "grid": 12,
+   "agg": "mean",
+   "regions": 144,
+   "tbx11k_dev": 0.8154,
+   "tune_auc": 0.6364
+  }
+ ],
+ "best": {
+  "grid": 12,
+  "agg": "max",
+  "regions": 144,
+  "tbx11k_dev": 0.9369,
+  "tune_auc": 0.7239
+ },
+ "grid18_addendum": {
+  "note": "Run separately after a memory failure. Recorded for completeness; the frozen selection is NOT changed, because 18/lse exceeds 12/max by 0.0018, far below noise, and switching after the fact would defeat the pre-commitment.",
+  "results": [
+   {
+    "grid": 18,
+    "agg": "mean",
+    "tune_auc": 0.6349
+   },
+   {
+    "grid": 18,
+    "agg": "max",
+    "tune_auc": 0.7186
+   },
+   {
+    "grid": 18,
+    "agg": "top3",
+    "tune_auc": 0.7224
+   },
+   {
+    "grid": 18,
+    "agg": "lse",
+    "tune_auc": 0.7257
+   }
+  ]
+ }
+}

@@ -1,0 +1,5 @@
+scanner,n,n_tb,n_non_tb,tb_prevalence,classifier_positive,sens_pre_gate,fpr_pre_gate,deferred,deferral_rate,deferral_rate_ci,tb_deferred,tb_deferral_rate,tb_deferral_rate_ci,non_tb_deferred,tb_referrals_intercepted,extra_reviews
+1 JPI Healthcare,408,44,364,0.1078,114,0.5682,0.2445,82,0.201,0.1642-0.2402,9,0.2045,0.0909-0.3182,73,5,82
+2 DRTECH,1332,151,1181,0.1134,328,0.5695,0.2049,92,0.0691,0.0563-0.0833,7,0.0464,0.0132-0.0795,85,0,92
+3 Konica Minolta,968,85,883,0.0878,487,0.7412,0.4802,110,0.1136,0.0940-0.1343,5,0.0588,0.0118-0.1176,105,2,110
+ALL,2708,280,2428,0.1034,929,0.6214,0.311,284,0.1049,0.0938-0.1163,21,0.075,0.0464-0.1071,263,7,284

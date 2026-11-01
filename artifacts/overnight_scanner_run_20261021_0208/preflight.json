@@ -1,0 +1,84 @@
+{
+  "run_id": "overnight_scanner_run_20261021_0208",
+  "start_local": "2026-10-21T02:08:12+05:30",
+  "git": {
+    "head": "f878a6c9e9746803938463941ae1ffaa5d1fd96a",
+    "branch": "master",
+    "status_short": [
+      "?? artifacts/overnight_run_20261021_2340/",
+      "?? artifacts/overnight_scanner_run_20261021_0208/"
+    ]
+  },
+  "env": {
+    "python": "3.13.2",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "torch": "2.6.0+cu124",
+    "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+    "vram_free_gb": 5.32,
+    "vram_total_gb": 6.44,
+    "vram_cap_80pct_gb": 5.15,
+    "ram_available_gb": 1.84,
+    "ram_total_gb": 16.39,
+    "ram_percent_used": 88.8,
+    "cpu_logical": 16,
+    "disk_D_free_gb": 188
+  },
+  "splits": {
+    "vietnam_TUNE_n": 1352,
+    "vietnam_REPORT_n": 1356,
+    "overlap": 0,
+    "tune_role": "development - fit every transform, calibrator and threshold here",
+    "report_role": "scored ONCE, after the manifest is frozen; exploratory due to prior cohort exposure"
+  },
+  "seeds": [
+    17,
+    29,
+    43,
+    61,
+    79
+  ],
+  "grid": 12,
+  "regions": 144,
+  "files": {
+    "artifacts/p2/audit/vietnam_case_level_gate_audit.csv": {
+      "sha256": "8476113fb842f3a9c03d382fcae1c3dad23618f9f881488ab31c35a8fe45745e",
+      "bytes": 179687
+    },
+    "artifacts/p2/external/vietnam_tune_report_split.json": {
+      "sha256": "0249dcc9c8a8503c9a6fdb00b6a508a742ef1e6394b0b8a33be2eaea19c8a33a",
+      "bytes": 27245
+    },
+    "data/raw/vietnam/Lunit_Versions_-_Dryad_Data_Set.csv": {
+      "sha256": "328ee268240f7bdd566a9b0a70115677c6db8eec9cfeb6ab24ee2bd5d4faf08b",
+      "bytes": 116309
+    },
+    "artifacts/p2/dryrun/provisional_c01.csv": {
+      "sha256": "b228f85cb10093076e04bc082063800b2b306eb0d1f080ace6a95bd7d7026ca1",
+      "bytes": 574069
+    },
+    "artifacts/p2/regional/regional_tbx11k_lungs_g12_v1.npz": {
+      "sha256": "3da5665a14433c105b38b7f1804997840520d62ae377487921638942c702845e",
+      "bytes": 1353907076
+    },
+    "artifacts/p2/regional/regional_vietnam_lungs_g12_v1.npz": {
+      "sha256": "ca787df52a37bb3d45f68035db67e864acbc454edd0ba6d32c0f3957df5de06e",
+      "bytes": 555473278
+    },
+    "artifacts/p2/regional/mil_final.json": {
+      "sha256": "d73d06c5f48142ee809d716985d01f120ed1222b7347f6b67296169c07f032c8",
+      "bytes": 756
+    },
+    "scripts/p2_32_mil_sweep.py": {
+      "sha256": "9abcd51279a25d30a3ff58163fc5ece9fb2c65bdb47cb8f23ecdecc034c262a4",
+      "bytes": 9694
+    },
+    "scripts/p2_35_gate_operational_audit.py": {
+      "sha256": "ff3dee4ab40d866ec84bc667d09bd17b964fdfd583993ac11dd513a49a4adba5",
+      "bytes": 10771
+    },
+    "artifacts/overnight_run_20261021_2340/PRIMARY_EXPERIMENT_PREREGISTRATION.md": {
+      "sha256": "b1b99ba16c1997353bd2f2073e924628093e6c53eea7505127684502094a0b73",
+      "bytes": 8114
+    }
+  }
+}

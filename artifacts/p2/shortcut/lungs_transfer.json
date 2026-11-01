@@ -1,0 +1,47 @@
+{
+ "created": "2026-10-17",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "tbx11k_lungs_only_dev_auc": 0.9889,
+ "segmentation": {
+  "n": 800,
+  "n_embedded": 800,
+  "n_sanity_failed": 0,
+  "sanity_fail_rate": 0.0,
+  "median_lung_area_frac": 0.3181,
+  "examples": []
+ },
+ "external": [
+  {
+   "site": "Shenzhen",
+   "n": 662,
+   "n_tb": 336,
+   "lungs_only_auc": 0.9284,
+   "ci95": [
+    0.9077,
+    0.9465
+   ],
+   "full_auc": 0.9382,
+   "border_only_auc": 0.5209
+  },
+  {
+   "site": "Montgomery",
+   "n": 138,
+   "n_tb": 58,
+   "lungs_only_auc": 0.8554,
+   "ci95": [
+    0.7836,
+    0.9184
+   ],
+   "full_auc": 0.8183,
+   "border_only_auc": 0.6082
+  }
+ ],
+ "verdict": "CLOSED: lung tissue carries the external result and the border does not. The external AUC reflects pathology.",
+ "note": "EXPLORATORY. Same PSPNet segmenter and masking rule as C05 and the shortcut probe; head trained on TBX11K and applied unchanged. internal_test untouched."
+}

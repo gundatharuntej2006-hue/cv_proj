@@ -1,0 +1,8 @@
+{
+ "n": 800,
+ "n_embedded": 800,
+ "n_sanity_failed": 0,
+ "sanity_fail_rate": 0.0,
+ "median_lung_area_frac": 0.3181,
+ "examples": []
+}

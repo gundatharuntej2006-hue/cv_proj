@@ -1,0 +1,43 @@
+{
+ "run": "clinical_fusion_20261101_0330",
+ "protocol_sha256": "2ee3e4b8bbfc9078f77f72ca74adc4b85181d2cda213efdeb0161a3f81160a0a",
+ "cohort_fingerprint": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+ "n": 1352,
+ "n_positive": 139,
+ "n_prev_tb": 466,
+ "folds": 10,
+ "repeats": 20,
+ "n_boot": 2000,
+ "boot_seed": 20261101,
+ "lr": {
+  "C": 1.0,
+  "penalty": "l2",
+  "solver": "lbfgs"
+ },
+ "clinical_features": [
+  "sex",
+  "age_group",
+  "c",
+  "f",
+  "wl",
+  "ns",
+  "contact",
+  "past_tb",
+  "dm",
+  "dm_unknown",
+  "scan1",
+  "scan2"
+ ],
+ "min_effect": 0.02,
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false
+ },
+ "tune_exposure": "TUNE selected the pooling configuration; absolute AUROCs optimistic; fusion increment fitted inside CV",
+ "adopted_into_production": false,
+ "elapsed_min": 4.27,
+ "environment": {
+  "python": "3.13.2",
+  "numpy": "2.2.6"
+ }
+}

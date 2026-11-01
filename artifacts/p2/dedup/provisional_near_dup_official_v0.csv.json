@@ -1,0 +1,13 @@
+{
+ "task": "P2-04",
+ "contract": "C17",
+ "date": "2026-10-06",
+ "embedding_file": "artifacts/p2/emb/radino_tbx11k_full_clahe0_v1.npz",
+ "variant": "full_clahe0",
+ "n_images": 12278,
+ "tau": 0.95,
+ "comparison": ">=",
+ "tau_source": "D06",
+ "cross_split_candidates": 158,
+ "within_split_pairs": 125
+}

@@ -1,0 +1,11 @@
+positive_phrase,positive_idx,negated_phrase,negated_idx,cosine_positive_vs_negated,random_cosine_p95_for_this_concept,negation_above_random_p95
+fibrosis,835,no fibrosis,364838,0.8435,0.6308,True
+scarring,96952,no scarring,142706,0.9058,0.7695,True
+volume loss,368164,no volume loss,271155,0.9797,0.8199,True
+volume loss,368164,volume loss has resolved,111256,0.866,0.8199,True
+calcification,77874,no calcification,1633,0.9608,0.8296,True
+focal opacity,281312,no focal opacity,240519,0.9512,0.8306,True
+consolidation,123742,no consolidation,55926,0.747,0.7709,False
+consolidation,123742,no focal consolidation,176374,0.7364,0.7709,False
+consolidation,123742,consolidation resolved,359292,0.7762,0.7709,True
+pleural thickening,341471,no pleural thickening,222393,0.915,0.7545,True

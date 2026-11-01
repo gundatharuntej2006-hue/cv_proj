@@ -1,0 +1,78 @@
+{
+ "run": "site_adaptation_benchmark_20261101_0300",
+ "protocol_sha256": "a999e45a50ab5908e25ec95912904925d0419443d90cceb347b0f71e8ec1af8f",
+ "finished_utc": "2026-10-31T21:30:28Z",
+ "elapsed_min": 7.03,
+ "backbone": {
+  "repo": "microsoft/rad-dino",
+  "revision": "110cbc18d5133582e320b43d53bf5c44e410c936"
+ },
+ "head": {
+  "trainable_parameters": 769,
+  "seed": 17,
+  "tbx11k_dev_auroc": 0.9363,
+  "tbx11k_threshold_at_0.70_spec": -3.371
+ },
+ "sites": {
+  "shz": {
+   "adaptation_n": 331,
+   "adaptation_tb": 168,
+   "evaluation_n": 331,
+   "evaluation_tb": 168,
+   "split_seed": 20261101,
+   "stratified": true,
+   "patient_disjoint": true,
+   "note": "one image per patient in NLM"
+  },
+  "mcu": {
+   "adaptation_n": 69,
+   "adaptation_tb": 29,
+   "evaluation_n": 69,
+   "evaluation_tb": 29,
+   "split_seed": 20261101,
+   "stratified": true,
+   "patient_disjoint": true,
+   "note": "one image per patient in NLM"
+  }
+ },
+ "grid": {
+  "shz": [
+   0,
+   10,
+   25,
+   50,
+   100,
+   200,
+   "all"
+  ],
+  "mcu": [
+   0,
+   10,
+   25,
+   50,
+   "all"
+  ]
+ },
+ "draws": [
+  0,
+  1,
+  2
+ ],
+ "n_boot": 2000,
+ "seed": 20261101,
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false,
+  "nlm_exposure": "both sites previously used for external validation; exploratory"
+ },
+ "training_of_backbone": false,
+ "production_changed": false,
+ "environment": {
+  "python": "3.13.2",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "torch": "2.6.0+cu124",
+  "cuda": "12.4",
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "cpu_threads": 8
+ }
+}

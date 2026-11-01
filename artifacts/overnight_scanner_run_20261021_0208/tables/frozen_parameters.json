@@ -1,0 +1,25 @@
+{
+  "pooled_threshold": 2.4765999999999995,
+  "scanner_thresholds": {
+    "1": 2.0070363999999996,
+    "2": 1.3887346999999999,
+    "3": 3.707495
+  },
+  "scanner_offsets_tune_non_tb_median": {
+    "1": 0.5137025,
+    "2": -0.8610015,
+    "3": 2.345174
+  },
+  "offset_corrected_pooled_threshold": 1.7206912,
+  "hashes": {
+    "scripts\\common.py": "d1a654e9c7734dc2",
+    "scripts\\task1_2_tune_diagnostics.py": "1495304892a0fd9b",
+    "scripts\\task3_subspace_tune.py": "f799c20beb982ed4",
+    "scripts\\task4_representation_diagnostics.py": "69456122c1a7c199",
+    "scripts\\task4b_inlp.py": "8a4d8ffca4153025",
+    "scripts\\task5_calibration.py": "ce9d47faaa83e69e",
+    "scripts\\verify_equivalence.py": "c88f1b4f35181477",
+    "tables/vietnam_case_scores.csv": "e03c51cf9d2ae9f8",
+    "tables/scanner_subspace_basis.npy": "84c7a540805b4c91"
+  }
+}

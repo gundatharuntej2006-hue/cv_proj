@@ -1,0 +1,18 @@
+{
+ "tbx11k_train": 3241,
+ "tbx11k_train_tb": 541,
+ "tbx11k_train_active": 447,
+ "nlm": {
+  "shz": {
+   "n": 662,
+   "tb": 336
+  },
+  "mcu": {
+   "n": 138,
+   "tb": 58
+  }
+ },
+ "development": 659,
+ "calibration": 899,
+ "nlm_in_development": false
+}

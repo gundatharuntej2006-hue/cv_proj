@@ -1,0 +1,22 @@
+TBX11K image-level label validation
+source: D:\tb-triage\data\raw\tbx11k\TBX11K
+output: D:\tb-triage\artifacts\p1\labels\tbx11k_image_labels_v1.csv (8400 rows)
+
+[PASS] annotation files parsed without problems       
+[PASS] row count is 8400                              got 8400
+[PASS] image_id is unique                             
+[PASS] official split sizes are 6600 / 1800           {'train': 6600, 'val': 1800}
+[PASS] trainval healthy == 3800                       got 3800
+[PASS] trainval sick_non_tb == 3800                   got 3800
+[PASS] trainval tuberculosis == 800                   got 800
+[PASS] train active_tb matches the paper (473)        got 473
+[PASS] train latent_tb matches the paper (104)        got 104
+[PASS] train active_latent_tb matches the paper (23)  got 23
+[PASS] exactly one label is deduced, and it is tb1199 got ['tb1199']
+[PASS] every labelled image exists on disk            
+[PASS] train matches TBX11K_train.txt exactly         only in list: 0, only in csv: 0
+[PASS] val matches TBX11K_val.txt exactly             only in list: 0, only in csv: 0
+
+category totals (trainval): {'active_latent_tb': 30, 'active_tb': 630, 'healthy': 3800, 'latent_tb': 140, 'sick_non_tb': 3800}
+train totals:               {'active_latent_tb': 23, 'active_tb': 473, 'healthy': 3000, 'latent_tb': 104, 'sick_non_tb': 3000}
+label_basis:                {'folder': 7600, 'lesion_box_categories': 799, 'deduced_from_published_counts': 1}

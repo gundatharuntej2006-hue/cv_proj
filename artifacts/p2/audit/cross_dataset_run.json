@@ -1,0 +1,18 @@
+{
+ "created": "2026-10-21",
+ "manifest": "cross_dataset_manifest.json",
+ "eligible": 800,
+ "regional_only": [],
+ "global_only": [],
+ "thresholds": {
+  "A_global_pooler": 0.6970451474189758,
+  "B_patch_mean_1x1": -2.5381720066070557,
+  "C_regional_max_12x12": -3.3367550373077393
+ },
+ "tbx11k_dev_auc": {
+  "A_global_pooler": 0.957,
+  "B_patch_mean_1x1": 0.8391,
+  "C_regional_max_12x12": 0.9368
+ },
+ "classification": "EXPLORATORY PAIRED BENCHMARK, not external validation"
+}

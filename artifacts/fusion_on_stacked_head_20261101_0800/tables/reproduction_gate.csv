@@ -1,0 +1,5 @@
+check,expected,here,pass
+X_noNLM raw TUNE AUROC,0.7585,0.7585,True
+X_noNLM calibration AUROC,0.9466,0.9466,True
+ours M2 (R16),0.7809,0.7809,True
+lunit M2 (R16),0.7778,0.7778,True

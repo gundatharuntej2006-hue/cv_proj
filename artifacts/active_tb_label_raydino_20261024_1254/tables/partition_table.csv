@@ -1,0 +1,5 @@
+split,n,healthy,sick_non_tb,active_tb,latent_tb,active_latent_tb,pos_tb_label,pos_active_tb_label,prevalence_tb_label,prevalence_active_tb_label
+train,5941,2700,2700,426,94,21,541,447,0.0911,0.0752
+internal_test,901,400,400,79,18,4,101,83,0.1121,0.0921
+development,659,300,300,47,10,2,59,49,0.0895,0.0744
+calibration,899,400,400,78,18,3,99,81,0.1101,0.0901

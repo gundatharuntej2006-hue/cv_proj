@@ -1,0 +1,43 @@
+TUNE 1352 | evaluation 677 (pos 70) | pools {1: 102, 2: 332, 3: 241}
+n= 25 A pooled 0.7546 [0.7546, 0.7546] prevTB 0.6285 sens 0.672 burden 0.344 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.3116, 0.2427, 0.4964]
+n= 25 B pooled 0.7667 [0.6968, 0.7844] prevTB 0.6686 sens 0.671 burden 0.335 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.3645, 0.3209, 0.3413]
+n= 25 C pooled 0.7795 [0.7692, 0.7856] prevTB 0.6793 sens 0.704 burden 0.335 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.4047, 0.3183, 0.3292]
+n= 25 D pooled 0.7791 [0.7674, 0.7884] prevTB 0.6747 sens 0.707 burden 0.334 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.4141, 0.3103, 0.3337]
+n= 50 A pooled 0.7546 [0.7546, 0.7546] prevTB 0.6285 sens 0.657 burden 0.334 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.2978, 0.2359, 0.4844]
+n= 50 B pooled 0.7749 [0.7363, 0.7850] prevTB 0.6728 sens 0.683 burden 0.322 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.3839, 0.3025, 0.3225]
+n= 50 C pooled 0.7807 [0.7724, 0.7851] prevTB 0.6800 sens 0.694 burden 0.323 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.3988, 0.3051, 0.3164]
+n= 50 D pooled 0.7806 [0.7718, 0.7869] prevTB 0.6755 sens 0.695 burden 0.321 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.4029, 0.2942, 0.3245]
+n=100 A pooled 0.7546 [0.7546, 0.7546] prevTB 0.6285 sens 0.664 burden 0.344 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.309, 0.2426, 0.4982]
+n=100 B pooled 0.7786 [0.7522, 0.7852] prevTB 0.6779 sens 0.699 burden 0.324 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.4178, 0.3053, 0.3102]
+n=100 C pooled 0.7818 [0.7782, 0.7844] prevTB 0.6826 sens 0.697 burden 0.324 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.4037, 0.3061, 0.3159]
+n=100 D pooled 0.7817 [0.7771, 0.7860] prevTB 0.6766 sens 0.707 burden 0.327 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.4153, 0.2966, 0.3324]
+n=200 A pooled 0.7546 [0.7546, 0.7546] prevTB 0.6285 sens 0.642 burden 0.321 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.2714, 0.2284, 0.4685]
+n=200 B pooled 0.7828 [0.7785, 0.7850] prevTB 0.6860 sens 0.694 burden 0.317 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.4043, 0.3092, 0.292]
+n=200 C pooled 0.7821 [0.7795, 0.7838] prevTB 0.6828 sens 0.694 burden 0.319 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.3984, 0.2989, 0.3142]
+n=200 D pooled 0.7817 [0.7782, 0.7837] prevTB 0.6768 sens 0.703 burden 0.322 | within [0.6843, 0.7872, 0.8283] | burden by scanner [0.4055, 0.2907, 0.3308]
+B - A: +0.0281 [+0.0070, +0.0484] | prevTB +0.0557 [+0.0069, +0.1019]
+C - A: +0.0281 [+0.0074, +0.0486] | prevTB +0.0557 [+0.0065, +0.1004]
+D - A: +0.0279 [+0.0094, +0.0460] | prevTB +0.0513 [+0.0091, +0.0898]
+natural          A pooled 0.7546 prevTB 0.6285 | scanner-2 sens 0.587 burden 0.237 | pooled sens 0.656
+natural          B pooled 0.7802 prevTB 0.6821 | scanner-2 sens 0.673 burden 0.309 | pooled sens 0.687
+natural          C pooled 0.7821 prevTB 0.6833 | scanner-2 sens 0.677 burden 0.301 | pooled sens 0.692
+natural          D pooled 0.7820 prevTB 0.6783 | scanner-2 sens 0.668 burden 0.293 | pooled sens 0.697
+prevalence 0     A pooled 0.7546 prevTB 0.6285 | scanner-2 sens 0.602 burden 0.250 | pooled sens 0.677
+prevalence 0     B pooled 0.6992 prevTB 0.5360 | scanner-2 sens 0.177 burden 0.064 | pooled sens 0.515
+prevalence 0     C pooled 0.7829 prevTB 0.6871 | scanner-2 sens 0.684 burden 0.330 | pooled sens 0.702
+prevalence 0     D pooled 0.7832 prevTB 0.6838 | scanner-2 sens 0.682 burden 0.322 | pooled sens 0.710
+prevalence 0.30  A pooled 0.7546 prevTB 0.6285 | scanner-2 sens 0.574 burden 0.215 | pooled sens 0.630
+prevalence 0.30  B pooled 0.7707 prevTB 0.7095 | scanner-2 sens 0.813 burden 0.457 | pooled sens 0.633
+prevalence 0.30  C pooled 0.7771 prevTB 0.6668 | scanner-2 sens 0.604 burden 0.246 | pooled sens 0.647
+prevalence 0.30  D pooled 0.7759 prevTB 0.6582 | scanner-2 sens 0.586 burden 0.231 | pooled sens 0.643
+previous TB only A pooled 0.7546 prevTB 0.6285 | scanner-2 sens 0.572 burden 0.214 | pooled sens 0.628
+previous TB only B pooled 0.7804 prevTB 0.6792 | scanner-2 sens 0.638 burden 0.269 | pooled sens 0.648
+previous TB only C pooled 0.7651 prevTB 0.6405 | scanner-2 sens 0.555 burden 0.198 | pooled sens 0.659
+previous TB only D pooled 0.7659 prevTB 0.6460 | scanner-2 sens 0.560 burden 0.203 | pooled sens 0.643
+no previous TB   A pooled 0.7546 prevTB 0.6285 | scanner-2 sens 0.605 burden 0.252 | pooled sens 0.679
+no previous TB   B pooled 0.7815 prevTB 0.6839 | scanner-2 sens 0.679 burden 0.326 | pooled sens 0.704
+no previous TB   C pooled 0.7835 prevTB 0.6910 | scanner-2 sens 0.686 burden 0.347 | pooled sens 0.688
+no previous TB   D pooled 0.7845 prevTB 0.6873 | scanner-2 sens 0.686 burden 0.332 | pooled sens 0.695
+verdict C: gain +0.0272 (B +0.0240) | worst s2 sens move 0.122 burden move 0.103 -> NOT USABLE AS IS
+verdict D: gain +0.0271 (B +0.0240) | worst s2 sens move 0.108 burden move 0.090 -> NOT USABLE AS IS
+done in 103.7 s

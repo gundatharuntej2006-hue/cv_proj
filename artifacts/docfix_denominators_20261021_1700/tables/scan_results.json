@@ -1,0 +1,115 @@
+{
+  "scan1_cohort_consecutive": [],
+  "scan2_citation": [
+    {
+      "file": "docs/p2_vietnam_result.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "docs/p2_external_validation.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "report/paper_draft.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "report/p2_00_abstract_intro.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "report/slides/p2_slides_outline.md",
+      "missing": [],
+      "pass": true
+    },
+    {
+      "file": "docs/p2_focal_pooling_final.md",
+      "missing": [],
+      "pass": true
+    }
+  ],
+  "scan3_baseline_value": [
+    {
+      "file": "docs/p2_focal_pooling.md",
+      "value": "0.6744",
+      "authoritative": false,
+      "in_authorised_scope": false,
+      "context": "ignificant.** | | Vietnam AUC | |---|---| | production global model | 0.6744 | | **regional max-MIL** | **0.7058** | | commercial comparator"
+    },
+    {
+      "file": "docs/p2_focal_pooling_final.md",
+      "value": "0.6743",
+      "authoritative": true,
+      "in_authorised_scope": true,
+      "context": "ng. The earlier configurations on this cohort scored **0.6151** and **0.6743**, but both were measured on the **full 2,708-participant cohor"
+    },
+    {
+      "file": "docs/p2_hard_negatives.md",
+      "value": "0.6743",
+      "authoritative": true,
+      "in_authorised_scope": false,
+      "context": "6 | | **healthy only** | 3,241 | 0.9569 | **0.9412** | **0.9295** | **0.6743** | **Adding hard negatives makes external transfer worse. Remo"
+    },
+    {
+      "file": "docs/p2_vietnam_result.md",
+      "value": "0.6743",
+      "authoritative": true,
+      "in_authorised_scope": true,
+      "context": "plementary only \u2014 see below* | | Vietnam, full cohort | 2,708 | 280 | 0.6743 | \u2014 | `artifacts/p2/dryrun/hard_negatives.json` | | **Vietnam R"
+    },
+    {
+      "file": "report/paper_draft.md",
+      "value": "0.6743",
+      "authoritative": true,
+      "in_authorised_scope": true,
+      "context": "** | | *screening cohort, full* | *Vietnam, all* | *2,708* | *280* | *0.6743* | *\u2014* | Three things must be read carefully here. **DA and DB "
+    }
+  ],
+  "scan4_mixed_denominators": [
+    {
+      "file": "docs/p2_focal_pooling_final.md",
+      "text": "The earlier configurations on this cohort scored **0.6151** and **0.6743**, but both were measured on the **full 2,708-participant cohort**, so **0.6151 \u2192 0.7242 is not a like-for-",
+      "denominators_named": true,
+      "in_authorised_scope": true
+    },
+    {
+      "file": "docs/p2_focal_pooling_final.md",
+      "text": "A global-pooling score on the REPORT half alone was never computed, so the > progression cannot be put on one denominator, and **the 0.6151 \u2192 0.7242 difference must > not be quoted",
+      "denominators_named": true,
+      "in_authorised_scope": true
+    },
+    {
+      "file": "docs/p2_focal_pooling_final.md",
+      "text": "0.6743 (full cohort) \u2192 0.7242 (REPORT half) \u2014 different denominators, see the Headline note",
+      "denominators_named": true,
+      "in_authorised_scope": true
+    },
+    {
+      "file": "report/paper_draft.md",
+      "text": "A global-pooling score on the REPORT half alone was never computed, so **0.6151 \u2192 0.7242 cannot be read as a single before/after improvement**: it mixes a configuration change with",
+      "denominators_named": true,
+      "in_authorised_scope": true
+    }
+  ],
+  "scan5_overclaims": [
+    {
+      "file": "report/paper_draft.md",
+      "claim": "pooling improves every cohort",
+      "context": "ed baseline already sits at 0.976. It is **not** the case that regional pooling improves every cohort: it helps at three sites and is neutral at the fourth. **The DA+DB pooled row i"
+    },
+    {
+      "file": "report/slides/p2_slides_outline.md",
+      "claim": "pooling improves every cohort",
+      "context": "rately: regional pooling gains +0.072 on DB and nothing on DA, so do not say it improves every cohort. If asked why India moved, the answer is the training negatives (about +0.138),"
+    }
+  ],
+  "protected_artifacts": {
+    "checked": 173,
+    "changed": [],
+    "all_unchanged": true
+  }
+}

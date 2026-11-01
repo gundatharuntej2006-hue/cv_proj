@@ -1,0 +1,246 @@
+{
+ "created": "2026-10-17",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "results": [
+  {
+   "variant": "full",
+   "mode": "deployed",
+   "contrast": "TB vs all negatives",
+   "n": 659,
+   "n_tb": 59,
+   "auc": 0.995,
+   "ci95": [
+    0.9883,
+    0.9993
+   ]
+  },
+  {
+   "variant": "full",
+   "mode": "deployed",
+   "contrast": "TB vs healthy only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9989,
+   "ci95": [
+    0.9967,
+    1.0
+   ]
+  },
+  {
+   "variant": "full",
+   "mode": "deployed",
+   "contrast": "TB vs sick_non_tb only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9911,
+   "ci95": [
+    0.9806,
+    0.9989
+   ]
+  },
+  {
+   "variant": "full",
+   "mode": "dedicated",
+   "contrast": "TB vs all negatives",
+   "n": 659,
+   "n_tb": 59,
+   "auc": 0.995,
+   "ci95": [
+    0.9883,
+    0.9993
+   ]
+  },
+  {
+   "variant": "full",
+   "mode": "dedicated",
+   "contrast": "TB vs healthy only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 1.0,
+   "ci95": [
+    1.0,
+    1.0
+   ]
+  },
+  {
+   "variant": "full",
+   "mode": "dedicated",
+   "contrast": "TB vs sick_non_tb only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9861,
+   "ci95": [
+    0.9706,
+    0.9978
+   ]
+  },
+  {
+   "variant": "lungs_only",
+   "mode": "deployed",
+   "contrast": "TB vs all negatives",
+   "n": 659,
+   "n_tb": 59,
+   "auc": 0.989,
+   "ci95": [
+    0.9757,
+    0.9982
+   ]
+  },
+  {
+   "variant": "lungs_only",
+   "mode": "deployed",
+   "contrast": "TB vs healthy only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9932,
+   "ci95": [
+    0.9831,
+    1.0
+   ]
+  },
+  {
+   "variant": "lungs_only",
+   "mode": "deployed",
+   "contrast": "TB vs sick_non_tb only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9847,
+   "ci95": [
+    0.968,
+    0.9973
+   ]
+  },
+  {
+   "variant": "lungs_only",
+   "mode": "dedicated",
+   "contrast": "TB vs all negatives",
+   "n": 659,
+   "n_tb": 59,
+   "auc": 0.989,
+   "ci95": [
+    0.9757,
+    0.9982
+   ]
+  },
+  {
+   "variant": "lungs_only",
+   "mode": "dedicated",
+   "contrast": "TB vs healthy only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9998,
+   "ci95": [
+    0.9991,
+    1.0
+   ]
+  },
+  {
+   "variant": "lungs_only",
+   "mode": "dedicated",
+   "contrast": "TB vs sick_non_tb only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9841,
+   "ci95": [
+    0.9684,
+    0.9963
+   ]
+  },
+  {
+   "variant": "border_only",
+   "mode": "deployed",
+   "contrast": "TB vs all negatives",
+   "n": 659,
+   "n_tb": 59,
+   "auc": 0.9081,
+   "ci95": [
+    0.8728,
+    0.938
+   ]
+  },
+  {
+   "variant": "border_only",
+   "mode": "deployed",
+   "contrast": "TB vs healthy only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9233,
+   "ci95": [
+    0.8844,
+    0.9574
+   ]
+  },
+  {
+   "variant": "border_only",
+   "mode": "deployed",
+   "contrast": "TB vs sick_non_tb only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.8929,
+   "ci95": [
+    0.8564,
+    0.9264
+   ]
+  },
+  {
+   "variant": "border_only",
+   "mode": "dedicated",
+   "contrast": "TB vs all negatives",
+   "n": 659,
+   "n_tb": 59,
+   "auc": 0.9081,
+   "ci95": [
+    0.8728,
+    0.938
+   ]
+  },
+  {
+   "variant": "border_only",
+   "mode": "dedicated",
+   "contrast": "TB vs healthy only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9847,
+   "ci95": [
+    0.9723,
+    0.9942
+   ]
+  },
+  {
+   "variant": "border_only",
+   "mode": "dedicated",
+   "contrast": "TB vs sick_non_tb only",
+   "n": 359,
+   "n_tb": 59,
+   "auc": 0.9119,
+   "ci95": [
+    0.8703,
+    0.948
+   ]
+  }
+ ],
+ "summary": {
+  "full": {
+   "vs_healthy": 1.0,
+   "vs_sick": 0.9861,
+   "drop": 0.0139
+  },
+  "lungs_only": {
+   "vs_healthy": 0.9998,
+   "vs_sick": 0.9841,
+   "drop": 0.0157
+  },
+  "border_only": {
+   "vs_healthy": 0.9847,
+   "vs_sick": 0.9119,
+   "drop": 0.0728
+  }
+ },
+ "note": "All three groups share hospitals, scanners and pipeline, so the healthy/sick swap changes only the control population. Provisional split, development only; internal_test untouched."
+}

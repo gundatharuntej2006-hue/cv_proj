@@ -1,0 +1,244 @@
+{
+  "inputs": {
+    "data/raw/vietnam/Lunit_Versions_-_Dryad_Data_Set.csv": "328ee268240f7bdd566a9b0a70115677c6db8eec9cfeb6ab24ee2bd5d4faf08b",
+    "artifacts/overnight_scanner_run_20261021_0208/tables/vietnam_case_scores.csv": "e03c51cf9d2ae9f8b7469a6e279b731a9ad4b1a169204d5a86a58470b32f848c"
+  },
+  "cohort_identity": {
+    "n_participants": 2708,
+    "xpert_positive": 280,
+    "xpert_positivity_pct": 10.34,
+    "previous_tb_pct": 35.16,
+    "dryad_doi_in_local_readme": "10.5061/dryad.5tb2rbpcv",
+    "local_readme_title": "Comparison of different Lunit INSIGHT CXR software versions when reading chest radiographs for tuberculosis",
+    "paper_reported": {
+      "n": 2708,
+      "positivity_pct": 10.3,
+      "previous_tb_pct": 35.2,
+      "dryad_doi": "10.5061/dryad.5tb2rbpcv"
+    },
+    "scanner_counts": {
+      "1": 408,
+      "2": 1332,
+      "3": 968
+    },
+    "matches_on_n": true,
+    "matches_on_positivity": true,
+    "matches_on_previous_tb": true
+  },
+  "published_lunit_reproduction": {
+    "construction": "FULL STRATIFICATION (interpretation A)",
+    "rows": [
+      {
+        "stratum": "overall",
+        "version": "v3.1.0.0",
+        "n": 2708,
+        "n_pos": 280,
+        "n_neg": 2428,
+        "recomputed": 0.7633,
+        "recomputed_2dp": 0.76,
+        "published_2dp": 0.76,
+        "match": true
+      },
+      {
+        "stratum": "overall",
+        "version": "v3.9.0.1",
+        "n": 2708,
+        "n_pos": 280,
+        "n_neg": 2428,
+        "recomputed": 0.7827,
+        "recomputed_2dp": 0.78,
+        "published_2dp": 0.78,
+        "match": true
+      },
+      {
+        "stratum": "past_tb",
+        "version": "v3.1.0.0",
+        "n": 952,
+        "n_pos": 102,
+        "n_neg": 850,
+        "recomputed": 0.6701,
+        "recomputed_2dp": 0.67,
+        "published_2dp": 0.67,
+        "match": true
+      },
+      {
+        "stratum": "past_tb",
+        "version": "v3.9.0.1",
+        "n": 952,
+        "n_pos": 102,
+        "n_neg": 850,
+        "recomputed": 0.7279,
+        "recomputed_2dp": 0.73,
+        "published_2dp": 0.73,
+        "match": true
+      },
+      {
+        "stratum": "no_past_tb",
+        "version": "v3.1.0.0",
+        "n": 1756,
+        "n_pos": 178,
+        "n_neg": 1578,
+        "recomputed": 0.8082,
+        "recomputed_2dp": 0.81,
+        "published_2dp": 0.81,
+        "match": true
+      },
+      {
+        "stratum": "no_past_tb",
+        "version": "v3.9.0.1",
+        "n": 1756,
+        "n_pos": 178,
+        "n_neg": 1578,
+        "recomputed": 0.8126,
+        "recomputed_2dp": 0.81,
+        "published_2dp": 0.81,
+        "match": true
+      }
+    ],
+    "all_six_match_at_2dp": true
+  },
+  "our_model_under_both_constructions": {
+    "A_full_stratification": {
+      "ours": {
+        "past_tb": {
+          "n": 952,
+          "n_pos": 102,
+          "n_neg": 850,
+          "auroc": 0.6392,
+          "ci95": [
+            0.5856,
+            0.6922
+          ]
+        },
+        "no_past_tb": {
+          "n": 1756,
+          "n_pos": 178,
+          "n_neg": 1578,
+          "auroc": 0.772,
+          "ci95": [
+            0.7403,
+            0.8025
+          ]
+        },
+        "degradation_noPast_minus_past": {
+          "estimate": 0.1328,
+          "ci95": [
+            0.0718,
+            0.1951
+          ],
+          "excludes_zero": true,
+          "method": "unpaired bootstrap; under full stratification the two strata are independent samples"
+        }
+      },
+      "lunit_v3.9.0.1": {
+        "past_tb": {
+          "n": 952,
+          "n_pos": 102,
+          "n_neg": 850,
+          "auroc": 0.7279,
+          "ci95": [
+            0.6726,
+            0.7818
+          ]
+        },
+        "no_past_tb": {
+          "n": 1756,
+          "n_pos": 178,
+          "n_neg": 1578,
+          "auroc": 0.8126,
+          "ci95": [
+            0.7797,
+            0.8435
+          ]
+        },
+        "degradation_noPast_minus_past": {
+          "estimate": 0.0847,
+          "ci95": [
+            0.0221,
+            0.1495
+          ],
+          "excludes_zero": true,
+          "method": "unpaired bootstrap; under full stratification the two strata are independent samples"
+        }
+      },
+      "lunit_v3.1.0.0": {
+        "past_tb": {
+          "n": 952,
+          "n_pos": 102,
+          "n_neg": 850,
+          "auroc": 0.6701,
+          "ci95": [
+            0.6148,
+            0.7247
+          ]
+        },
+        "no_past_tb": {
+          "n": 1756,
+          "n_pos": 178,
+          "n_neg": 1578,
+          "auroc": 0.8082,
+          "ci95": [
+            0.7766,
+            0.8384
+          ]
+        },
+        "degradation_noPast_minus_past": {
+          "estimate": 0.1381,
+          "ci95": [
+            0.0753,
+            0.2019
+          ],
+          "excludes_zero": true,
+          "method": "unpaired bootstrap; under full stratification the two strata are independent samples"
+        }
+      },
+      "difference_in_differences_ours_minus_lunit39": {
+        "estimate": 0.0481,
+        "ci95": [
+          -0.017,
+          0.1113
+        ],
+        "excludes_zero": false,
+        "method": "bootstrap resampling all four stratum-by-class cells per replicate"
+      }
+    },
+    "B_shared_positives": {
+      "ours": {
+        "past_tb": {
+          "n": 1130,
+          "n_pos": 280,
+          "n_neg": 850,
+          "auroc": 0.6182
+        },
+        "no_past_tb": {
+          "n": 1858,
+          "n_pos": 280,
+          "n_neg": 1578,
+          "auroc": 0.7811
+        },
+        "degradation_noPast_minus_past": {
+          "estimate": 0.1629,
+          "note": "intervals for this construction are in prevtb_subgroup_20261021_1055/tables/subgroup_difference_tests.csv; they require the shared-positive bootstrap"
+        }
+      },
+      "lunit_v3.9.0.1": {
+        "past_tb": {
+          "n": 1130,
+          "n_pos": 280,
+          "n_neg": 850,
+          "auroc": 0.7192
+        },
+        "no_past_tb": {
+          "n": 1858,
+          "n_pos": 280,
+          "n_neg": 1578,
+          "auroc": 0.817
+        },
+        "degradation_noPast_minus_past": {
+          "estimate": 0.0978,
+          "note": "intervals for this construction are in prevtb_subgroup_20261021_1055/tables/subgroup_difference_tests.csv; they require the shared-positive bootstrap"
+        }
+      }
+    }
+  }
+}

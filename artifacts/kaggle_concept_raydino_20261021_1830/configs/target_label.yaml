@@ -1,0 +1,18 @@
+# Target-label semantics for BOTH encoder arms. Changing this in one arm only would
+# invalidate the comparison, so guards.assert_target_mapping is called before training.
+label_column: tb_label
+positive_categories:
+  - active_tb
+  - latent_tb
+  - active_latent_tb
+negative_categories:
+  - healthy
+description: >
+  The frozen baseline target. Positives are every image in the TBX11K `tb` folder,
+  including latent_tb, which carries tb_label=1 while its own active_tb_label=0.
+  This mismatch is a DOCUMENTED LIMITATION of the reference pipeline, applied
+  identically to both encoders so the comparison stays fair. It is not silently
+  corrected here. An active-only alternative was measured separately in an earlier
+  run and is NOT mixed into this benchmark.
+negatives_note: >
+  healthy-only negatives, matching the frozen baseline. sick_non_tb is excluded.

@@ -1,0 +1,15 @@
+decision,selected_value,cohorts_consulted,saw_TUNE,saw_REPORT,saw_full_vietnam,date_or_commit_time,precommitted,evidence,status
+D08 CLAHE,off,TBX11K dev,no,no,no,2026-10-14,n/a (pre-dates Vietnam),01c77fa docs/p2_d08_d09_recommendation.md; artifacts/p2/dryrun/d08_d09_sweep.json,verified
+D09 crop margin (original),full image,TBX11K dev,no,no,no,2026-10-14,n/a,"01c77fa; five-way tie on primary metric, decided on simplicity",verified
+D09 revisited -> lung crop,lungs-only,TBX11K dev + Shenzhen + Montgomery,no,no,no,2026-10-17,"NO - post-hoc, motivated by external results",8fe1b0c docs/p2_shortcut_does_not_transfer.md,verified
+D13 OOD threshold,0.70,TBX11K dev + lateral/non-medical pools,no,no,no,2026-10-14,NO - chosen to reject 100% of two alien pools,7a4707c docs/p2_ood_threshold_is_miscalibrated.md,verified
+D11 head type,binary,TBX11K dev,no,no,no,2026-10-14,"pre-registered criterion, amended and dated",7f09984 artifacts/p2/dryrun/section14_ablations.json,verified
+Negative composition,healthy-only,TBX11K dev + FULL Vietnam cohort,yes (implicitly),YES (implicitly),YES,2026-10-20 09:22,NO - selected by scoring the full Vietnam cohort; split did not exist until 18:51 that day,7b92fee scripts/p2_29_hard_negatives.py; artifacts/p2/dryrun/hard_negatives.json mtime 09:19,verified
+Focal pooling: use regions,yes,TBX11K dev + FULL Vietnam cohort,yes (implicitly),YES (implicitly),YES,2026-10-20 11:14,NO - preliminary 6x6 run scored on the full cohort,479254b docs/p2_focal_pooling.md,verified
+TUNE/REPORT split,"1352/1356 stratified, seed 20261020",Vietnam metadata only (no model scores),n/a,n/a,labels+scanner only,2026-10-20 18:51,YES - created before any sweep,artifacts/p2/external/vietnam_tune_report_split.json mtime 18:51; committed 1c81573 19:00,verified
+Pooling grid + aggregator,"12x12, max",TUNE half only,yes,no,no,2026-10-20 19:46,"YES - selection rule and scorer committed 19:00, sweep artifact 19:46",1c81573 (19:00) adds p2_32+p2_33+split; artifacts/p2/regional/mil_sweep.json mtime 19:46,verified
+Decision NOT to switch to 18x18+lse,kept 12x12 max,TUNE half only,yes,no,no,2026-10-20,YES - honoured the pre-commitment despite a nominally higher value,mil_sweep.json key grid18_addendum; 18/lse 0.7257 vs frozen 0.7239,verified
+REPORT read,0.7242,REPORT half,-,READ ONCE,-,2026-10-20 19:47,n/a - this is the reported result,"artifacts/p2/regional/mil_final.json mtime 19:47, after scorer commit at 19:00",verified
+Attention-MIL comparison,rejected (worse),TUNE half only,yes,no,no,2026-10-20 22:0x,NO - run after the REPORT read; labelled exploratory in-code,artifacts/p2/regional/attention_mil.json status field = EXPLORATORY,verified
+Gate operating threshold (audit),2.4766 at 70% spec,Vietnam TUNE half,yes,no,no,2026-10-20 22:31,NO - refitted for the audit; TBX11K-derived threshold gave 89% referrals,fc60e36 scripts/p2_35_gate_operational_audit.py,verified
+TBX11K site metadata,does not exist,TBX11K archive,n/a,n/a,n/a,2026-10-20,n/a,annotations/json/*.json carry no site field; lists/ carry none; verified by inspection,verified

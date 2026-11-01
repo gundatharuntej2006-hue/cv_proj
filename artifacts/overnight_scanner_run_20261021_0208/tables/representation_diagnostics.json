@@ -1,0 +1,23 @@
+{
+  "chance_balanced_accuracy": 0.3321758301337316,
+  "n_permutations": 200,
+  "seed": 17,
+  "folds": 5,
+  "ranks_tested": [
+    2,
+    3,
+    8,
+    16,
+    32,
+    64
+  ],
+  "preregistered_rank": 3,
+  "probe_feature": "mean-pooled 768-d token vector per image",
+  "baseline": {
+    "scanner_balanced_acc": 0.9895775243735937,
+    "scanner_macro_f1": 0.9905955270833234,
+    "tb_auroc_tune": 0.7237421933846163
+  },
+  "evaluated_on": "Vietnam TUNE only, 5-fold CV, never scoring fitted rows",
+  "report_touched": false
+}

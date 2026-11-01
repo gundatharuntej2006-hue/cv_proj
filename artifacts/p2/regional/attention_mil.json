@@ -1,0 +1,22 @@
+{
+ "created": "2026-10-20",
+ "seeds": [
+  17,
+  29,
+  43
+ ],
+ "reference_max_pooling_tune": 0.7239,
+ "results": [
+  {
+   "method": "attention",
+   "tbx11k_dev": 0.595,
+   "tune_auc": 0.6072
+  },
+  {
+   "method": "attention+MLP",
+   "tbx11k_dev": 0.9495,
+   "tune_auc": 0.6416
+  }
+ ],
+ "status": "EXPLORATORY - run after the primary REPORT read"
+}

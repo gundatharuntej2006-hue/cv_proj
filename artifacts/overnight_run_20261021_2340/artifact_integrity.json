@@ -1,0 +1,80 @@
+{
+  "vietnam_scores": {
+    "n": 2708,
+    "finite": true,
+    "min": -5.2386,
+    "max": 7.7322,
+    "n_unique": 2708,
+    "classes_present": [
+      0,
+      1
+    ],
+    "ood_finite": true,
+    "ood_range": [
+      0.3942,
+      0.7756
+    ]
+  },
+  "nlm_scores": {
+    "score_A_global_pooler": {
+      "finite": true,
+      "n_unique": 800,
+      "range": [
+        0.1079,
+        0.9969
+      ]
+    },
+    "score_B_patch_mean_1x1": {
+      "finite": true,
+      "n_unique": 800,
+      "range": [
+        -4.7369,
+        2.5483
+      ]
+    },
+    "score_C_regional_max_12x12": {
+      "finite": true,
+      "n_unique": 800,
+      "range": [
+        -5.9572,
+        7.6954
+      ]
+    }
+  },
+  "nlm_arm_pairs_identical": {
+    "score_A_global_pooler|score_B_patch_mean_1x1": false,
+    "score_A_global_pooler|score_C_regional_max_12x12": false,
+    "score_B_patch_mean_1x1|score_C_regional_max_12x12": false
+  },
+  "nlm_classes_per_cohort": {
+    "Montgomery": {
+      "n": 138,
+      "pos": 58,
+      "neg": 80
+    },
+    "Shenzhen": {
+      "n": 662,
+      "pos": 336,
+      "neg": 326
+    }
+  },
+  "manifest_grid_claim": "see file",
+  "cache_shapes": {
+    "regional_tbx11k_lungs_g12_v1.npz": [
+      6600,
+      144,
+      768
+    ],
+    "regional_vietnam_lungs_g12_v1.npz": [
+      2708,
+      144,
+      768
+    ],
+    "regional_nlm_lungs_g12_v1.npz": [
+      800,
+      144,
+      768
+    ]
+  },
+  "all_caches_are_144_regions": true
+}

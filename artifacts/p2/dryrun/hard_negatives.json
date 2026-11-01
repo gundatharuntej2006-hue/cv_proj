@@ -1,0 +1,213 @@
+{
+ "created": "2026-10-20",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "compositions": {
+  "all": {
+   "healthy": 1.0,
+   "sick_non_tb": 1.0
+  },
+  "sick_only": {
+   "sick_non_tb": 1.0
+  },
+  "sick_3x": {
+   "healthy": 1.0,
+   "sick_non_tb": 3.0
+  },
+  "healthy_only": {
+   "healthy": 1.0
+  }
+ },
+ "results": [
+  {
+   "variant": "full",
+   "negatives": "all",
+   "n_train": 5941,
+   "tbx11k_dev_auc": 0.9951,
+   "external": {
+    "Shenzhen": [
+     0.9404,
+     0.9218,
+     0.9573
+    ],
+    "Montgomery": [
+     0.8254,
+     0.7398,
+     0.9032
+    ],
+    "Vietnam": [
+     0.6196,
+     0.5898,
+     0.6495
+    ]
+   }
+  },
+  {
+   "variant": "full",
+   "negatives": "sick_only",
+   "n_train": 3241,
+   "tbx11k_dev_auc": 0.9432,
+   "external": {
+    "Shenzhen": [
+     0.8692,
+     0.8402,
+     0.8951
+    ],
+    "Montgomery": [
+     0.7573,
+     0.6608,
+     0.8486
+    ],
+    "Vietnam": [
+     0.6126,
+     0.5825,
+     0.6434
+    ]
+   }
+  },
+  {
+   "variant": "full",
+   "negatives": "sick_3x",
+   "n_train": 11341,
+   "tbx11k_dev_auc": 0.9931,
+   "external": {
+    "Shenzhen": [
+     0.9188,
+     0.8959,
+     0.939
+    ],
+    "Montgomery": [
+     0.7756,
+     0.6808,
+     0.8645
+    ],
+    "Vietnam": [
+     0.5935,
+     0.5633,
+     0.6249
+    ]
+   }
+  },
+  {
+   "variant": "full",
+   "negatives": "healthy_only",
+   "n_train": 3241,
+   "tbx11k_dev_auc": 0.9577,
+   "external": {
+    "Shenzhen": [
+     0.9354,
+     0.9166,
+     0.9528
+    ],
+    "Montgomery": [
+     0.9278,
+     0.8817,
+     0.9655
+    ],
+    "Vietnam": [
+     0.6538,
+     0.6239,
+     0.6846
+    ]
+   }
+  },
+  {
+   "variant": "lungs_only",
+   "negatives": "all",
+   "n_train": 5941,
+   "tbx11k_dev_auc": 0.9891,
+   "external": {
+    "Shenzhen": [
+     0.9294,
+     0.9088,
+     0.9472
+    ],
+    "Montgomery": [
+     0.8547,
+     0.7829,
+     0.9178
+    ],
+    "Vietnam": [
+     0.6428,
+     0.6126,
+     0.6727
+    ]
+   }
+  },
+  {
+   "variant": "lungs_only",
+   "negatives": "sick_only",
+   "n_train": 3241,
+   "tbx11k_dev_auc": 0.9461,
+   "external": {
+    "Shenzhen": [
+     0.8484,
+     0.8182,
+     0.8751
+    ],
+    "Montgomery": [
+     0.7769,
+     0.6845,
+     0.8622
+    ],
+    "Vietnam": [
+     0.6412,
+     0.611,
+     0.6716
+    ]
+   }
+  },
+  {
+   "variant": "lungs_only",
+   "negatives": "sick_3x",
+   "n_train": 11341,
+   "tbx11k_dev_auc": 0.9861,
+   "external": {
+    "Shenzhen": [
+     0.9013,
+     0.8765,
+     0.9229
+    ],
+    "Montgomery": [
+     0.8147,
+     0.7298,
+     0.892
+    ],
+    "Vietnam": [
+     0.6196,
+     0.589,
+     0.6503
+    ]
+   }
+  },
+  {
+   "variant": "lungs_only",
+   "negatives": "healthy_only",
+   "n_train": 3241,
+   "tbx11k_dev_auc": 0.9569,
+   "external": {
+    "Shenzhen": [
+     0.9412,
+     0.9233,
+     0.9576
+    ],
+    "Montgomery": [
+     0.9295,
+     0.8824,
+     0.9698
+    ],
+    "Vietnam": [
+     0.6743,
+     0.6443,
+     0.7039
+    ]
+   }
+  }
+ ],
+ "note": "Weighting by replication. Development is held fixed across compositions so early stopping stays comparable. EXPLORATORY."
+}

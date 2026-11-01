@@ -1,0 +1,124 @@
+{
+  "pinned_revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+  "vocabulary_sha256": "93e975b722422b64f18b57161ac9894fe30ac7a04cc68b7aa8a2e01f6d0fc439",
+  "rule": "exact single vocabulary entry only; no pooling, no expansion, no template",
+  "audited": [
+    {
+      "concept": "fibrosis",
+      "concept_idx": 835,
+      "role": "primary",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "scarring",
+      "concept_idx": 96952,
+      "role": "primary",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "volume loss",
+      "concept_idx": 368164,
+      "role": "primary",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "calcified granuloma",
+      "concept_idx": 209383,
+      "role": "primary",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "calcification",
+      "concept_idx": 77874,
+      "role": "primary",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "focal opacity",
+      "concept_idx": 281312,
+      "role": "primary",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "consolidation",
+      "concept_idx": 123742,
+      "role": "primary",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "pleural thickening",
+      "concept_idx": 341471,
+      "role": "primary",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "bronchiectasis",
+      "concept_idx": 57870,
+      "role": "primary",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "scoliosis",
+      "concept_idx": 82734,
+      "role": "negative control",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    },
+    {
+      "concept": "degenerative changes",
+      "concept_idx": 339316,
+      "role": "negative control",
+      "provenance": "copied verbatim from kaggle_exec_prep_20261023_1130/configs/concept_indices.json and b1_clear_mechanism_20261031_2328/configs/concept_indices.json"
+    }
+  ],
+  "diagnostic_probes": [
+    {
+      "concept": "no consolidation",
+      "concept_idx": 55926,
+      "role": "DIAGNOSTIC PROBE",
+      "rationale": "negation pair for the anomalous concept; tests whether the image-side axis separates presence from absence"
+    },
+    {
+      "concept": "no scarring",
+      "concept_idx": 142706,
+      "role": "DIAGNOSTIC PROBE",
+      "rationale": "negation pair for the headline concept, so the test is not applied only where it is convenient"
+    },
+    {
+      "concept": "clear lungs",
+      "concept_idx": 64918,
+      "role": "DIAGNOSTIC PROBE",
+      "rationale": "normality anchor; tests whether the consolidation axis behaves like a normal-chest detector"
+    },
+    {
+      "concept": "lungs are clear",
+      "concept_idx": 66018,
+      "role": "DIAGNOSTIC PROBE",
+      "rationale": "second normality anchor, different surface form"
+    },
+    {
+      "concept": "no acute cardiopulmonary process",
+      "concept_idx": 322541,
+      "role": "DIAGNOSTIC PROBE",
+      "rationale": "normality anchor in standard report register"
+    },
+    {
+      "concept": "normal chest",
+      "concept_idx": 290873,
+      "role": "DIAGNOSTIC PROBE",
+      "rationale": "normality anchor whose text geometry is furthest from the consolidation anchor (cos +0.100), so it is not pre-selected to agree"
+    }
+  ],
+  "probe_declaration": "These six probes are declared here, in writing, BEFORE any image-side similarity for them is computed. They were chosen from the text-side geometry in tables/concept_semantics.json by mechanism - negation pairs and normality anchors - not by any observed association with the classifier score. They are DIAGNOSTIC ONLY: they are excluded from the Benjamini-Hochberg family, they are not endpoints, and no intervention, threshold, subgroup or model choice may be based on them. They exist to test the hypothesis named in the task brief section 3 A4, that the concept embedding may be semantically close to normal or negated findings.",
+  "bh_family": [
+    "fibrosis",
+    "scarring",
+    "volume loss",
+    "calcified granuloma",
+    "calcification",
+    "focal opacity",
+    "consolidation",
+    "pleural thickening",
+    "bronchiectasis"
+  ],
+  "bh_note": "the 9 primary concepts only, as predeclared in the earlier runs. The family is NOT independent - see tables/concept_similarity_matrix.csv - so the correction is conservative for a correlated family, not a correction for 9 independent tests."
+}

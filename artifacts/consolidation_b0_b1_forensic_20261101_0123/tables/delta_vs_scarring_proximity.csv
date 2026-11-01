@@ -1,0 +1,18 @@
+concept,role,text_cosine_to_scarring_anchor,delta_rho_B1_minus_B0,delta_excludes_zero
+scarring,primary,1.0,-0.0344,True
+no scarring,diagnostic probe,0.9058,-0.0343,True
+pleural thickening,primary,0.8745,-0.035,True
+calcified granuloma,primary,0.8087,-0.0077,False
+calcification,primary,0.8085,-0.0297,True
+fibrosis,primary,0.7455,-0.0182,True
+degenerative changes,negative control,0.7301,-0.0384,True
+focal opacity,primary,0.7259,-0.0106,True
+volume loss,primary,0.6912,-0.0111,True
+clear lungs,diagnostic probe,0.6538,0.0009,False
+no acute cardiopulmonary process,diagnostic probe,0.6529,0.0018,False
+lungs are clear,diagnostic probe,0.6348,-0.002,False
+no consolidation,diagnostic probe,0.6243,-0.0019,False
+bronchiectasis,primary,0.5867,0.0177,True
+consolidation,primary,0.5865,0.0067,False
+scoliosis,negative control,0.5237,-0.007,False
+normal chest,diagnostic probe,0.4652,0.0042,False

@@ -1,0 +1,77 @@
+{
+  "A_determinism": {
+    "n": 2708,
+    "n_matching_5e-7": 2708,
+    "max_abs_deviation": 4.997863771727395e-07,
+    "bit_identical": false
+  },
+  "B_subspace_seed_sensitivity": {
+    "baseline_tune_auroc": 0.723742,
+    "per_seed": [
+      {
+        "subspace_seed": 17,
+        "tune_auroc": 0.723315,
+        "delta_vs_baseline": -0.000427,
+        "singular_values": [
+          73.936,
+          63.323,
+          0.0
+        ]
+      },
+      {
+        "subspace_seed": 29,
+        "tune_auroc": 0.723487,
+        "delta_vs_baseline": -0.000255,
+        "singular_values": [
+          73.47,
+          63.909,
+          0.0
+        ]
+      },
+      {
+        "subspace_seed": 43,
+        "tune_auroc": 0.723161,
+        "delta_vs_baseline": -0.000581,
+        "singular_values": [
+          74.136,
+          62.28,
+          0.0
+        ]
+      },
+      {
+        "subspace_seed": 61,
+        "tune_auroc": 0.723452,
+        "delta_vs_baseline": -0.000291,
+        "singular_values": [
+          73.738,
+          63.675,
+          0.0
+        ]
+      }
+    ],
+    "delta_range": [
+      -0.000581,
+      -0.000255
+    ],
+    "conclusion": "the null does not depend on the subspace seed"
+  },
+  "C_offset_uncertainty": {
+    "point_estimate": 0.020582,
+    "stratified_bootstrap": {
+      "n": 10000,
+      "ci95": [
+        -0.0029,
+        0.044
+      ],
+      "excludes_zero": false
+    },
+    "permutation_test": {
+      "n": 2000,
+      "null_mean": -0.014999,
+      "null_max": 0.020582,
+      "p_value": 0.1575,
+      "note": "null permutes the SAME three offsets across the three scanners, so it tests whether the assignment matters, not whether any shift helps"
+    }
+  },
+  "note": "deeper checks on experiments already frozen and scored; no parameter, threshold or acceptance criterion was changed"
+}

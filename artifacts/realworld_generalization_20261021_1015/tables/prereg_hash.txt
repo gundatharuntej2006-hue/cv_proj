@@ -1,0 +1,3 @@
+f748b4fc1cad44e69d401c8671bcd4e8bd22465901e973de27db0abf398c1dfa  artifacts/realworld_generalization_20261021_1015/02_EXPERIMENT_PREREGISTRATION.md
+hashed_at 2026-10-21T10:27:20+0530
+scoring had not started at this point

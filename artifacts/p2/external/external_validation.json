@@ -1,0 +1,77 @@
+{
+ "created": "2026-10-16",
+ "status": "EXPLORATORY, not reportable",
+ "why": "the reportable external number must be a sealed run of the final model on the final C01; see docs/p2_sealed_scoring.md",
+ "model": {
+  "dev_auc": 0.9949,
+  "seed_sd": 0.0001,
+  "variant": "full_clahe0",
+  "temperature": 0.4927794188260948,
+  "t_lower": 0.9068834781646729,
+  "ood_threshold": 0.7
+ },
+ "tbx11k_development": {
+  "auc": 0.995,
+  "auc_ci95": [
+   0.9883,
+   0.9993
+  ],
+  "n": 659,
+  "n_tb": 59
+ },
+ "external_sites": [
+  {
+   "site": "Shenzhen",
+   "n": 662,
+   "n_tb": 336,
+   "auc": 0.9382,
+   "auc_ci95": [
+    0.9189,
+    0.9552
+   ],
+   "sens_at_tbx11k_threshold": 0.869,
+   "spec_at_tbx11k_threshold": 0.8742,
+   "gate_rejection_rate": 0.0121,
+   "sens_at_95_spec_local": 0.7589,
+   "sens_at_70_spec_local": 0.9345,
+   "median_p_tb": 0.9981,
+   "median_p_normal": 0.5351
+  },
+  {
+   "site": "Montgomery",
+   "n": 138,
+   "n_tb": 58,
+   "auc": 0.8183,
+   "auc_ci95": [
+    0.7308,
+    0.8986
+   ],
+   "sens_at_tbx11k_threshold": 0.6724,
+   "spec_at_tbx11k_threshold": 0.95,
+   "gate_rejection_rate": 0.2246,
+   "sens_at_95_spec_local": 0.6724,
+   "sens_at_70_spec_local": 0.7759,
+   "median_p_tb": 0.9849,
+   "median_p_normal": 0.3086
+  }
+ ],
+ "domain_gap": {
+  "Shenzhen": {
+   "source_auroc_from_ood_score": 0.7991,
+   "median_ood_tbx11k": 0.4102,
+   "median_ood_site": 0.5163
+  },
+  "Montgomery": {
+   "source_auroc_from_ood_score": 0.9699,
+   "median_ood_tbx11k": 0.4102,
+   "median_ood_site": 0.651
+  }
+ },
+ "leakage_check": {
+  "max_cosine_external_vs_train": 0.8389,
+  "pairs_above_0.90": 0,
+  "note": "training uses the core TBX11K lists, not all_*.txt"
+ },
+ "preprocessing": "cv2.resize INTER_AREA to 512x512, matching C04",
+ "note": "Shenzhen and Montgomery each carry their own same-hospital controls, so the comparison does not reward acquisition-pipeline detection."
+}

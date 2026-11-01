@@ -1,0 +1,89 @@
+Loading weights:   0%|          | 0/223 [00:00<?, ?it/s]Loading weights: 100%|##########| 223/223 [00:00<00:00, 4271.87it/s]
+D2 loaded: grid 37, 86.6 M params
+  D2 tbx_train  3241 images (3241, 144, 768)  2.6 min  0.048 s/img
+  D2 tbx_dev    659 images (659, 144, 768)  0.5 min  0.046 s/img
+  D2 tbx_cal    899 images (899, 144, 768)  0.8 min  0.054 s/img
+  D2 vie_tune  1352 images (1352, 144, 768)  1.0 min  0.044 s/img
+Loading weights:   0%|          | 0/208 [00:00<?, ?it/s]Loading weights: 100%|##########| 208/208 [00:00<00:00, 3117.62it/s]
+[transformers] [1mSiglipVisionModel LOAD REPORT[0m from: StanfordAIMI/XraySigLIP__vit-b-16-siglip-512__webli
+Key                                                          | Status     |  | 
+-------------------------------------------------------------+------------+--+-
+text_model.encoder.layers.{0...11}.self_attn.k_proj.weight   | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.self_attn.q_proj.bias     | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.layer_norm2.weight        | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.self_attn.v_proj.bias     | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.self_attn.v_proj.weight   | UNEXPECTED |  | 
+text_model.embeddings.position_embedding.weight              | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.layer_norm1.weight        | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.layer_norm1.bias          | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.mlp.fc2.weight            | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.self_attn.out_proj.bias   | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.mlp.fc1.bias              | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.self_attn.out_proj.weight | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.self_attn.k_proj.bias     | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.mlp.fc2.bias              | UNEXPECTED |  | 
+text_model.final_layer_norm.weight                           | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.layer_norm2.bias          | UNEXPECTED |  | 
+text_model.head.bias                                         | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.mlp.fc1.weight            | UNEXPECTED |  | 
+text_model.final_layer_norm.bias                             | UNEXPECTED |  | 
+logit_bias                                                   | UNEXPECTED |  | 
+text_model.head.weight                                       | UNEXPECTED |  | 
+text_model.encoder.layers.{0...11}.self_attn.q_proj.weight   | UNEXPECTED |  | 
+logit_scale                                                  | UNEXPECTED |  | 
+text_model.embeddings.token_embedding.weight                 | UNEXPECTED |  | 
+
+Notes:
+- UNEXPECTED:	can be ignored when loading from different task/architecture; not ok if you expect identical arch.
+S loaded: grid 32, 93.5 M params
+  S tbx_train  3241 images (3241, 144, 768)  1.9 min  0.035 s/img
+  S tbx_dev    659 images (659, 144, 768)  0.4 min  0.035 s/img
+  S tbx_cal    899 images (899, 144, 768)  0.5 min  0.035 s/img
+  S vie_tune  1352 images (1352, 144, 768)  0.8 min  0.035 s/img
+train 3241 dev 659 cal 899 (active 81) tune 1352 (xpert+ 139)
+
+arm D   d=768
+   seed 17 dev 0.9363
+   seed 29 dev 0.9370
+   seed 43 dev 0.9374
+   seed 61 dev 0.9370
+   seed 79 dev 0.9365
+
+arm D2  d=768
+   seed 17 dev 0.9365
+   seed 29 dev 0.9363
+   seed 43 dev 0.9369
+   seed 61 dev 0.9360
+   seed 79 dev 0.9367
+
+arm S   d=768
+   seed 17 dev 0.9372
+   seed 29 dev 0.9352
+   seed 43 dev 0.9353
+   seed 61 dev 0.9363
+   seed 79 dev 0.9364
+
+arm C3  d=2304
+   seed 17 dev 0.9520
+   seed 29 dev 0.9506
+   seed 43 dev 0.9499
+   seed 61 dev 0.9503
+   seed 79 dev 0.9507
+gate D expected 0.9498 here 0.9498 pass
+D     dev 0.9368 cal 0.9498 [0.9277, 0.9686] tune 0.7237 [0.6846, 0.7626]
+D2    dev 0.9364 cal 0.9493 [0.9273, 0.9673] tune 0.7426 [0.7051, 0.7803]
+S     dev 0.9361 cal 0.9270 [0.8913, 0.9564] tune 0.7067 [0.6682, 0.7456]
+E3    dev 0.9427 cal 0.9503 [0.9270, 0.9691] tune 0.7347 [0.6970, 0.7721]
+E_DS  dev 0.9423 cal 0.9472 [0.9219, 0.9675] tune 0.7252 [0.6871, 0.7631]
+E_DD2 dev 0.9397 cal 0.9517 [0.9298, 0.9696] tune 0.7368 [0.6988, 0.7746]
+E_D2S dev 0.9418 cal 0.9462 [0.9209, 0.9666] tune 0.7349 [0.6980, 0.7723]
+C3    dev 0.9505 cal 0.9504 [0.9257, 0.9701] tune 0.7101 [0.6715, 0.7475]
+E3 - D: cal +0.0006 [-0.0067, +0.0076] | tune +0.0109 [-0.0002, +0.0215] REJECT
+D2 - D: cal -0.0004 [-0.0076, +0.0067] | tune +0.0188 [+0.0015, +0.0364] 
+S - D: cal -0.0227 [-0.0502, -0.0007] | tune -0.0171 [-0.0442, +0.0084] 
+E_DS - D: cal -0.0026 [-0.0126, +0.0063] | tune +0.0015 [-0.0111, +0.0134] 
+E_DD2 - D: cal +0.0019 [-0.0020, +0.0061] | tune +0.0131 [+0.0043, +0.0220] 
+E_D2S - D: cal -0.0035 [-0.0154, +0.0073] | tune +0.0111 [-0.0062, +0.0278] 
+C3 - D: cal +0.0007 [-0.0120, +0.0110] | tune -0.0137 [-0.0324, +0.0041] 
+
+fit done in 403.2 s

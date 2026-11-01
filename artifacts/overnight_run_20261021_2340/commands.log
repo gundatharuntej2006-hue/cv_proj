@@ -1,0 +1,51 @@
+# Commands run during the overnight run, in order. All from the repository root (D:\tb-triage).
+# Every command below is read-only with respect to existing artifacts. Nothing was committed,
+# pushed, deleted or overwritten outside this run directory.
+
+## Priority 0 - run record
+git rev-parse HEAD                                              # f878a6c9e9746803938463941ae1ffaa5d1fd96a
+git rev-parse --abbrev-ref HEAD                                 # master
+git status --short                                              # clean except the new run directory
+git log --oneline -8
+py -3 artifacts/overnight_run_20261021_2340/scripts/make_manifest.py        # exit 0, 26 files hashed
+
+## Priority 1 - verify existing state
+py -3 artifacts/overnight_run_20261021_2340/scripts/inspect_npz.py \
+    artifacts/p2/regional/regional_tbx11k_lungs_g12_v1.npz \
+    artifacts/p2/regional/regional_nlm_lungs_g12_v1.npz \
+    artifacts/p2/regional/regional_vietnam_lungs_g12_v1.npz \
+    artifacts/p2/bundle/head.npz artifacts/p2/bundle/bank.npz
+grep -n "ood_policy|advisory|blocking" src/p2_cls/pipeline.py   # default advisory at line 150
+sed -n '55,125p' scripts/p2_35_gate_operational_audit.py        # provenance of classifier_score
+py -3 -m pytest -q                                              # 228 passed, 1 skipped, exit 0
+
+## Priority 2 - scanner, label and data coverage
+py -3 artifacts/overnight_run_20261021_2340/scripts/audit_data.py           # exit 0, 3 CSVs
+py -3 artifacts/overnight_run_20261021_2340/scripts/source_probe.py         # exit 0
+
+## Priority 3 and 5 - reproduce baselines, errors and score distributions
+py -3 artifacts/overnight_run_20261021_2340/scripts/reproduce_and_analyse.py  # exit 0, 22 rows
+
+## Priority 5.5 - artifact integrity (inline, written to artifact_integrity.json)
+py -3 -c "<finiteness, uniqueness, arm-distinctness, class presence, cache grid shapes>"
+
+## Priority 5.7 - report consistency
+py -3 -c "<sweep table vs mil_sweep.json, cell by cell>"
+grep -rln "0\.6744" docs report artifacts/p2/audit scripts
+
+## Priority 6 - tests and reproducibility
+py -3 -m pytest -q                                              # 228 passed, 1 skipped, exit 0
+py -3 -m pytest tests/p2_cls/test_ood_cannot_suppress.py -q     # 11 passed, exit 0
+py -3 -m pytest artifacts/overnight_run_20261021_2340/tests -q  # 5 passed, exit 0
+py -3 -m py_compile artifacts/overnight_run_20261021_2340/scripts/*.py \
+                    artifacts/overnight_run_20261021_2340/tests/*.py   # exit 0
+
+# One in-run fix, recorded rather than hidden:
+#   scripts/source_probe.py initially passed multi_class="multinomial" to LogisticRegression,
+#   which scikit-learn 1.9.0 has removed. The argument was dropped; multinomial is the
+#   default for a multi-class target in that version, so the intended behaviour is unchanged.
+# One test expectation corrected:
+#   the new batch test first asserted that a missing file yields status ERROR. The pipeline
+#   actually returns REJECTED at stage "decode" with reason "unreadable: FileNotFoundError",
+#   which is the better contract. The test was corrected to pin that, including the assertion
+#   that it is distinguishable from an OOD rejection.

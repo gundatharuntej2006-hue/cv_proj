@@ -1,0 +1,192 @@
+{
+ "run": "consolidation_b0_b1_forensic_20261101_0123",
+ "title": "Consolidation-anomaly investigation and B0/B1 representation audit",
+ "type": "forensic and statistical; no training, no production change",
+ "finished_utc": "2026-10-31T20:25:39Z",
+ "elapsed_min": 26.42,
+ "git_head_before": "f878a6c9e9746803938463941ae1ffaa5d1fd96a",
+ "git_head_after": "f878a6c9e9746803938463941ae1ffaa5d1fd96a",
+ "execution": "local GPU; no Kaggle session; nothing uploaded",
+ "clear_inference_rerun": true,
+ "clear_inference_reason": "the prior run deliberately deleted its per-case similarities",
+ "cohort": {
+  "name": "vietnam_tune",
+  "n": 1352,
+  "n_positive": 139,
+  "n_negative": 1213,
+  "n_past_tb": 466,
+  "fingerprint_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+  "ordered_id_hash_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+  "images_missing": 0,
+  "images_unapproved_present": 1356
+ },
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false,
+  "report_pids_in_cohort": 0
+ },
+ "model": {
+  "repo": "peterhan91/CLEAR",
+  "revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+  "clear_commit": "57d2eae57ddabf8e56c8013ec675336d71b3d8e7",
+  "input_px": 448,
+  "checkpoint": "D:\\hf-cache\\hub\\models--peterhan91--CLEAR\\snapshots\\142f169c8b006b0f28cf55c6a237c3003db5ed8f\\best_model.pt",
+  "checkpoint_bytes": 603060057,
+  "embeddings_bytes": 1131400935,
+  "loader": "clear.load_pretrained",
+  "visual_parameters": 87174144,
+  "elapsed_min": 1.7
+ },
+ "vocabulary_sha256": "93e975b722422b64f18b57161ac9894fe30ac7a04cc68b7aa8a2e01f6d0fc439",
+ "concepts": {
+  "audited": 11,
+  "diagnostic_probes": 6,
+  "encoded": 17,
+  "bh_family": [
+   "fibrosis",
+   "scarring",
+   "volume loss",
+   "calcified granuloma",
+   "calcification",
+   "focal opacity",
+   "consolidation",
+   "pleural thickening",
+   "bronchiectasis"
+  ],
+  "bh_family_is_not_independent": true
+ },
+ "statistics": {
+  "seed": 20261101,
+  "n_boot_primary": 10000,
+  "n_boot_subgroup": 2000,
+  "interval": "percentile",
+  "resampling_unit": "patient (one image per patient in Vietnam)"
+ },
+ "b0_identity_with_production": {
+  "spearman": 1.0,
+  "pearson": 1.0,
+  "max_abs_difference": 1.000000000139778e-06,
+  "source_production": "artifacts\\overnight_scanner_run_20261021_0208\\tables\\vietnam_case_scores.csv",
+  "source_B0": "active_tb_label_raydino_20261024_1254/.../vietnam_tune_armA.csv"
+ },
+ "reproduction": {
+  "targets": {
+   "consolidation|negatives (all)": -0.3,
+   "consolidation|positives (all)": -0.3849,
+   "scarring|negatives (all)": 0.5661,
+   "fibrosis|negatives (all)": 0.4166
+  },
+  "all_passed": true
+ },
+ "environment": {
+  "python": "3.13.2",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "torch": "2.6.0+cu124",
+  "cuda": "12.4",
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "numpy": "2.2.6"
+ },
+ "disposition": "ARTEFACT_OR_PIPELINE_ERROR_IDENTIFIED",
+ "disposition_basis": "A demonstrable phrase-mapping / semantic defect explains the sign. The CLEAR anchors do not separate a finding from its negation (text cosine X vs 'no X' = +0.75 to +0.98), and 27.6% of vocabulary sentences mentioning consolidation are negated, so its anchor sits in the normality region. On the image side 'no consolidation' correlates with the classifier score at -0.534, more strongly than 'consolidation' (-0.300), and normality phrases reach -0.601. The arithmetic reproduces exactly; the interpretation was wrong.",
+ "key_findings": {
+  "negation_blindness_text_side": {
+   "fibrosis vs no fibrosis": 0.8435,
+   "scarring vs no scarring": 0.9058,
+   "volume loss vs no volume loss": 0.9797,
+   "volume loss vs volume loss has resolved": 0.866,
+   "calcification vs no calcification": 0.9608,
+   "focal opacity vs no focal opacity": 0.9512,
+   "consolidation vs no consolidation": 0.747,
+   "consolidation vs no focal consolidation": 0.7364,
+   "consolidation vs consolidation resolved": 0.7762,
+   "pleural thickening vs no pleural thickening": 0.915
+  },
+  "negated_fraction_of_vocabulary_context": {
+   "consolidation": 0.2763,
+   "scarring": 0.016,
+   "fibrosis": 0.0633,
+   "focal opacity": 0.0571,
+   "volume loss": 0.017,
+   "calcification": 0.0291,
+   "bronchiectasis": 0.0211,
+   "pleural thickening": 0.0214,
+   "scoliosis": 0.011,
+   "calcified granuloma": 0.0337,
+   "degenerative changes": 0.0144
+  },
+  "anchor_vs_real_sentences": {
+   "n_sampled": 1500,
+   "affirmative": {
+    "n": 1127,
+    "median": 0.6047,
+    "p25": 0.4647,
+    "p75": 0.7219
+   },
+   "negated": {
+    "n": 373,
+    "median": 0.6161,
+    "p25": 0.443,
+    "p75": 0.7379
+   },
+   "median_gap_affirmative_minus_negated": -0.0114
+  },
+  "image_side_probe_rho_vs_score_B0_negatives": {
+   "no acute cardiopulmonary process": -0.6012,
+   "no consolidation": -0.5339,
+   "clear lungs": -0.4694,
+   "normal chest": -0.4348,
+   "lungs are clear": -0.4107,
+   "consolidation": -0.3,
+   "no scarring": 0.3009,
+   "scarring": 0.5661
+  },
+  "consolidation_within_scanner_rho_negatives": {
+   "scanner 1": -0.1397,
+   "scanner 2": -0.2411,
+   "scanner 3": -0.1472,
+   "pooled": -0.3
+  },
+  "leave_one_out_range_pooled_negatives": [
+   -0.3028,
+   -0.2983
+  ],
+  "b0_b1_rank_agreement_spearman": 0.9893,
+  "localisation": {
+   "spearman_cosine_to_scarring_vs_delta_rho": -0.8235,
+   "p_value": 4.86e-05,
+   "n": 17,
+   "at_or_above_cos_0.69": {
+    "n": 9,
+    "n_negative_delta": 9,
+    "mean_delta": -0.0244
+   },
+   "below_cos_0.69": {
+    "n": 8,
+    "n_negative_delta": 3,
+    "mean_delta": 0.0026
+   },
+   "normality_probes_all_cover_zero": true
+  },
+  "scarring_vs_no_scarring_delta": {
+   "scarring": -0.0344,
+   "no scarring": -0.0343
+  }
+ },
+ "corrections_to_prior_runs": {
+  "U3_consolidation_anomaly": "CLOSED - explained",
+  "broad_re_ranking_reading": "CORRECTED - the B0->B1 change is localised to the scarring neighbourhood, not general",
+  "degenerative_changes_as_control": "INVALIDATED - text cosine 0.730 to scarring, inside the region that moved",
+  "arithmetic_of_prior_reports": "NO ERROR FOUND - every checked statistic reproduced"
+ },
+ "still_open": {
+  "U4": "CLEAR's exposure to this cohort unknown",
+  "cavity": "no exact vocabulary entry; never measured",
+  "b1_positive_case_safety": "0.9424 -> 0.9281 locked-threshold sensitivity, 2 of 139; unresolvable here",
+  "scanner_composition": "quantified but not decomposed into site vs population"
+ },
+ "image_review_workstream_D": "SKIPPED - no radiologist participating; question already answered by the negation probes",
+ "per_case_export": "none; shards computed in private scratch and deleted",
+ "training_performed": false,
+ "production_unchanged": "Vietnam screening AUROC remains 0.7242; nothing was modified",
+ "next_action": "Stop the concept-intervention line; correct the interpretation in the existing write-ups."
+}

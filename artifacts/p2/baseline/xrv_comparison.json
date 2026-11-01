@@ -1,0 +1,175 @@
+{
+ "created": "2026-10-14",
+ "variant": "full_clahe0",
+ "weights": "densenet121-res224-all",
+ "n_images": 8400,
+ "n_dev": 659,
+ "n_dev_tb": 59,
+ "zero_shot": [
+  {
+   "pathology": "Pneumonia",
+   "auc": 0.8026,
+   "auc_oriented": 0.8026
+  },
+  {
+   "pathology": "Nodule",
+   "auc": 0.7622,
+   "auc_oriented": 0.7622
+  },
+  {
+   "pathology": "Emphysema",
+   "auc": 0.745,
+   "auc_oriented": 0.745
+  },
+  {
+   "pathology": "Lung Lesion",
+   "auc": 0.7288,
+   "auc_oriented": 0.7288
+  },
+  {
+   "pathology": "Pneumothorax",
+   "auc": 0.6902,
+   "auc_oriented": 0.6902
+  },
+  {
+   "pathology": "Fracture",
+   "auc": 0.6826,
+   "auc_oriented": 0.6826
+  },
+  {
+   "pathology": "Edema",
+   "auc": 0.6754,
+   "auc_oriented": 0.6754
+  },
+  {
+   "pathology": "Enlarged Cardiomediastinum",
+   "auc": 0.6439,
+   "auc_oriented": 0.6439
+  },
+  {
+   "pathology": "Mass",
+   "auc": 0.6285,
+   "auc_oriented": 0.6285
+  },
+  {
+   "pathology": "Pleural_Thickening",
+   "auc": 0.6267,
+   "auc_oriented": 0.6267
+  },
+  {
+   "pathology": "Consolidation",
+   "auc": 0.6144,
+   "auc_oriented": 0.6144
+  },
+  {
+   "pathology": "Lung Opacity",
+   "auc": 0.6092,
+   "auc_oriented": 0.6092
+  },
+  {
+   "pathology": "Infiltration",
+   "auc": 0.6045,
+   "auc_oriented": 0.6045
+  },
+  {
+   "pathology": "Fibrosis",
+   "auc": 0.5992,
+   "auc_oriented": 0.5992
+  },
+  {
+   "pathology": "Cardiomegaly",
+   "auc": 0.471,
+   "auc_oriented": 0.529
+  },
+  {
+   "pathology": "Effusion",
+   "auc": 0.5246,
+   "auc_oriented": 0.5246
+  },
+  {
+   "pathology": "Hernia",
+   "auc": 0.5164,
+   "auc_oriented": 0.5164
+  },
+  {
+   "pathology": "Atelectasis",
+   "auc": 0.4971,
+   "auc_oriented": 0.5029
+  }
+ ],
+ "zero_shot_best": {
+  "pathology": "Pneumonia",
+  "auc": 0.8026,
+  "auc_oriented": 0.8026
+ },
+ "heads": [
+  {
+   "label": "rad-dino 768-d",
+   "dim": 768,
+   "auc": 0.9949,
+   "seed_sd": 0.0001,
+   "sens_at_70": 1.0,
+   "sens_at_95": 0.9661
+  },
+  {
+   "label": "xrv densenet 1024-d",
+   "dim": 1024,
+   "auc": 0.9539,
+   "seed_sd": 0.0005,
+   "sens_at_70": 0.9661,
+   "sens_at_95": 0.8475
+  },
+  {
+   "label": "xrv pathologies 18-d",
+   "dim": 18,
+   "auc": 0.9024,
+   "seed_sd": 0.002,
+   "sens_at_70": 0.9153,
+   "sens_at_95": 0.5932
+  }
+ ],
+ "paired_vs_raddino": [
+  {
+   "label": "xrv densenet 1024-d",
+   "delta_auc": -0.0409,
+   "ci95": [
+    -0.0727,
+    -0.014
+   ],
+   "verdict": "worse"
+  },
+  {
+   "label": "xrv pathologies 18-d",
+   "delta_auc": -0.0897,
+   "ci95": [
+    -0.1338,
+    -0.0515
+   ],
+   "verdict": "worse"
+  },
+  {
+   "label": "zero-shot Pneumonia",
+   "delta_auc": -0.1924,
+   "ci95": [
+    -0.2541,
+    -0.1328
+   ],
+   "verdict": "worse"
+  }
+ ],
+ "within_dataset_median_distance": {
+  "rad-dino": {
+   "median_self": 0.3582,
+   "median_new_site": 0.7787,
+   "ratio": 2.174,
+   "site_auroc": 1.0
+  },
+  "xrv densenet": {
+   "median_self": 0.0164,
+   "median_new_site": 0.092,
+   "ratio": 5.602,
+   "site_auroc": 0.9998
+  }
+ },
+ "note": "Provisional split (Person 1's C01 pending). Development split only; internal_test untouched. Both backbones see byte-identical pixels via p2_cls.embed.load_manifest/read_image."
+}

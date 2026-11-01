@@ -1,0 +1,187 @@
+{
+  "phase": 0,
+  "scores_computed": false,
+  "protocol_sources": {
+    "NEXT_STEP.md": {
+      "path": "artifacts/overnight_scanner_run_20261021_0208/NEXT_STEP.md",
+      "exists": true,
+      "sha256": "96fb00d728d3cd9dd8e9ff240f0cf03d978d448c5e9b01bb877fd9a5ca90fb0d"
+    },
+    "FROZEN_MANIFEST.md": {
+      "path": "artifacts/overnight_scanner_run_20261021_0208/FROZEN_MANIFEST.md",
+      "exists": true,
+      "sha256": "1af10d5e64c9762aae6c0a764b703077ec2a382f5541d6f65982b5350c31e141"
+    },
+    "frozen_parameters.json": {
+      "path": "artifacts/overnight_scanner_run_20261021_0208/tables/frozen_parameters.json",
+      "exists": true,
+      "sha256": "a632a86c268684ee92cc6e27dd2683c87f855664d8f7948a33ec309a1004ff08"
+    },
+    "PRIMARY_EXPERIMENT_PREREGISTRATION.md": {
+      "path": "artifacts/overnight_run_20261021_2340/PRIMARY_EXPERIMENT_PREREGISTRATION.md",
+      "exists": true,
+      "sha256": "b1b99ba16c1997353bd2f2073e924628093e6c53eea7505127684502094a0b73"
+    },
+    "dadb_third_site.json": {
+      "path": "artifacts/p2/external/dadb_third_site.json",
+      "exists": true,
+      "sha256": "9badd17376f3ab336ae716ce5a72ea4d4ec1c11dde1678037126b5beedfe88ed"
+    },
+    "radino_dadb_lungs_only_v1.npz": {
+      "path": "artifacts/p2/external/radino_dadb_lungs_only_v1.npz",
+      "exists": true,
+      "sha256": "b31b10954be72d2a10ced84d4d2332f46e7de131ba07c3e5d96926e6a7a7d56b"
+    },
+    "radino_dadb_full_v1.npz": {
+      "path": "artifacts/p2/external/radino_dadb_full_v1.npz",
+      "exists": true,
+      "sha256": "8b7653a13e3b9e7b4e7b3217ca519df763d2f4053944213aff88064a1db760af"
+    },
+    "p2_26_dadb_third_site.py": {
+      "path": "scripts/p2_26_dadb_third_site.py",
+      "exists": true,
+      "sha256": "9466239df0e783bf180ed4142c64930398f23359de793f18a2f1117c21e4cf13"
+    }
+  },
+  "frozen_offsets": {
+    "parameters": {
+      "1": 0.5137025,
+      "2": -0.8610015,
+      "3": 2.345174
+    },
+    "estimated_on": "Vietnam TUNE half, per rad_system, median score of non-TB cases",
+    "keyed_by": "Vietnam rad_system in {1, 2, 3}",
+    "formula": "score_corrected = score - offset[rad_system]"
+  },
+  "dadb_estimator_in_NEXT_STEP": {
+    "text": "Per site, the median score of that site's non-TB cases. DA/DB has no development half, so use leave-one-out: centre each case by the median of the other non-TB cases at its site.",
+    "requires_dadb_non_tb_labels": true,
+    "fits_offsets_on_dadb": true
+  },
+  "acceptance_rule_in_NEXT_STEP": {
+    "minimum_effect_size": "+0.02 pooled AUROC",
+    "uncertainty": "95% paired bootstrap CI excludes zero",
+    "guardrail": "neither site's AUROC falls by more than 0.02",
+    "present_and_unambiguous": true
+  },
+  "cohort": {
+    "source_dir": "data\\raw\\tbx11k\\TBX11K\\imgs\\extra\\da+db",
+    "source_dir_exists": true,
+    "n_files": 176,
+    "n_reported_in_dadb_third_site_json": 176,
+    "reconciles": true,
+    "n_unique_case_ids": 176,
+    "n_duplicate_case_ids": 0,
+    "missing_files": 0,
+    "by_site_label": {
+      "DA_label0": 50,
+      "DA_label1": 22,
+      "DB_label0": 52,
+      "DB_label1": 52
+    },
+    "by_site": {
+      "DA": 72,
+      "DB": 104
+    },
+    "n_positive": 74,
+    "n_negative": 102,
+    "prevalence": 0.4205,
+    "label_mapping": "filename first character: p -> 1 (TB), otherwise 0",
+    "patient_identifiers_available": false,
+    "patient_overlap_checkable": false,
+    "published_vs_recomputed": {
+      "DA+DB": {
+        "published": [
+          176,
+          74
+        ],
+        "recomputed": [
+          176,
+          74
+        ],
+        "match": true
+      },
+      "DA": {
+        "published": [
+          72,
+          22
+        ],
+        "recomputed": [
+          72,
+          22
+        ],
+        "match": true
+      },
+      "DB": {
+        "published": [
+          104,
+          52
+        ],
+        "recomputed": [
+          104,
+          52
+        ],
+        "match": true
+      }
+    }
+  },
+  "available_artifacts": {
+    "global_embeddings": {
+      "full": {
+        "keys": [
+          "emb",
+          "n_sanity_fail"
+        ],
+        "emb_shape": [
+          176,
+          768
+        ],
+        "n_sanity_fail": 0,
+        "has_image_id": false
+      },
+      "lungs_only": {
+        "keys": [
+          "emb",
+          "n_sanity_fail"
+        ],
+        "emb_shape": [
+          176,
+          768
+        ],
+        "n_sanity_fail": 1,
+        "has_image_id": false
+      },
+      "border_only": {
+        "keys": [
+          "emb",
+          "n_sanity_fail"
+        ],
+        "emb_shape": [
+          176,
+          768
+        ],
+        "n_sanity_fail": 0,
+        "has_image_id": false
+      }
+    },
+    "regional_12x12_embedding_exists": false,
+    "case_level_score_file_exists": false,
+    "note": "the Vietnam offset result was measured on focal-pooling (12x12 max) scores; DA/DB has global 768-d embeddings only"
+  },
+  "provenance": {
+    "overlap_with_provisional_c01": 0,
+    "overlap_with_core_trainval_labels": 0,
+    "scripts_reading_dadb": [
+      "scripts/p2_26_dadb_third_site.py"
+    ],
+    "appears_in_decision_provenance_table": false,
+    "rad_dino_checkpoint_exposure": "UNKNOWN. The RAD-DINO model card states the released checkpoint was selected by linear probing on validation sets of 'the evaluation datasets described in the paper', which the card does not name. DA/DB (NITRD, New Delhi) is not in the listed pre-training corpora, but checkpoint-selection exposure cannot be excluded."
+  },
+  "precondition_6_application_at_inference": {
+    "frozen_vietnam_offsets_transferable_to_dadb": false,
+    "reason_not_transferable": "the frozen offsets are keyed to Vietnam rad_system 1/2/3; DA and DB are different acquisition sources with no mapping to those groups, and the task forbids guessing one",
+    "dadb_estimator_requires_dadb_labels": true,
+    "label_free_variant_would_still_fit_on_dadb": true,
+    "verdict": "NOT EVALUABLE as a frozen-parameter validation"
+  }
+}

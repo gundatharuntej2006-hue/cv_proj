@@ -1,0 +1,10 @@
+group,n,median_score,p75_score,p90_score,referral_rate_at_fixed_threshold,median_lunit,lunit_referral_rate
+"negative, no past TB",1578,-0.3384,2.3179,4.1669,0.2319,0.452,0.2389
+"negative, PAST TB",850,2.1749,3.7886,5.0082,0.4576,0.7095,0.4153
+"negative, diabetes",232,0.3458,2.8895,4.3703,0.2974,0.477,0.2457
+"negative, 0 symptoms",1383,0.5422,2.8883,4.5247,0.2936,0.518,0.2531
+"negative, 3+ symptoms",30,0.5698,2.2273,4.1311,0.2333,0.588,0.3333
+"negative, TB contact",164,0.1868,3.1289,4.8345,0.2866,0.584,0.2805
+"negative, age >=55",1969,0.6548,2.9839,4.5762,0.3088,0.534,0.2727
+ALL negatives,2428,0.7432,2.9805,4.5728,0.311,0.568,0.3007
+ALL TB positives,280,3.1234,4.5232,5.6868,0.6214,0.889,0.6857

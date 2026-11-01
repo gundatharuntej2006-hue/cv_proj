@@ -1,0 +1,57 @@
+{
+ "generated_utc": "2026-10-24T07:25:57Z",
+ "inputs": {
+  "artifacts\\p2\\dryrun\\provisional_c01.csv": "b228f85cb10093076e04bc082063800b2b306eb0d1f080ace6a95bd7d7026ca1",
+  "artifacts\\p2\\labels_tbx11k_trainval_v1.csv": "3d81ed2928b1f020b2dd36360a51a51ec731ae5f420bd6b102fd5ea9acbd77a1",
+  "artifacts\\p2\\dedup\\provisional_near_dup_official_v0.csv": "894744344882845f62e9ae343d8e919de52a6ac30b9fd6de07145b0526f55982"
+ },
+ "label_table_rows": 8400,
+ "c01_rows": 8400,
+ "target_mapping_mismatches": [
+  [
+   "tb1199",
+   "category differs: active_tb vs latent_tb"
+  ],
+  [
+   "tb1199",
+   "active_tb_label not derivable from category"
+  ]
+ ],
+ "target_mapping_deterministic": false,
+ "c01_stores_active_tb_label_as_blank_for_latent": 139,
+ "near_duplicate_pairs_by_partition_pair": {
+  "not_in_C01": 108,
+  "calibration|train": 22,
+  "internal_test|train": 24,
+  "development|internal_test": 3,
+  "calibration|development": 1
+ },
+ "calibration_images_with_a_cross_split_near_duplicate": 23,
+ "calibration_affected_ids": [
+  "s0480",
+  "s0667",
+  "s1046",
+  "s1124",
+  "s1623",
+  "s1939",
+  "s2193",
+  "s2432",
+  "s2542",
+  "s2857",
+  "s2953",
+  "s3648",
+  "s3669",
+  "s3710",
+  "s3741",
+  "s3878",
+  "s3902",
+  "s4090",
+  "s4579",
+  "s4621",
+  "s4862",
+  "tb0870",
+  "tb0918"
+ ],
+ "patient_ids_available": false,
+ "patient_id_note": "TBX11K ships no patient identifier; C01 and the label table carry image_id only. Folds are image-level and cannot be claimed patient-grouped."
+}

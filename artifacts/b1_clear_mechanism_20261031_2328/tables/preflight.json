@@ -1,0 +1,122 @@
+{
+ "manifest_sha256": "eea6bfcad3d1a025cec3f04d6b86d59a2c1c8aa4d2e871c2acbf2a5015e509f9",
+ "finished_utc": "2026-10-31T18:49:49Z",
+ "elapsed_min": 35.23,
+ "execution": "local GPU; no Kaggle session, no upload of any kind",
+ "cohort": {
+  "name": "vietnam_tune",
+  "n": 1352,
+  "n_positive": 139,
+  "n_past_tb": 466,
+  "fingerprint_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+  "ordered_id_hash_sha256": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+  "images_missing": 0,
+  "images_not_approved": 1356
+ },
+ "partitions": {
+  "vietnam_report_used": false,
+  "tbx11k_internal_test_used": false,
+  "report_pids_in_cohort": 0
+ },
+ "model": {
+  "repo": "peterhan91/CLEAR",
+  "revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+  "clear_commit": "57d2eae57ddabf8e56c8013ec675336d71b3d8e7",
+  "input_px": 448,
+  "concept_embedding_rows": 368294,
+  "checkpoint": "D:\\hf-cache\\hub\\models--peterhan91--CLEAR\\snapshots\\142f169c8b006b0f28cf55c6a237c3003db5ed8f\\best_model.pt",
+  "checkpoint_bytes": 603060057,
+  "embeddings_bytes": 1131400935,
+  "loader": "clear.load_pretrained",
+  "visual_parameters": 87174144,
+  "elapsed_min": 1.94
+ },
+ "vocabulary": {
+  "sha256": "93e975b722422b64f18b57161ac9894fe30ac7a04cc68b7aa8a2e01f6d0fc439",
+  "n_entries": 368294,
+  "re_derived": {
+   "scarring": 96952,
+   "fibrosis": 835,
+   "consolidation": 123742,
+   "volume loss": 368164,
+   "scoliosis": 82734,
+   "degenerative changes": 339316
+  }
+ },
+ "assets_verified_sha256": {
+  "best_model.pt": {
+   "sha256": "da1617a7d47970667a7a158eabfa4c4f3798d5d03b7f98caec150d8ee6ab6a03",
+   "bytes": 603060057
+  },
+  "concept_embeddings_368294.pt": {
+   "sha256": "7241c5b920c4394b507f2c4bd89f1d0b70775399caaa2f5323cb373afb1a00d6",
+   "bytes": 1131400935
+  }
+ },
+ "concepts": {
+  "n_encoded": 11,
+  "names": [
+   "fibrosis",
+   "scarring",
+   "volume loss",
+   "calcified granuloma",
+   "calcification",
+   "focal opacity",
+   "consolidation",
+   "pleural thickening",
+   "bronchiectasis",
+   "scoliosis",
+   "degenerative changes"
+  ],
+  "bh_family": [
+   "fibrosis",
+   "scarring",
+   "volume loss",
+   "calcified granuloma",
+   "calcification",
+   "focal opacity",
+   "consolidation",
+   "pleural thickening",
+   "bronchiectasis"
+  ],
+  "negative_controls": [
+   "scoliosis",
+   "degenerative changes"
+  ],
+  "excluded_no_exact_entry": [
+   "cavity",
+   "nodule",
+   "reticular opacity"
+  ],
+  "score_kind": "text-similarity to one report sentence per concept: a weakly supervised proxy, NOT a validated detector"
+ },
+ "statistics": {
+  "per_arm_seed": 20261023,
+  "per_arm_n_boot": 10000,
+  "paired_seed": 20261031,
+  "paired_n_boot": 10000,
+  "resampling_unit": "patient (one image per patient in Vietnam)"
+ },
+ "locked_thresholds": {
+  "B0": -0.5973,
+  "B1": -2.1911
+ },
+ "inputs_sha256": {
+  "vietnam_tune_armA.csv": "85ef1d2ea0e077a05f830b5054187578642c44d7b6b10ca2bf32e2c099f6ded7",
+  "vietnam_tune_armB1.csv": "b557baaf8e8a1ed6abbffdc22fff36c2198b2989668dbe384b0335697cfa1d21",
+  "concept_audit.py": "ba0ddc3596d8c7ffb830f027a84fd43360c403977be260c0dee8ccfdcf8f684b",
+  "paths.py": "99bc9bb5f4b4c66655453a75a8dbdce6d25fadbc128e077da977790a7417e667",
+  "concept_indices.json (this run, extended)": "c7efbb10fcacc643b8d27f796e33b35225be89f960dda2ad696dd622bfa8b148",
+  "ANALYSIS_MANIFEST.md": "eea6bfcad3d1a025cec3f04d6b86d59a2c1c8aa4d2e871c2acbf2a5015e509f9"
+ },
+ "environment": {
+  "python": "3.13.2",
+  "platform": "Windows-11-10.0.26300-SP0",
+  "torch": "2.6.0+cu124",
+  "cuda": "12.4",
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "numpy": "2.2.6"
+ },
+ "per_case_export": "none; shards computed in scratch and deleted",
+ "production_unchanged": "Vietnam screening AUROC remains 0.7242; no checkpoint, prediction file or threshold was modified"
+}

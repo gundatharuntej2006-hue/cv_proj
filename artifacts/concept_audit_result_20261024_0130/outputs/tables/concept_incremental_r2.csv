@@ -1,0 +1,10 @@
+concept,delta_r2,r2_clinical_only,r2_with_concept
+fibrosis,0.0996,0.2441,0.3437
+scarring,0.1975,0.2441,0.4416
+volume loss,0.0383,0.2441,0.2823
+calcified granuloma,0.0,0.2441,0.2441
+calcification,0.0214,0.2441,0.2654
+focal opacity,0.0079,0.2441,0.2519
+consolidation,0.0182,0.2441,0.2623
+pleural thickening,0.0066,0.2441,0.2507
+bronchiectasis,0.0097,0.2441,0.2538

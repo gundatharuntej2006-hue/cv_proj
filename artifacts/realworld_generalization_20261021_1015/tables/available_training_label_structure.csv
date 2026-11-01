@@ -1,0 +1,6 @@
+folder,category,n_total,class,in_current_negatives,excluded_from_current_negatives,n_train,n_development,n_calibration,n_internal_test,documentation
+health,healthy,3800,negative,YES,no,2700,300,400,400,"TBX11K archive folder structure (imgs/health, imgs/sick, imgs/tb); category from the archive's own annotation, not from filenames"
+sick,sick_non_tb,3800,negative,no,YES,2700,300,400,400,"TBX11K archive folder structure (imgs/health, imgs/sick, imgs/tb); category from the archive's own annotation, not from filenames"
+tb,active_latent_tb,30,positive,no,no,21,2,3,4,"TBX11K archive folder structure (imgs/health, imgs/sick, imgs/tb); category from the archive's own annotation, not from filenames"
+tb,active_tb,631,positive,no,no,427,47,78,79,"TBX11K archive folder structure (imgs/health, imgs/sick, imgs/tb); category from the archive's own annotation, not from filenames"
+tb,latent_tb,139,positive,no,no,93,10,18,18,"TBX11K archive folder structure (imgs/health, imgs/sick, imgs/tb); category from the archive's own annotation, not from filenames"

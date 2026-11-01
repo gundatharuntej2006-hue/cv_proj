@@ -1,0 +1,66 @@
+{
+  "n_total": 2708,
+  "n_tune": 1352,
+  "report_half_read": false,
+  "one_image_per_patient": true,
+  "scanner_by_tb": {
+    "table_rows_scanner_1_2_3_cols_tb0_tb1": [
+      [
+        364,
+        44
+      ],
+      [
+        1181,
+        151
+      ],
+      [
+        883,
+        85
+      ]
+    ],
+    "chi2": 4.051,
+    "dof": 2,
+    "p_value": 0.1319,
+    "cramers_v": 0.0387,
+    "prevalence_by_scanner": {
+      "1": 0.1078,
+      "2": 0.1134,
+      "3": 0.0878
+    },
+    "interpretation": "descriptive association only; it does not establish confounding or its absence"
+  },
+  "probe": {
+    "fitted_on": "Vietnam TUNE half only",
+    "n": 1352,
+    "class_counts": {
+      "1": 204,
+      "2": 665,
+      "3": 483
+    },
+    "majority_class_accuracy": 0.4919,
+    "balanced_accuracy": 0.9737,
+    "macro_f1": 0.9772,
+    "balanced_accuracy_under_label_permutation_mean": 0.3381,
+    "balanced_accuracy_under_label_permutation_max": 0.3515,
+    "confusion_rows_true_1_2_3_cols_pred_1_2_3": [
+      [
+        195,
+        6,
+        3
+      ],
+      [
+        2,
+        657,
+        6
+      ],
+      [
+        1,
+        10,
+        472
+      ]
+    ],
+    "classifier": "StandardScaler + multinomial LogisticRegression(C=0.1)",
+    "cv": "5-fold stratified; one image per patient so this is patient-grouped",
+    "seed": 17
+  }
+}

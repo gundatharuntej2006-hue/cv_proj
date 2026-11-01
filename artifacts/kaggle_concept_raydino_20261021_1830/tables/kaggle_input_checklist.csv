@@ -1,0 +1,7 @@
+required_relative_path,kind,size,expected_shape,checksum_or_count,status,local_source_path
+vietnam_img512/,dir,346 MB,"2708 PNG, named <pid>.png",n=2708 first=59a0975c69d4,REPO HAS IT - licence BLOCKED,data/processed/v1/vietnam_img512
+vietnam_case_scores.csv,file,0.13 MB,"2708 rows: pid,xpert_result,rad_system,split_half,score_baseline",e03c51cf9d2ae9f8,REPO HAS IT,artifacts/overnight_scanner_run_20261021_0208/tables/vietnam_case_scores.csv
+Lunit_Versions_-_Dryad_Data_Set.csv,file,0.12 MB,"2708 rows, 14 cols incl past_tb",328ee268240f7bdd,REPO HAS IT - licence BLOCKED,data/raw/vietnam/Lunit_Versions_-_Dryad_Data_Set.csv
+vietnam_tune_report_split.json,file,0.03 MB,tune 1352 / report 1356,0249dcc9c8a8503c,REPO HAS IT,artifacts/p2/external/vietnam_tune_report_split.json
+provisional_c01.csv,file,0.57 MB,train/development/calibration usable,b228f85cb1009307,REPO HAS IT - strip internal_test rows first,artifacts/p2/dryrun/provisional_c01.csv
+labels_tbx11k_trainval_v1.csv,file,0.54 MB,8400 rows,3d81ed2928b1f020,REPO HAS IT,artifacts/p2/labels_tbx11k_trainval_v1.csv

@@ -1,0 +1,14 @@
+image_score,contrast,label,delta_auroc_all,ci95_all,excludes_zero_all,meets_min_effect_0.02,delta_auroc_prev_tb_n466,ci95_prev_tb,excludes_zero_prev_tb
+ours,M2 - M0,fusion vs image alone,0.058,"[0.0304, 0.0846]",True,True,0.0996,"[0.0352, 0.1654]",True
+ours,M3 - M0,fusion+interaction vs image alone,0.0587,"[0.0298, 0.0864]",True,True,0.098,"[0.0194, 0.1763]",True
+ours,M3 - M2,interaction vs fusion,0.0006,"[-0.005, 0.0063]",False,False,-0.0016,"[-0.019, 0.0141]",False
+ours_B1,M2 - M0,fusion vs image alone,0.0494,"[0.0243, 0.0742]",True,True,0.0923,"[0.0346, 0.1531]",True
+ours_B1,M3 - M0,fusion+interaction vs image alone,0.0497,"[0.0233, 0.0751]",True,True,0.0924,"[0.0216, 0.164]",True
+ours_B1,M3 - M2,interaction vs fusion,0.0004,"[-0.0044, 0.0051]",False,False,0.0,"[-0.0139, 0.0131]",False
+lunit,M2 - M0,fusion vs image alone,0.0007,"[-0.018, 0.0187]",False,False,0.0089,"[-0.0323, 0.049]",False
+lunit,M3 - M0,fusion+interaction vs image alone,-0.0008,"[-0.0205, 0.0188]",False,False,0.0024,"[-0.0478, 0.0523]",False
+lunit,M3 - M2,interaction vs fusion,-0.0015,"[-0.0066, 0.004]",False,False,-0.0064,"[-0.0175, 0.0048]",False
+cross,ours/M0 - lunit/M0,ours raw vs lunit raw,-0.0543,"[-0.0943, -0.0148]",True,,-0.0918,"[-0.1741, -0.0085]",True
+cross,ours/M2 - lunit/M0,ours fused vs lunit raw,0.0038,"[-0.0344, 0.0391]",False,,0.0079,"[-0.066, 0.0827]",False
+cross,ours/M2 - lunit/M2,ours fused vs lunit fused,0.0031,"[-0.0258, 0.0326]",False,,-0.001,"[-0.0629, 0.063]",False
+cross,ours/M3 - lunit/M3,ours fused+int vs lunit fused+int,0.0052,"[-0.024, 0.0336]",False,,0.0038,"[-0.0547, 0.0631]",False

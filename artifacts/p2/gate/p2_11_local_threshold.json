@@ -1,0 +1,36 @@
+{
+ "auroc_ood_vs_frontal_unseen_site": 0.9836997319034853,
+ "auroc_ood_vs_indist_home_site": 1.0,
+ "local_threshold_curve": [
+  {
+   "n_local": "10",
+   "frontals_kept": 0.8742857142857141,
+   "lateral_caught": 0.9331499999999999,
+   "nonmedical_caught": 0.9575609756097562
+  },
+  {
+   "n_local": "25",
+   "frontals_kept": 0.9204800000000002,
+   "lateral_caught": 0.9218999999999999,
+   "nonmedical_caught": 0.954390243902439
+  },
+  {
+   "n_local": "50",
+   "frontals_kept": 0.93025,
+   "lateral_caught": 0.92262,
+   "nonmedical_caught": 0.9582926829268291
+  },
+  {
+   "n_local": "100",
+   "frontals_kept": 0.9438,
+   "lateral_caught": 0.91594,
+   "nonmedical_caught": 0.9560365853658536
+  },
+  {
+   "n_local": "all",
+   "frontals_kept": 0.9466666666666667,
+   "lateral_caught": 0.916,
+   "nonmedical_caught": 0.9552845528455285
+  }
+ ]
+}

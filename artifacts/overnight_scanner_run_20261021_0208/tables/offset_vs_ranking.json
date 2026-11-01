@@ -1,0 +1,32 @@
+{
+  "target_specificity": 0.7,
+  "pooled_auroc_before_alignment": 0.7237421933846163,
+  "pooled_auroc_after_alignment": 0.7533020574471997,
+  "threshold_before": 2.4765999999999995,
+  "threshold_after": 1.7206912,
+  "referral_by_scanner": {
+    "1": {
+      "before": 0.2696,
+      "after": 0.2892,
+      "sens_before": 0.5455,
+      "sens_after": 0.5455
+    },
+    "2": {
+      "before": 0.2271,
+      "after": 0.4015,
+      "sens_before": 0.5333,
+      "sens_after": 0.7867
+    },
+    "3": {
+      "before": 0.5052,
+      "after": 0.2774,
+      "sens_before": 0.8095,
+      "sens_after": 0.5952
+    }
+  },
+  "referral_spread_before": 0.2781,
+  "referral_spread_after": 0.1241,
+  "alignment_statistic": "per-scanner subtraction of the TUNE non-TB median",
+  "note": "AUROC within a scanner is shift-invariant, so any pooled AUROC change here comes only from re-ordering cases ACROSS scanners",
+  "report_touched": false
+}

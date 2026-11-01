@@ -1,0 +1,22 @@
+{
+  "criterion_1_worst_scanner_auroc_improves": true,
+  "worst_scanner_auroc_baseline": 0.6745,
+  "worst_scanner_auroc_P1": 0.6745,
+  "criterion_2_paired_pooled_ci_excludes_zero": false,
+  "paired_pooled_delta": -0.0002,
+  "paired_pooled_ci": [
+    -0.0009,
+    0.0004
+  ],
+  "PREREGISTERED_OUTCOME": "REJECT",
+  "offset_correction_exploratory": {
+    "paired_pooled_delta": 0.0206,
+    "ci": [
+      -0.003,
+      0.0436
+    ],
+    "ci_excludes_zero": false,
+    "worst_scanner_auroc": 0.6745,
+    "note": "not part of the preregistration; exploratory"
+  }
+}

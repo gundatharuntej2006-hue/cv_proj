@@ -1,0 +1,63 @@
+{
+ "created": "2026-11-01",
+ "bundle_version": 3,
+ "status": "RESEARCH CANDIDATE v3 - NOT PROMOTED. v2 (bundle_v2_regional) remains the default.",
+ "model": {
+  "model_id": "maira2_regional_g12_max_active",
+  "head_type": "regional_max",
+  "grid": 12,
+  "aggregator": "max",
+  "seeds": [
+   17,
+   29,
+   43,
+   61,
+   79
+  ],
+  "target": "active_tb_label (latent / obsolete TB labelled negative)",
+  "trainable_parameters": 3845,
+  "weight_path": "head.npz",
+  "weight_sha256": "7f61a082d1a247395ef06c805fcb10acc624bba756431131883a1477a7fe1f93",
+  "weights_copied_from": "artifacts/fusion_on_stacked_head_20261101_0800/tables/X_noNLM_head.npz"
+ },
+ "backbone": "microsoft/rad-dino-maira-2@a6132efb9268859545e9f68be18a76a6473f174a",
+ "features": "512px lungs-masked -> 518 -> 37x37 patches -> 12x12 adaptive-avg regions, L2 per region",
+ "training_rows": {
+  "split": "train",
+  "n": 3241,
+  "positives": 447,
+  "categories": [
+   "active_tb",
+   "latent_tb",
+   "active_latent_tb",
+   "healthy"
+  ],
+  "sick_non_tb_excluded": true,
+  "nlm_included": false
+ },
+ "dev_auc": 0.9321,
+ "dev_auc_vs_tb_label": 0.9317,
+ "thresholds": {
+  "logit_at_spec_0.70": -4.0317,
+  "logit_at_spec_0.90": -2.3512,
+  "fitted_on": "TBX11K development (659), negatives = not active TB - never Vietnam, never calibration"
+ },
+ "known_external": {
+  "tbx11k_calibration_auroc_vs_active": 0.9466,
+  "vietnam_tune_auroc_raw": 0.7585,
+  "vietnam_tune_auroc_fused_cv": 0.7941,
+  "vietnam_tune_auroc_fused_no_scanner_cv": 0.7803,
+  "comparator_vietnam_tune_raw": 0.778,
+  "note": "TUNE is exposed: encoder, target and fusion were all chosen on it (R20-R23). Not validation. Vietnam REPORT is also exposed (six scoring events, R7) and is not read here."
+ },
+ "provenance_runs": [
+  "multiencoder_ensemble_20261101_0600",
+  "stacked_levers_20261101_0700",
+  "fusion_on_stacked_head_20261101_0800",
+  "clinical_field_ablation_20261101_0900"
+ ],
+ "fusion": "fusion.json (optional; EXPLORATORY)",
+ "attribution": "image logit = max over 144 regions of the region logit; the arg-max region is exactly the decision region",
+ "provisional": true,
+ "note": "Candidate for evaluation on an untouched cohort against the comparator, previous-TB as a pre-specified subgroup. Split is the provisional C01; internal_test never read."
+}

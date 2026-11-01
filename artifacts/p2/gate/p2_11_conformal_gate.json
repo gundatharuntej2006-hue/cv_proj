@@ -1,0 +1,60 @@
+{
+ "method": "conformal threshold on local normal images, t = ceil((n+1)(1-alpha))-th smallest",
+ "min_n_rule": "n >= 1/alpha - 1, identical to the triage threshold's bound",
+ "results": [
+  {
+   "alpha": 0.1,
+   "n": 9,
+   "false_rejection": 0.10113475177304965,
+   "ood_caught": 0.9188829311885613
+  },
+  {
+   "alpha": 0.1,
+   "n": 19,
+   "false_rejection": 0.10982188295165396,
+   "ood_caught": 0.9464298480786416
+  },
+  {
+   "alpha": 0.1,
+   "n": 25,
+   "false_rejection": 0.07325333333333334,
+   "ood_caught": 0.9284137622877571
+  },
+  {
+   "alpha": 0.1,
+   "n": 50,
+   "false_rejection": 0.09513333333333333,
+   "ood_caught": 0.9507640750670241
+  },
+  {
+   "alpha": 0.1,
+   "n": 100,
+   "false_rejection": 0.0968,
+   "ood_caught": 0.9541554959785522
+  },
+  {
+   "alpha": 0.05,
+   "n": 19,
+   "false_rejection": 0.047302798982188296,
+   "ood_caught": 0.8620866845397677
+  },
+  {
+   "alpha": 0.05,
+   "n": 25,
+   "false_rejection": 0.038213333333333335,
+   "ood_caught": 0.8461796246648794
+  },
+  {
+   "alpha": 0.05,
+   "n": 50,
+   "false_rejection": 0.037599999999999995,
+   "ood_caught": 0.8827390527256479
+  },
+  {
+   "alpha": 0.05,
+   "n": 100,
+   "false_rejection": 0.050533333333333326,
+   "ood_caught": 0.9220598748882931
+  }
+ ]
+}

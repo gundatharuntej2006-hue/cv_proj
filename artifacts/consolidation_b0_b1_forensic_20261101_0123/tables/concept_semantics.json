@@ -1,0 +1,241 @@
+{
+ "vocabulary_rows": 368294,
+ "embedding_shape": [
+  368294,
+  768
+ ],
+ "embedding_dtype": "torch.float32",
+ "revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+ "seed": 20261101,
+ "context_frequency": {
+  "consolidation": 0.2763,
+  "scarring": 0.016,
+  "fibrosis": 0.0633,
+  "focal opacity": 0.0571,
+  "volume loss": 0.017,
+  "calcification": 0.0291,
+  "bronchiectasis": 0.0211,
+  "pleural thickening": 0.0214,
+  "scoliosis": 0.011,
+  "calcified granuloma": 0.0337,
+  "degenerative changes": 0.0144
+ },
+ "consolidation_nearest_audited_concepts": [
+  {
+   "concept": "focal opacity",
+   "cosine": 0.8467
+  },
+  {
+   "concept": "calcification",
+   "cosine": 0.7934
+  },
+  {
+   "concept": "volume loss",
+   "cosine": 0.7596
+  },
+  {
+   "concept": "pleural thickening",
+   "cosine": 0.6955
+  },
+  {
+   "concept": "degenerative changes",
+   "cosine": 0.6793
+  },
+  {
+   "concept": "scarring",
+   "cosine": 0.5865
+  },
+  {
+   "concept": "scoliosis",
+   "cosine": 0.5597
+  },
+  {
+   "concept": "calcified granuloma",
+   "cosine": 0.546
+  },
+  {
+   "concept": "fibrosis",
+   "cosine": 0.4351
+  },
+  {
+   "concept": "bronchiectasis",
+   "cosine": 0.2868
+  }
+ ],
+ "anchor_vs_sentences": {
+  "n_sampled": 1500,
+  "affirmative": {
+   "n": 1127,
+   "median": 0.6047,
+   "p25": 0.4647,
+   "p75": 0.7219
+  },
+  "negated": {
+   "n": 373,
+   "median": 0.6161,
+   "p25": 0.443,
+   "p75": 0.7379
+  },
+  "median_gap_affirmative_minus_negated": -0.0114
+ },
+ "negation_pairs": [
+  {
+   "positive_phrase": "fibrosis",
+   "positive_idx": 835,
+   "negated_phrase": "no fibrosis",
+   "negated_idx": 364838,
+   "cosine_positive_vs_negated": 0.8435,
+   "random_cosine_p95_for_this_concept": 0.6308,
+   "negation_above_random_p95": true
+  },
+  {
+   "positive_phrase": "scarring",
+   "positive_idx": 96952,
+   "negated_phrase": "no scarring",
+   "negated_idx": 142706,
+   "cosine_positive_vs_negated": 0.9058,
+   "random_cosine_p95_for_this_concept": 0.7695,
+   "negation_above_random_p95": true
+  },
+  {
+   "positive_phrase": "volume loss",
+   "positive_idx": 368164,
+   "negated_phrase": "no volume loss",
+   "negated_idx": 271155,
+   "cosine_positive_vs_negated": 0.9797,
+   "random_cosine_p95_for_this_concept": 0.8199,
+   "negation_above_random_p95": true
+  },
+  {
+   "positive_phrase": "volume loss",
+   "positive_idx": 368164,
+   "negated_phrase": "volume loss has resolved",
+   "negated_idx": 111256,
+   "cosine_positive_vs_negated": 0.866,
+   "random_cosine_p95_for_this_concept": 0.8199,
+   "negation_above_random_p95": true
+  },
+  {
+   "positive_phrase": "calcification",
+   "positive_idx": 77874,
+   "negated_phrase": "no calcification",
+   "negated_idx": 1633,
+   "cosine_positive_vs_negated": 0.9608,
+   "random_cosine_p95_for_this_concept": 0.8296,
+   "negation_above_random_p95": true
+  },
+  {
+   "positive_phrase": "focal opacity",
+   "positive_idx": 281312,
+   "negated_phrase": "no focal opacity",
+   "negated_idx": 240519,
+   "cosine_positive_vs_negated": 0.9512,
+   "random_cosine_p95_for_this_concept": 0.8306,
+   "negation_above_random_p95": true
+  },
+  {
+   "positive_phrase": "consolidation",
+   "positive_idx": 123742,
+   "negated_phrase": "no consolidation",
+   "negated_idx": 55926,
+   "cosine_positive_vs_negated": 0.747,
+   "random_cosine_p95_for_this_concept": 0.7709,
+   "negation_above_random_p95": false
+  },
+  {
+   "positive_phrase": "consolidation",
+   "positive_idx": 123742,
+   "negated_phrase": "no focal consolidation",
+   "negated_idx": 176374,
+   "cosine_positive_vs_negated": 0.7364,
+   "random_cosine_p95_for_this_concept": 0.7709,
+   "negation_above_random_p95": false
+  },
+  {
+   "positive_phrase": "consolidation",
+   "positive_idx": 123742,
+   "negated_phrase": "consolidation resolved",
+   "negated_idx": 359292,
+   "cosine_positive_vs_negated": 0.7762,
+   "random_cosine_p95_for_this_concept": 0.7709,
+   "negation_above_random_p95": true
+  },
+  {
+   "positive_phrase": "pleural thickening",
+   "positive_idx": 341471,
+   "negated_phrase": "no pleural thickening",
+   "negated_idx": 222393,
+   "cosine_positive_vs_negated": 0.915,
+   "random_cosine_p95_for_this_concept": 0.7545,
+   "negation_above_random_p95": true
+  }
+ ],
+ "random_cosine_reference": [
+  {
+   "concept": "fibrosis",
+   "random_cosine_median": 0.3945,
+   "random_cosine_p95": 0.6308,
+   "random_cosine_max": 0.9478
+  },
+  {
+   "concept": "scarring",
+   "random_cosine_median": 0.4875,
+   "random_cosine_p95": 0.7695,
+   "random_cosine_max": 0.8818
+  },
+  {
+   "concept": "volume loss",
+   "random_cosine_median": 0.4895,
+   "random_cosine_p95": 0.8199,
+   "random_cosine_max": 0.9428
+  },
+  {
+   "concept": "calcified granuloma",
+   "random_cosine_median": 0.4668,
+   "random_cosine_p95": 0.7601,
+   "random_cosine_max": 0.9185
+  },
+  {
+   "concept": "calcification",
+   "random_cosine_median": 0.5034,
+   "random_cosine_p95": 0.8296,
+   "random_cosine_max": 0.9319
+  },
+  {
+   "concept": "focal opacity",
+   "random_cosine_median": 0.5143,
+   "random_cosine_p95": 0.8306,
+   "random_cosine_max": 0.9191
+  },
+  {
+   "concept": "consolidation",
+   "random_cosine_median": 0.4121,
+   "random_cosine_p95": 0.7709,
+   "random_cosine_max": 0.8974
+  },
+  {
+   "concept": "pleural thickening",
+   "random_cosine_median": 0.4754,
+   "random_cosine_p95": 0.7545,
+   "random_cosine_max": 0.8722
+  },
+  {
+   "concept": "bronchiectasis",
+   "random_cosine_median": 0.3469,
+   "random_cosine_p95": 0.6242,
+   "random_cosine_max": 0.7782
+  },
+  {
+   "concept": "scoliosis",
+   "random_cosine_median": 0.3807,
+   "random_cosine_p95": 0.6157,
+   "random_cosine_max": 0.9074
+  },
+  {
+   "concept": "degenerative changes",
+   "random_cosine_median": 0.4518,
+   "random_cosine_p95": 0.7523,
+   "random_cosine_max": 0.8526
+  }
+ ]
+}

@@ -1,0 +1,55 @@
+train 3241 dev 659 cal 899 tune 1352 nlm 800 (tb 394)
+DRY. Pass --run.
+train 3241 dev 659 cal 899 tune 1352 nlm 800 (tb 394)
+  D2 nlm        800 images (800, 144, 768)  0.7 min  0.056 s/img
+
+arm A        enc=D target=tb rows=3241 (pos 541)
+   seed 17 dev 0.9363
+   seed 29 dev 0.9370
+   seed 43 dev 0.9374
+   seed 61 dev 0.9370
+   seed 79 dev 0.9365
+
+arm MB1      enc=D target=active rows=4041 (pos 841)
+   seed 17 dev 0.9335
+   seed 29 dev 0.9340
+   seed 43 dev 0.9353
+   seed 61 dev 0.9340
+   seed 79 dev 0.9340
+
+arm X        enc=D2 target=active rows=4041 (pos 841)
+   seed 17 dev 0.9382
+   seed 29 dev 0.9378
+   seed 43 dev 0.9375
+   seed 61 dev 0.9378
+   seed 79 dev 0.9382
+
+arm X_noNLM  enc=D2 target=active rows=3241 (pos 447)
+   seed 17 dev 0.9318
+   seed 29 dev 0.9322
+   seed 43 dev 0.9324
+   seed 61 dev 0.9325
+   seed 79 dev 0.9323
+
+arm X_tb     enc=D2 target=tb rows=4041 (pos 935)
+   seed 17 dev 0.9399
+   seed 29 dev 0.9400
+   seed 43 dev 0.9401
+   seed 61 dev 0.9395
+   seed 79 dev 0.9403
+gate A    expected 0.9498 here 0.9498 pass
+gate MB1  expected 0.9497 here 0.9497 pass
+A        dev 0.9368 cal 0.9498 [0.9277, 0.9686] tune 0.7237 [0.6846, 0.7626]
+MB1      dev 0.9355 cal 0.9497 [0.9285, 0.9679] tune 0.7517 [0.7132, 0.7892]
+X        dev 0.9362 cal 0.9488 [0.9274, 0.9666] tune 0.7524 [0.7153, 0.7892]
+X_noNLM  dev 0.9317 cal 0.9466 [0.9247, 0.9648] tune 0.7585 [0.7217, 0.7963]
+X_tb     dev 0.9399 cal 0.9513 [0.9294, 0.9694] tune 0.7359 [0.6982, 0.7738]
+X - A: cal -0.0010 [-0.0099, +0.0083] | tune +0.0286 [+0.0089, +0.0490] REJECT
+X - MB1: cal -0.0010 [-0.0094, +0.0077] | tune +0.0006 [-0.0171, +0.0184] 
+X_noNLM - A: cal -0.0032 [-0.0110, +0.0046] | tune +0.0348 [+0.0160, +0.0542] 
+X_tb - A: cal +0.0016 [-0.0060, +0.0093] | tune +0.0121 [-0.0058, +0.0302] 
+X - X_noNLM: cal +0.0022 [-0.0010, +0.0056] | tune -0.0062 [-0.0124, +0.0001] 
+X - X_tb: cal -0.0025 [-0.0057, +0.0006] | tune +0.0165 [+0.0088, +0.0244] 
+MB1 - A: cal -0.0000 [-0.0050, +0.0050] | tune +0.0280 [+0.0172, +0.0386] 
+
+done in 436.8 s

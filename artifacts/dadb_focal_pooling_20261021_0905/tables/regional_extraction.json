@@ -1,0 +1,18 @@
+{
+  "n": 176,
+  "shape": [
+    176,
+    144,
+    768
+  ],
+  "dtype": "float16",
+  "grid": 12,
+  "regions": 144,
+  "patch_grid": 37,
+  "preprocessing": "resize 512 INTER_AREA if needed; lungs-only mask from data/processed/v1/masks_dadb; non-lung filled with image mean",
+  "source_order": "sorted(SRC.rglob('*')) over data/raw/tbx11k/TBX11K/imgs/extra/da+db",
+  "image_id_stored": true,
+  "labels_used": false,
+  "sha256": "8be1b4f90626e0450c391246c029afe54bbda7fc366722817bfb1bf9159de478",
+  "minutes": 0.17
+}

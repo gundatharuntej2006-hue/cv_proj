@@ -1,0 +1,25 @@
+ M docs/p2_external_validation.md
+ M docs/p2_focal_pooling_final.md
+ M docs/p2_vietnam_result.md
+ M report/p2_00_abstract_intro.md
+ M report/p2_99_conclusion.md
+ M report/paper_draft.md
+ M report/slides/p2_slides_outline.md
+?? artifacts/active_tb_label_raydino_20261024_1254/
+?? artifacts/collaboration_package_20261021_1145/
+?? artifacts/concept_audit_result_20261024_0130/
+?? artifacts/dadb_focal_pooling_20261021_0905/
+?? artifacts/dadb_offset_validation_20261021_0255/
+?? artifacts/doc_finalisation_20261021_0930/
+?? artifacts/docfix_codlin_provenance_20261021_1250/
+?? artifacts/docfix_denominators_20261021_1700/
+?? artifacts/docfix_slides_focal_20261021_1415/
+?? artifacts/dryad_rights_clear_audit_20261023_0900/
+?? artifacts/kaggle_concept_raydino_20261021_1830/
+?? artifacts/kaggle_exec_prep_20261023_1130/
+?? artifacts/overnight_run_20261021_2340/
+?? artifacts/overnight_scanner_run_20261021_0208/
+?? artifacts/prevtb_subgroup_20261021_1055/
+?? artifacts/prior_art_review_20261021_1200/
+?? artifacts/realworld_generalization_20261021_1015/
+?? artifacts/report_exposure_audit_20261024_0215/

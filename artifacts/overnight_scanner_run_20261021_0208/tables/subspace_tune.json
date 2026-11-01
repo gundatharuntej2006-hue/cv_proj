@@ -1,0 +1,45 @@
+{
+  "agg": "max",
+  "grid": 12,
+  "seeds": [
+    17,
+    29,
+    43,
+    61,
+    79
+  ],
+  "rank": 3,
+  "subspace": {
+    "seed": 17,
+    "epochs": 60,
+    "lr": 0.01,
+    "classes": [
+      1,
+      2,
+      3
+    ],
+    "singular_values": [
+      73.9361801147461,
+      63.32319641113281,
+      8.03351758804638e-06
+    ],
+    "orthonormality_residual": 4.76837158203125e-07,
+    "fitted_on": "Vietnam TUNE tokens only, rad_system labels only",
+    "tb_labels_used_in_transform": false
+  },
+  "equivalence_check": {
+    "tbx11k_dev_auroc": 0.9367514124293785,
+    "tbx11k_dev_published": 0.9368,
+    "vietnam_tune_auroc_unprojected": 0.7237421933846163,
+    "vietnam_tune_published": 0.7237,
+    "passed": true
+  },
+  "tune_results": {
+    "baseline": 0.7237421933846163,
+    "P1": 0.723315164850807,
+    "P2": 0.72330330294709,
+    "P2_tbx11k_dev": 0.9369491525423729
+  },
+  "report_metrics_computed": false,
+  "elapsed_s": 92.6
+}

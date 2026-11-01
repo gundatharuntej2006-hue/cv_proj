@@ -1,0 +1,3 @@
+device,encoder_load_s,encode_n_images,encode_total_s,encode_s_per_image,encode_images_per_s,head_fit_n_images,head_fit_s,head_fit_dev_auroc,trainable_parameters,frozen_backbone_parameters,peak_gpu_memory_gb,reproduces_cached_features_mad,precision
+NVIDIA GeForce RTX 4050 Laptop GPU,27.46,800,24.21,0.0303,33.04,3241,6.58,0.9363,769,86580480,0.686,0.0,fp16
+cpu (8 torch threads),0.69,32,40.01,1.2504,0.8,3241,61.62,0.9364,769,86580480,,,fp32

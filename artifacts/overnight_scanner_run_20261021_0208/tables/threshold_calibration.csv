@@ -1,0 +1,4 @@
+scanner,n_tune,n_tb,n_non_tb,pooled_threshold,scanner_threshold,threshold_shift,sens_pooled,sens_scanner,spec_pooled,spec_scanner,referral_pooled,referral_scanner,ppv_pooled,ppv_scanner,missed_tb_pooled,missed_tb_scanner,false_pos_pooled,false_pos_scanner
+1,204,22,182,2.4766,2.007036,-0.469564,0.5455,0.5455,0.7637,0.6978,0.2696,0.3284,0.2182,0.1791,10,10,43,55
+2,665,75,590,2.4766,1.388735,-1.087865,0.5333,0.6933,0.8119,0.7,0.2271,0.3444,0.2649,0.2271,35,23,111,177
+3,483,42,441,2.4766,3.707496,1.230896,0.8095,0.6905,0.5238,0.6984,0.5052,0.3354,0.1393,0.179,8,13,210,133

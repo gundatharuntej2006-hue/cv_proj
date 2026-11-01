@@ -1,0 +1,81 @@
+{
+  "vocabulary_sha256_prefix": "93e975b722422b64f18b57161ac9894f",
+  "hf_repo": "peterhan91/CLEAR",
+  "pinned_revision": "142f169c8b006b0f28cf55c6a237c3003db5ed8f",
+  "rule": "use ONLY the exact single vocabulary entry per concept. Concepts lacking one are EXCLUDED from the primary analysis and are not approximated by aggregating related sentences.",
+  "n_primary": 9,
+  "mapping": [
+    {
+      "concept": "fibrosis",
+      "exact_vocab_entry": "fibrosis",
+      "concept_idx": 835,
+      "status": "EXACT - single vocabulary entry"
+    },
+    {
+      "concept": "scarring",
+      "exact_vocab_entry": "scarring",
+      "concept_idx": 96952,
+      "status": "EXACT - single vocabulary entry"
+    },
+    {
+      "concept": "volume loss",
+      "exact_vocab_entry": "volume loss",
+      "concept_idx": 368164,
+      "status": "EXACT - single vocabulary entry"
+    },
+    {
+      "concept": "calcified granuloma",
+      "exact_vocab_entry": "calcified granuloma",
+      "concept_idx": 209383,
+      "status": "EXACT - single vocabulary entry"
+    },
+    {
+      "concept": "calcification",
+      "exact_vocab_entry": "calcification",
+      "concept_idx": 77874,
+      "status": "EXACT - single vocabulary entry"
+    },
+    {
+      "concept": "cavity",
+      "exact_vocab_entry": null,
+      "concept_idx": null,
+      "status": "NO EXACT ENTRY - excluded from the primary analysis"
+    },
+    {
+      "concept": "focal opacity",
+      "exact_vocab_entry": "focal opacity",
+      "concept_idx": 281312,
+      "status": "EXACT - single vocabulary entry"
+    },
+    {
+      "concept": "consolidation",
+      "exact_vocab_entry": "consolidation",
+      "concept_idx": 123742,
+      "status": "EXACT - single vocabulary entry"
+    },
+    {
+      "concept": "pleural thickening",
+      "exact_vocab_entry": "pleural thickening",
+      "concept_idx": 341471,
+      "status": "EXACT - single vocabulary entry"
+    },
+    {
+      "concept": "nodule",
+      "exact_vocab_entry": null,
+      "concept_idx": null,
+      "status": "NO EXACT ENTRY - excluded from the primary analysis"
+    },
+    {
+      "concept": "reticular opacity",
+      "exact_vocab_entry": null,
+      "concept_idx": null,
+      "status": "NO EXACT ENTRY - excluded from the primary analysis"
+    },
+    {
+      "concept": "bronchiectasis",
+      "exact_vocab_entry": "bronchiectasis",
+      "concept_idx": 57870,
+      "status": "EXACT - single vocabulary entry"
+    }
+  ]
+}

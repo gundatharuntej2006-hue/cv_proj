@@ -1,0 +1,111 @@
+{
+ "created": "2026-10-14",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "knn_k_ablation": [
+  {
+   "k": 1,
+   "auroc_per_pool": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "mean_auroc": 1.0,
+   "threshold_at_full_catch": 0.719,
+   "false_flag_all": 0.0015,
+   "false_flag_sick_non_tb": 0.0033,
+   "false_flag_tb": 0.0
+  },
+  {
+   "k": 3,
+   "auroc_per_pool": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "mean_auroc": 1.0,
+   "threshold_at_full_catch": 0.7373,
+   "false_flag_all": 0.0015,
+   "false_flag_sick_non_tb": 0.0033,
+   "false_flag_tb": 0.0
+  },
+  {
+   "k": 5,
+   "auroc_per_pool": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "mean_auroc": 1.0,
+   "threshold_at_full_catch": 0.7449,
+   "false_flag_all": 0.0015,
+   "false_flag_sick_non_tb": 0.0033,
+   "false_flag_tb": 0.0
+  },
+  {
+   "k": 10,
+   "auroc_per_pool": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "mean_auroc": 1.0,
+   "threshold_at_full_catch": 0.7577,
+   "false_flag_all": 0.0015,
+   "false_flag_sick_non_tb": 0.0033,
+   "false_flag_tb": 0.0
+  },
+  {
+   "k": 20,
+   "auroc_per_pool": {
+    "non_medical": 1.0,
+    "lateral_cxr": 1.0
+   },
+   "mean_auroc": 1.0,
+   "threshold_at_full_catch": 0.7741,
+   "false_flag_all": 0.0015,
+   "false_flag_sick_non_tb": 0.0033,
+   "false_flag_tb": 0.0
+  }
+ ],
+ "head_ablation": {
+  "heads": [
+   {
+    "head_type": "binary",
+    "n_classes": 2,
+    "auc_on_tb_label": 0.995,
+    "reported_training_auc": 0.9949,
+    "seed_sd": 0.0001,
+    "sens_at_95": 0.9661,
+    "sens_at_95_ci": [
+     0.8846,
+     0.9907
+    ],
+    "sens_at_70": 1.0
+   },
+   {
+    "head_type": "three_class",
+    "n_classes": 3,
+    "auc_on_tb_label": 0.9921,
+    "reported_training_auc": 0.992,
+    "seed_sd": 0.0002,
+    "sens_at_95": 0.9661,
+    "sens_at_95_ci": [
+     0.8846,
+     0.9907
+    ],
+    "sens_at_70": 1.0
+   }
+  ],
+  "three_class_minus_binary": {
+   "delta_auc": -0.0028,
+   "ci95": [
+    -0.0079,
+    -0.0
+   ],
+   "verdict": "worse"
+  }
+ },
+ "note": "Provisional split, development only; internal_test untouched. 'thr@100%' is the largest OOD threshold still catching every image in every alien pool; 'FF' is the false-flag rate there."
+}

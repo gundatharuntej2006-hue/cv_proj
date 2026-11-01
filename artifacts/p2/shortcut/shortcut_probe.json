@@ -1,0 +1,105 @@
+{
+ "created": "2026-10-16",
+ "seeds": [
+  17,
+  29,
+  43,
+  61,
+  79
+ ],
+ "n_images": 8400,
+ "n_dev": 659,
+ "n_dev_tb": 59,
+ "fill": "per-image mean",
+ "mask_source": "C05 lung masks",
+ "dilate_px": 48,
+ "border_frac": 0.12,
+ "variants": [
+  {
+   "variant": "full",
+   "auc": 0.9949,
+   "seed_sd": 0.0001,
+   "sens_at_95": 0.9661,
+   "sens_at_95_ci": [
+    0.8846,
+    0.9907
+   ],
+   "sens_at_70": 1.0
+  },
+  {
+   "variant": "lungs_only",
+   "auc": 0.9889,
+   "seed_sd": 0.0001,
+   "sens_at_95": 0.9492,
+   "sens_at_95_ci": [
+    0.8608,
+    0.9826
+   ],
+   "sens_at_70": 1.0,
+   "delta_auc": -0.006,
+   "ci95": [
+    -0.0141,
+    -0.0002
+   ],
+   "verdict": "worse"
+  },
+  {
+   "variant": "lungs_erased",
+   "auc": 0.9532,
+   "seed_sd": 0.0005,
+   "sens_at_95": 0.7797,
+   "sens_at_95_ci": [
+    0.6587,
+    0.8665
+   ],
+   "sens_at_70": 0.9661,
+   "delta_auc": -0.0423,
+   "ci95": [
+    -0.0833,
+    -0.0134
+   ],
+   "verdict": "worse"
+  },
+  {
+   "variant": "lungs_erased_dilated",
+   "auc": 0.9493,
+   "seed_sd": 0.0003,
+   "sens_at_95": 0.7797,
+   "sens_at_95_ci": [
+    0.6587,
+    0.8665
+   ],
+   "sens_at_70": 0.9492,
+   "delta_auc": -0.0462,
+   "ci95": [
+    -0.0732,
+    -0.0229
+   ],
+   "verdict": "worse"
+  },
+  {
+   "variant": "border_only",
+   "auc": 0.9094,
+   "seed_sd": 0.0016,
+   "sens_at_95": 0.5593,
+   "sens_at_95_ci": [
+    0.4329,
+    0.6785
+   ],
+   "sens_at_70": 0.9322,
+   "delta_auc": -0.0869,
+   "ci95": [
+    -0.1213,
+    -0.0566
+   ],
+   "verdict": "worse"
+  }
+ ],
+ "above_chance_auc_retained": {
+  "lungs_only": 0.9879,
+  "lungs_erased": 0.9157,
+  "lungs_erased_dilated": 0.9079,
+  "border_only": 0.8272
+ },
+ "note": "Provisional split, development only; internal_test untouched. lungs_erased contains no lung field at all."
+}
