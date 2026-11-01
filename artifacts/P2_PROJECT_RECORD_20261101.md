@@ -660,6 +660,18 @@ post-hoc heatmaps, inability to publish) were assertions, not findings, and are 
     needs a consecutive-screening calibration sample and a fail-closed guard; neither is
     tested, and the result is not a general representative-sampling guarantee.
 
+16. **None of the raw scores is a probability; the fused output is one only where it was fitted**
+    (audit A1, descriptive, no new fitting; `artifacts/probability_calibration_audit_20261101_1100`).
+    The served v2 image logit read through a sigmoid has ECE **0.487 [0.464, 0.510]**, calibration
+    intercept **−5.3**, slope **0.30** on TUNE (top decile: 0.996 predicted, 0.23 observed); the
+    comparator's raw abnormality score behaves the same way (ECE 0.439, intercept −3.4, slope 0.68).
+    The fused outputs, out-of-fold, are probability-shaped — v2 ECE 0.024 [0.018, 0.044], v3 ECE
+    0.016 [0.013, 0.035], intercept 0.00, slope 0.94, Brier skill +0.09 / +0.11 over prevalence — but
+    the intercept is TUNE's prevalence and the scanner columns are TUNE's scanners, so this holds
+    for a site with the same prevalence and the same three scanners and for no other. Scanner 1
+    (n = 204) sits above the 0.03 ECE bound in both. No recalibration map was fitted or saved; the
+    API contract "screening score, not a probability" is now a measured statement.
+
 ## 6. Methodological rules that emerged (and held)
 
 - **Preregister and hash before fitting.** Every experiment since R5 carries a sha-256 of
@@ -722,6 +734,7 @@ exactly. What has repeatedly needed repair is **interpretation**.
 | label-free per-scanner calibration | **WORKS, NOT USABLE AS IS** (R25) — mean-centering on 25 unlabelled images/scanner recovers the full supervised gain (+0.028 [+0.007, +0.049]; +0.056 previous TB); fails the pre-registered stability bound on one stress condition (previous-TB-only batch: scanner sensitivity −0.122, bound 0.10); supervised term fails worse under prevalence shift; requires a consecutive-sample calibration batch — guard not yet tested |
 | untouched-cohort head-to-head vs comparator | **PRE-REGISTERED, AWAITING DATA** — `artifacts/headtohead_prereg_v1/` (PROTOCOL v1 sha `16b44ec1…` hashed 2026-11-01; non-inferiority margin 0.03, previous TB pre-specified but exploratory, scanner-stratified; ≥ 400 confirmed cases for power; one-shot scorer with LOCK, no training path; DATA_REQUEST.md ready to send) |
 | consecutive-sample calibration guard | **IMPLEMENTED AS A FAIL-CLOSED PROPOSAL ENDPOINT, STILL UNVALIDATED** (`src/p2_cls/site_calibration.py`, `/v2/calibration/propose`; 6 tests) — ≥ 25 unlabelled consecutive screening images, questionnaire composition checked against a site reference, **fail closed**: composition uncertain or outside validated limits → no correction, frozen uncorrected model, human review flag. Software cannot prove a batch is consecutive; that needs auditable enrolment records. Establishing that these safeguards make calibration safe requires a prospective evaluation, not another TUNE run |
+| is any output a probability | **MEASURED** (audit A1, descriptive) — raw v2 logit through a sigmoid: ECE 0.487, intercept −5.3, slope 0.30 (not a probability; comparator raw the same); fused out-of-fold: ECE 0.024 (v2) / 0.016 (v3), intercept 0.00, slope 0.94 — a probability only at TUNE's prevalence and scanners; nothing fitted or saved for serving |
 | served model = research model | **FIXED** (R18) — bundle_v2_regional + pipeline_v2 + serve_v2, smoke-verified |
 | scanner composition in the consolidation association | quantified, not decomposed |
 

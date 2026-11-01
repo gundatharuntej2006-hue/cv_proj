@@ -1,0 +1,26 @@
+{
+ "protocol_sha256": "49a7a0d7f2863212eaaf19e4d96dc069b8c6b70350466ba194b913476a55cb10",
+ "cohort_fingerprint": "1aa55cd5c0eb2088f2a037d9a8e5770ca1c0f4a75ea21566d743d17577ed1751",
+ "v3_head_sha256": "7f61a082d1a247395ef06c805fcb10acc624bba756431131883a1477a7fe1f93",
+ "reproduction_gate": {
+  "v3_raw_tune_auroc": 0.7585,
+  "expected": 0.7585,
+  "v2_raw_tune_auroc": 0.7237,
+  "expected_v2": 0.7237
+ },
+ "n_boot": 2000,
+ "boot_seed": 20261101,
+ "bins": 10,
+ "reading_rule": {
+  "slope": [
+   0.8,
+   1.2
+  ],
+  "intercept": [
+   -0.2,
+   0.2
+  ],
+  "ece_max": 0.03
+ },
+ "seconds": 16.9
+}
