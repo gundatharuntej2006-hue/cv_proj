@@ -1,15 +1,27 @@
 # -*- coding: utf-8 -*-
-"""Path resolution for P2 modules. Delegates to tbcore.paths (P4's shared module), which
-exists in this repo; the TB_MOCK redirection lives there."""
-from pathlib import Path
-from tbcore.paths import get_repo_root, resolve_path, is_mock_mode
+"""Path resolution with the TB_MOCK switch.
 
-REPO_ROOT = get_repo_root()
+TEMPORARY. `tbcore.paths` (Person 4, P4-01) is the real home for this. P2 may not edit
+`tbcore`, and P2-02 is due in Week 1 before `tbcore` exists, so this shim stands in and
+delegates to `tbcore.paths` the moment that module is importable. Delete this file in
+the PR that first imports `tbcore` successfully.
+"""
+import os
+from pathlib import Path
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
 def mock_mode() -> bool:
-    return is_mock_mode()
+    return os.environ.get("TB_MOCK", "") == "1"
 
 
 def resolve(rel: str) -> Path:
-    return resolve_path(rel)
+    """Repo-relative contract path -> real path, redirected under mock/ when TB_MOCK=1."""
+    try:
+        from tbcore import paths as _tbcore_paths      # noqa: F401  (P4's real one)
+        return Path(_tbcore_paths.resolve(rel))
+    except Exception:
+        pass
+    rel = rel.replace("\\", "/").lstrip("/")
+    return (REPO_ROOT / "mock" / rel) if mock_mode() else (REPO_ROOT / rel)

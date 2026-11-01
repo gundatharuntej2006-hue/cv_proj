@@ -71,10 +71,31 @@ Better than the distance gate's 1.3%, still unusable.
 
 Earlier in this session I ran Shenzhen and Montgomery at original resolution against the gate,
 saw 5% and 26.8% rejection, and concluded the gate was reading content rather than
-preprocessing. **That control was invalid.** Those same radiographs are inside TBX11K — 400 of
-them in `imgs/extra/mc+shenzhen/`, some in the very bank being scored against — so passing them
-demonstrates nothing about an unseen site. CheXpert Plus is the first genuinely independent
-site we have tested, and it gives the opposite answer.
+preprocessing. **That control was invalid** — but not for the reason given here originally,
+and the reason matters.
+
+> **Correction, 2026-10-16 — see `p2_tbx11k_composition_corrected.md`.** This section said
+> those radiographs are "inside TBX11K — some in the very bank being scored against". Both
+> halves are wrong. TBX11K's benchmark is all Chinese hospital data; the 400 NLM images ship
+> in the archive under `imgs/extra/mc+shenzhen/`, referenced only from `all_*.txt`. The OOD
+> bank is built from **core-list training embeddings**, so no NLM image was ever in it —
+> verified at max cosine 0.8389 across all 8,400, zero pairs above 0.90.
+>
+> The control was nevertheless invalid, for a reason found later: those images were scored at
+> **original resolution** (3000×2919, 4892×4020) while the bank was built from C04's 512×512
+> standardised images, so the rejection rates measured a preprocessing mismatch rather than a
+> site difference.
+>
+> **This means the gate's cross-site behaviour is an open question again, not a settled one.**
+> The 98.7% CheXpert false-rejection figure below stands as measured, but it is now one site
+> rather than the general case. Shenzhen and Montgomery are genuinely unseen by our models and
+> are being re-tested properly — 512-standardised, against the core-list bank — by
+> `scripts/p2_22_external_validation.py`. If they reject at 5–27% while CheXpert rejects at
+> 98.7%, the honest conclusion is that transfer is **site-dependent**, which is a weaker and
+> more useful claim than "the threshold does not transfer".
+
+CheXpert Plus was the first site tested that is independent of the TBX11K archive entirely,
+and it gives the opposite answer to that earlier run.
 
 ## The constructive half: a locally-set threshold
 
@@ -95,6 +116,43 @@ dozen ordinary radiographs to commission the gate, not a prevalence survey.
 AUROC for OOD against normal frontals **at the unseen site** is 0.9837 (0.9812 for laterals,
 0.9888 for non-medical), against 1.0000 at the home site. The discriminative power is
 essentially intact; only the operating point moved.
+
+## Why it fails: TBX11K is pathologically homogeneous (the mechanism)
+
+Having a fix is good; knowing *why* the gate fails makes it a result rather than a patch.
+Four measurements on the real embeddings (`scripts/p2_11_site_geometry.py`,
+`artifacts/p2/gate/p2_11_site_geometry.json`):
+
+**1. The site difference is a rank-1 mean shift — and it is orthogonal to TB.** A single
+direction (the difference of the two sites' mean embeddings) separates TBX11K from CheXpert
+at AUROC **0.9984**. Projecting that one direction out drops site separability to **0.486**
+(chance) and leaves the in-site TB probe AUC **unchanged** (0.9857 -> 0.9856). So "which
+hospital" and "has TB" live in different directions — the classifier is not confounded by
+site.
+
+**2. But removing the shift does not fix the gate.** After projecting out the site
+direction, the gate still rejects **97.3%** of CheXpert frontals (was 98.7%). A mean shift
+is not why the gate fails.
+
+**3. The real reason: TBX11K is twice as tight as a real hospital.** Median self kNN
+distance is **0.39** within TBX11K and **0.78** within CheXpert. TBX11K images sit far
+closer to each other than a real site's images do, because the benchmark's authors resized
+and standardised them. A density gate calibrated on that cluster treats anything with
+normal real-world spread as out-of-distribution.
+
+**4. Whitening does not fix it either.** Standardising every dimension by TBX11K's own
+mean and variance barely moves the false-rejection rate (98.7% -> 98.0%). The homogeneity
+is not a per-axis scale you can divide out; it is intrinsic to how tightly the benchmark
+occupies embedding space.
+
+**Consequence.** You cannot make a new site look like TBX11K, because no real site is that
+homogeneous. The only sound fix is to re-learn what "normal density" means at the new site
+from local data — which is exactly the conformal re-fitting below. Embedding surgery
+(projection, whitening) is shown *not* to work, which is itself worth reporting: it rules
+out the obvious domain-adaptation reflexes and justifies the local-calibration approach.
+
+This also sharpens the duplicate finding: a benchmark homogeneous enough to break a density
+gate is a benchmark worth auditing, and we did (see `p2_duplicate_finding.md`).
 
 ## Making it rigorous: a conformal threshold for the gate
 

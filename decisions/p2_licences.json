@@ -1,16 +1,130 @@
 {
-  "decision_id": "D15",
-  "owner": "p2",
-  "title": "Model and OOD Data Licences",
-  "criterion_preregistered": "Verify RAD-DINO academic non-commercial research licence, timm weights terms, and CheXpert Stanford RUA terms",
-  "preregistered_at": "2026-09-21",
-  "candidates": ["Academic research compliance"],
-  "value": {"rad_dino_licence": "Research-NonCommercial", "chexpert_licence": "Stanford-RUA"},
-  "evidence": ["docs/p2_vram_feasibility.md"],
-  "data_used": ["none"],
-  "reviewed_by": "p4",
-  "guide_ack": false,
-  "locked": true,
-  "locked_at": "2026-09-28",
-  "git_sha": "c0ffee1"
+ "decision_id": "D15",
+ "owner": "p2",
+ "title": "Model licences and pinned revisions (classification side)",
+ "criterion_preregistered": "Every model weight used by Person 2 is recorded with its exact revision and its licence, checked on the model card before use. Anything that is not usable for an academic project is rejected.",
+ "preregistered_at": "2026-09-29",
+ "candidates": [
+  "microsoft/rad-dino",
+  "timm efficientnet_b3 (ImageNet weights)"
+ ],
+ "value": {
+  "radino": {
+   "model_id": "microsoft/rad-dino",
+   "revision": "110cbc18d5133582e320b43d53bf5c44e410c936",
+   "licence": "MIT, LICENSE file starts \"MIT License\"",
+   "use": "frozen feature extractor, academic project only",
+   "verified_on": "2026-09-29"
+  },
+  "efficientnet_b3": {
+   "source": "timm",
+   "licence": "Apache-2.0 (library); confirm the pretrained tag's own licence when the baseline is trained in P2-12",
+   "use": "ImageNet-pretrained baseline"
+  },
+  "ood_sources": {
+   "status": "lateral_cxr and non_medical OBTAINED with verified licences. other_body_part awaits a Redivis API token. C03 is built and frozen once the third type lands. SEPARATELY: the gate that will consume C03 has a serious problem - see docs/p2_ood_gate_finding.md.",
+   "requirement": "P2-10 needs >= 200 images per ood_type in ood_eval: lateral_cxr, other_body_part, non_medical.",
+   "candidates": {
+    "chexpert": {
+     "ood_type": "lateral_cxr",
+     "status": "REGISTERED and licence verified, but the distribution is BROKEN at source",
+     "route": "Stanford AIMI registration plus a signed research use agreement; a person must sign it, so it cannot be automated.",
+     "named_in_plan": true,
+     "action": "Atul or the guide registers. This is the critical path for P2-10.",
+     "licence": "Stanford University Dataset Research Use Agreement",
+     "licence_verified": true,
+     "verified_on": "2026-10-06",
+     "verified_from": "the dataset page at stanfordaimi.azurewebsites.net, licence link read directly after login",
+     "blocker": "Registered 2026-10-06 and the Research Use Agreement accepted. The download link for CheXpert-v1.0.zip resolves to Azure blob storage and returns BlobNotFound: 'The specified blob does not exist' (container chexpertchestxrays-u20210408). That is not an expired SAS token, which would return AuthenticationFailed; the 471 GB blob is absent from Stanford's storage. The accompanying README.md and the two label CSVs download fine, so only the images are missing.",
+     "next": [
+      "Report the missing blob through 'Report an Issue with this dataset' on the CheXpert page.",
+      "Check CheXpert Plus (stanfordaimi.azurewebsites.net/datasets/5158c524-d3ab-4e02-96e9-6ee9efc110a1), the 2024 re-release of the same images in PNG and DICOM, which may be chunked rather than one blob.",
+      "If neither works, laterals wait on the Open-i licence enquiry."
+     ],
+     "usable_now": false,
+     "what_we_did_get": "train_cheXbert.csv (23 MB): 223,414 rows, 191,027 frontal and 32,387 lateral, with paths of the form CheXpert-v1.0/train/patientNNNNN/studyN/viewN_lateral.jpg. The metadata we would need is in hand; only the pixels are missing."
+    },
+    "openi_indiana_cxr": {
+     "ood_type": "lateral_cxr",
+     "status": "LICENCE UNVERIFIED - DO NOT USE YET",
+     "what_it_is": "NLM Open-i / Indiana University collection, 7,470 frontal and lateral images, bulk tgz 1.36 GB, download URL live (HTTP 200, checked 2026-10-06).",
+     "url": "https://openi.nlm.nih.gov/imgs/collections/NLMCXR_png.tgz",
+     "claimed_licence": "CC BY-NC-ND 4.0 (secondary sources only)",
+     "verification_attempted": [
+      "openi.nlm.nih.gov FAQ and about pages: JavaScript-rendered, no licence text retrievable",
+      "the collection's own paper (Demner-Fushman et al., scholarworks.indianapolis.iu.edu): contains no licence statement",
+      "nlm.nih.gov/web_policies.html: NLM explicitly disclaims it, stating 'It is your responsibility to determine and satisfy copyright or other use restrictions... NLM cannot guarantee the copyright status for any item.'"
+     ],
+     "conclusion": "No primary source confirms the licence, so it stays blocked. If it is CC BY-NC-ND, the NoDerivatives clause also means resized or cropped versions must not appear in the paper's figures, which is a second reason to settle this before use rather than after.",
+     "action": "Email the Open-i contact form asking for the collection's terms of use in writing.",
+     "priority": "RAISED to primary route for lateral_cxr on 2026-10-06, because CheXpert is only offered as a 471 GB archive. At 1.36 GB Open-i is the only practical lateral source we have found. The licence enquiry is now blocking, not optional."
+    },
+    "other_body_part": {
+     "ood_type": "other_body_part",
+     "status": "ACCESS GRANTED 2026-10-06 via Redivis; awaiting an API token to fetch",
+     "action": "MURA (Stanford, same registration route as CheXpert) is the obvious candidate and would clear both types with one agreement."
+    },
+    "non_medical": {
+     "ood_type": "non_medical",
+     "status": "NO SOURCE IDENTIFIED",
+     "action": "Needs a set with per-image licence provenance, not a scrape. Open Images (per-image CC BY 2.0 with the licence URL in the metadata) is the most defensible option."
+    },
+    "chexpert_plus": {
+     "ood_type": "lateral_cxr",
+     "status": "OBTAINED 2026-10-07",
+     "licence": "Stanford University Dataset Research Use Agreement",
+     "licence_verified": true,
+     "accepted_by": "Atul Dhull, 2026-10-06",
+     "what": "500 lateral chest X-rays, one per patient, from png_chexpert_plus_chunk_0.zip",
+     "how": "HTTP Range reads against the zip's central directory: 920 MB transferred out of a 155.7 GB archive (0.59%). The archive was never downloaded. src/p2_gate/remote_zip.py",
+     "control_set": "150 FRONTAL images were also fetched as a control for the OOD experiment. They are not OOD data and must never enter C03."
+    },
+    "wikimedia_commons": {
+     "ood_type": "non_medical",
+     "status": "OBTAINED 2026-10-07",
+     "n": 246,
+     "licence": "per image; only CC0, Public Domain, CC BY and CC BY-SA accepted",
+     "licence_verified": true,
+     "verified_from": "Wikimedia Commons API extmetadata, per file",
+     "counts": {
+      "CC BY-SA 4.0": 168,
+      "CC BY-SA 3.0": 50,
+      "CC0": 8,
+      "CC BY 3.0": 8,
+      "CC BY 4.0": 4,
+      "Public domain": 3,
+      "CC BY-SA 2.5": 2,
+      "CC BY 2.0": 1,
+      "CC BY-SA 2.0 de": 1,
+      "CC BY-SA 3.0 lu": 1
+     },
+     "attribution_required": true,
+     "note": "Curated Quality-image categories rather than a general CC-Zero sweep, which could silently include a radiograph in a set defined as non-medical. Per-image author and source page in data/raw/ood/non_medical_commons/_provenance.json."
+    }
+   },
+   "rule": "No source enters the committed C03 file until its licence is read at its primary source and recorded here with the URL, the date and who checked it. build() refuses an unverified source, and validate() fails any manifest containing one.",
+   "why_this_is_strict": "The project claims licence diligence in its methodology. A TB screening paper that used images it had no clear right to use would be worse than one with fewer OOD images."
+  },
+  "tbx11k_licence_conflict": {
+   "flagged": "2026-10-12",
+   "website_says": "CC BY 4.0 (mmcheng.net/tb)",
+   "data_files_say": "CC BY-NC-SA 2.0 \u2014 consistent across all 10+ COCO annotation JSONs, url http://creativecommons.org/licenses/by-nc-sa/2.0/",
+   "governing": "conservative reading: treat as CC BY-NC-SA 2.0 until resolved",
+   "implication": "NonCommercial ok for academic use; ShareAlike affects reuse of derived images in figures. D05 (P1) should cite both and note the conflict.",
+   "action": "handed to P1 in Downloads/P2_handoff_for_C01/README_handoff.md"
+  }
+ },
+ "evidence": [
+  "docs/p2_vram_feasibility.md",
+  "artifacts/p2/p2_01_vram_feasibility.json"
+ ],
+ "data_used": [
+  "none"
+ ],
+ "reviewed_by": "p4",
+ "guide_ack": false,
+ "locked": false,
+ "locked_at": null,
+ "git_sha": null,
+ "note": "Locked once Person 4 reviews it and the OOD sources clear (W5). OOD register added 2026-10-06: tooling done, no source cleared yet. RAD-DINO is MIT-licensed, verified from the model card and the LICENSE file in the model repository, so there is no academic-use restriction on the backbone. The system is still presented as decision support only, for clinical reasons rather than licence reasons."
 }

@@ -1,84 +1,26 @@
-# Byte-compiled / optimized / DLL files
+# data and models never go in git (work plan, Section 4.6 Git rules)
+data/
+!data/splits/
+runs/
+logs/
+artifacts/**/*.pt
+artifacts/**/*.npz
+artifacts/**/*.safetensors
+hf-cache/
+mock/
 __pycache__/
-*.py[cod]
-*$py.class
-*.so
+*.pyc
+.venv/
 
-# Environments & virtualenvs
-.env
-.venv
-env/
-venv/
-ENV/
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+# signing keys and gate tokens must never be committed (P2-14)
+*.key
+.tb_seal_key*
+artifacts/p2/sealed/gate_*.json
 
-# Testing & Coverage
-.pytest_cache/
-.coverage
-.coverage.*
-htmlcov/
-nosetests.xml
-coverage.xml
-
-# Jupyter Notebooks
-.ipynb_checkpoints/
-
-# IDE configurations
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# Large medical data files (Never commit raw datasets)
-data/raw/*
-!data/raw/.gitkeep
-data/processed/*
-!data/processed/.gitkeep
-*.dcm
-*.dicom
-*.nii
-*.nii.gz
-*.zip
-*.tar
-*.tar.gz
-*.7z
-
-# Model checkpoints and heavy artifacts
-artifacts/checkpoints/*
-!artifacts/checkpoints/.gitkeep
-artifacts/calibration/*
-!artifacts/calibration/.gitkeep
-*.pt
-*.pth
-*.bin
-*.onnx
-*.safetensors
-*.ckpt
-
-# Training & Eval runs
-runs/*
-!runs/.gitkeep
-wandb/
-
-# Logs
-logs/*
-!logs/.gitkeep
-*.log
-
-# Generated PDF reports
-report/output/*
-!report/output/.gitkeep
+# P2 2026-11-01: feature caches and masked PNGs stay local; the small inference heads are tracked
+artifacts/**/cache/
+artifacts/**/lungs512_calibration/
+report/arxiv/paper.log
+!artifacts/p2/bundle_v2_regional/head.npz
+!artifacts/p2/bundle_v3_candidate/head.npz
+!artifacts/fusion_on_stacked_head_20261101_0800/tables/X_noNLM_head.npz

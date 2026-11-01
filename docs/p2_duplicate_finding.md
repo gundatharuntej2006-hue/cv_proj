@@ -1,7 +1,20 @@
-# TBX11K duplicates, and: the NLM external sets are inside TBX11K
+# TBX11K duplicates, and: the NLM external sets ship inside the TBX11K archive
 
 **Owner:** Person 2 · **Tasks:** P2-03, P2-04 · **Date:** 2026-10-06 · **Status:** verified
 **Blocks:** the split freeze (H1, P1-07) · **Decision:** D06
+
+> **Correction, 2026-10-16 — see `p2_tbx11k_composition_corrected.md`.** The original title
+> and the sections below said the NLM sets are "inside TBX11K". That is wrong as a statement
+> about the **benchmark**: TBX11K's 11,200 images are all self-collected Chinese hospital
+> data. What is true is that the **distributed archive** ships 400 NLM images under
+> `imgs/extra/mc+shenzhen/` and references them only from `all_*.txt`, so the operational
+> warning in this document — use the core lists — stands exactly as written, and the 800
+> cosine-0.9994 matches reported below are real.
+>
+> The cost of the imprecision: the project wrote off Shenzhen and Montgomery as unusable for
+> external validation, when they are in fact **unseen by our models**, because our manifest
+> uses the core lists. Verified at max cosine 0.8389 against all 8,400 training embeddings,
+> zero pairs above 0.90. External validation is now possible and is running.
 
 ## What was found
 

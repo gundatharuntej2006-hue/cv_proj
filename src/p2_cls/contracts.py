@@ -106,8 +106,8 @@ def check_c08_invariants(df):
             bad.append("for a three-class row, p_tb_raw must equal p3_tb")
     if df.groupby(["image_id", "model_id"]).size().max() > 1:
         bad.append("one row per (image_id, model_id) only")
-    if int(df["is_primary"].groupby(df["model_id"]).max().sum()) != 1:
-        bad.append("exactly one model_id may be is_primary")
+    if int(df["is_primary"].groupby(df["model_id"]).max().sum()) > 1:
+        bad.append("at most one model_id may be is_primary (0 before D11, 1 after)")
     if not df["p_tb_raw"].between(0, 1).all():
         bad.append("p_tb_raw must lie in [0, 1]")
     return bad

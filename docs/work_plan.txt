@@ -1,0 +1,890 @@
+# Explainable TB Screening from Chest X-Rays — Work Plan (4 Workstreams)
+
+BAI506 Mini Project, BMSIT&M 2026-27 · Team of 4 · 12 working weeks + 1 in reserve (3 months, full scope) · RTX 4050 6 GB laptop + Kaggle/Colab T4
+
+> This README is the team's operating plan: who builds what, which files connect the workstreams, and how results stay honest. It contains no implementation code.
+
+| Person | Name (fill in) | GitHub handle | Workstream |
+|---|---|---|---|
+| Person 1 | | `@tb-p1` | Data, preprocessing, segmentation → dashboard |
+| Person 2 | Atul | `@tb-p2` | RAD-DINO classification, quality/OOD gate → baselines, report assembly |
+| Person 3 | | `@tb-p3` | D-FINE detection, Grad-CAM → PDF, logging, latency |
+| Person 4 | | `@tb-p4` | Statistics, calibration, conformal triage, pipeline, evaluation, governance |
+
+---
+
+## 1. Project summary
+
+1. **Input:** a frontal chest X-ray (DICOM or PNG), decoded, converted to grayscale and resized to 512×512.
+2. **Gate:** an image-quality check plus a RAD-DINO kNN OOD score. Rejected images go to manual review.
+3. **Analysis:** TorchXRayVision lung segmentation with a sanity check, then a lung crop with margin (full image if the check fails). A frozen RAD-DINO with a selected head gives the TB probability, and D-FINE detects single-class TB lesions.
+4. **Decision:** temperature scaling (fitted on development), then a conformal lower threshold and a precision-constrained upper threshold (set on calibration) give **TB / REFER / NOT TB**. The detector link rule can move NOT TB to REFER.
+5. **Output:** a worklist sorted by calibrated TB probability, with Grad-CAM, lesion boxes, a per-patient PDF and prediction logs. Every metric carries n and a 95% CI. Target: sensitivity ≥ 90% and specificity ≥ 70% (screen-positive = TB or REFER).
+
+**"Prototype done" means all of the following are true:**
+- `make demo` starts the Streamlit dashboard on the laptop. A mixed batch (DICOM, PNG, one corrupt file, one lateral view, one non-medical image) produces a worklist with every Section 11 field, a PDF per case and one log line per case.
+- All 23 decision files (D01–D23) are locked, the no-test-tuning gate has passed, and the internal test has been run **once**. Tables 12.1–12.8 exist with n and CIs.
+- One challenge submission has been made and logged, using the Section 4.6 category mapping fixed in D21. External validation (Section 13) and the comparative-experiments table (Section 14) are complete.
+- Latency E6 has been measured and reported as pass or fail against < 2 s (GPU) and < 10 s (CPU).
+- The report, slides and backup demo video are finished, and `main` is tagged `v-freeze`.
+
+---
+
+## 2. Precedence note
+
+`docs/methodology.md` (Sections 1–21) is the **source of truth**. `docs/proposal.md` applies only where the methodology is silent. Where the two conflict, the methodology wins:
+
+| Topic | Proposal (OUTDATED, do not implement) | Methodology (USE THIS) |
+|---|---|---|
+| Classifier | EfficientNet-B3 / ConvNeXt-Tiny primary | Frozen RAD-DINO primary, EfficientNet-B3 baseline |
+| Detector | YOLO11, active/latent classes | D-FINE, single TB class; RT-DETRv2 is an extension |
+| Lung segmentation | Train U-Net on Montgomery (Dice E1) | Pretrained TorchXRayVision + sanity check; report failure rate |
+| Masking | Blank outside lungs | Crop to lung bounding box with margin |
+| Imbalance | Focal loss | Weighted sampler / logit-adjusted loss |
+| Splits | Dev cut from train; official val = internal test | Dev 10% of train; official val halved into calibration and internal test |
+| Threshold | ROC-selected | Conformal lower + precision-constrained upper → TB / REFER / NOT TB |
+| Temperature scaling | Fitted on validation | Fitted on development split only |
+| Quality gate | Reject lateral / non-X-ray | Image-quality check + RAD-DINO kNN OOD gate; view head is an extension |
+| CLAHE | Always on | Tested on/off once |
+| Lung-crop ablation | E3 shortcut ablation | "Does lung cropping help?" (methodology Section 14) |
+
+These proposal-only requirements are **retained** and each has an owner (see Section 9): DICOM anonymisation, corrupt-file robustness, threshold slider with the WHO default marked, prediction logging, per-patient PDF, latency E6, 1366×768 usability, scope-honesty text, Codabench log, Kaggle checkpoint-to-Drive, external-dataset fallback, and the Grad-CAM review with the guide.
+
+---
+
+## 3. Repository tree with owners
+
+Rule: **you edit only paths you own.** You may *import* another person's public API (`api.py`) or *read* their contract files, but you never edit them. A CI ownership check (P4-01) fails any PR from branch `pN/…` that touches another owner's path.
+
+```
+cv_proj/
+├── README.md                              P4 (steward; any change needs all-4 review)
+├── .github/
+│   ├── CODEOWNERS                         P4
+│   └── workflows/ci.yml                   P3 (pytest + contract validators + ownership check)
+├── .gitignore  .gitattributes  .pre-commit-config.yaml   P1 (.gitattributes = Git LFS rules)
+├── environment.yml  pyproject.toml  Makefile             P1 (Makefile only includes mk/pN.mk)
+├── mk/p1.mk  mk/p2.mk  mk/p3.mk  mk/p4.mk                each owner
+├── requirements/base.txt                  P1
+├── requirements/p1.txt … p4.txt           each owner (own extra deps)
+├── third_party/D-FINE/                    P3 (git submodule, pinned commit)
+│
+├── docs/
+│   ├── methodology.md  proposal.md        frozen inputs (nobody edits)
+│   ├── p1_datasets.md  p1_storage_budget.md  p1_usability.md  p1_demo_script.md      P1
+│   ├── p2_vram_feasibility.md  p2_ood_sources.md                                      P2
+│   ├── p3_dfine_feasibility.md  p3_kaggle_runbook.md  p3_gradcam_review.md            P3
+│   └── p4_codabench_log.md  p4_gate_audit.md                                          P4
+│
+├── contracts/                             P4 steward · FROZEN at tag contracts-v1 (end W1)
+│   ├── README.md                          contract index C01–C18, R1–R4
+│   ├── schemas/  formal JSON Schema for C01, C14, C16, C18 only
+│   ├── specs/    one short .md per remaining contract (fields, dtypes, producer)
+│   ├── case_result.schema.json            C14
+│   ├── decision.schema.json               C16
+│   └── ccr/CCR-NNN.md                     contract change requests (raised by anyone, 4 approvals)
+│
+├── decisions/                             one JSON per locked decision; owner = filename prefix
+│   ├── README.md                          P4 (registry index D01–D23)
+│   ├── p1_*.json                          P1  (D01–D05)
+│   ├── p2_*.json                          P2  (D06–D15)
+│   ├── p3_*.json                          P3  (D16–D20)
+│   └── p4_*.json                          P4  (D21–D23)
+│
+├── data/                                  gitignored except data/splits/
+│   ├── raw/tbx11k/ raw/shenzhen/ raw/montgomery/ raw/fallback/                 P1
+│   ├── raw/ood/                                                                P2
+│   ├── splits/tbx11k_splits_v1.csv  splits/external_v1.csv   (committed)       P1
+│   ├── splits/ood_heldout_v1.csv                             (committed)       P2
+│   ├── processed/v1/                      C04 store, masks, C05                P1
+│   └── boxes/v1/                          C06 COCO files                       P1
+│
+├── src/
+│   ├── tbcore/        P4  validators, sealed-split guard, seed, paths (mock switch), version stamps, disclaimer text
+│   ├── p1_data/       P1  ingest, anonymise, splits, TorchXRayVision seg, sanity, crop, boxes, external; api.py = R1
+│   ├── p1_app/        P1  Streamlit dashboard, worklist, threshold slider
+│   ├── p1_viewhead/   P1  (extension) frontal/lateral head
+│   ├── p2_cls/        P2  RAD-DINO embeddings, heads, EfficientNet-B3, selection; api.py = R2 (classify)
+│   ├── p2_gate/       P2  image-quality check, kNN OOD, near-duplicate search; api.py = R2 (gate)
+│   ├── p3_det/        P3  D-FINE adapter, training configs, detection metrics; api.py = R3 (detect)
+│   ├── p3_xai/        P3  Grad-CAM for ViT, localisation metrics, overlay renderer; api.py = R3 (explain)
+│   ├── p3_ops/        P3  Kaggle→Drive checkpointing, PDF, prediction logger, latency E6
+│   ├── p4_stats/      P4  Wilson/bootstrap CIs, ECE, temperature, conformal, upper threshold, link rule
+│   ├── p4_pipeline/   P4  run_case / run_batch → CaseResult; api.py = R4
+│   └── p4_eval/       P4  no-test-tuning gate, tables 12.1–12.8, external, Section 14, challenge bundle
+│
+├── tests/tbcore/ tests/p1_*/ tests/p2_*/ tests/p3_*/ tests/p4_*/     owner by prefix
+├── notebooks/p1/ p2/ p3/ p4/                                         owner by folder
+├── artifacts/p1/ p2/ p3/ p4/          owner by folder (small files in LFS, large on Drive + SHA)
+├── mock/                              gitignored; each producer writes only its own contracts
+├── runs/                              gitignored; CaseResult outputs (P4)
+├── logs/predictions.jsonl             gitignored; C15 (P3)
+└── report/
+    ├── main.md  abstract/intro/conclusion  slides/                   P2
+    ├── p1_*.md   p2_*.md   p3_*.md   p4_*.md                         each owner
+    └── demo_video.md                                                 P1
+```
+
+**Storage budget (50 GB total, P1-02):** P1 ≤ 22 GB (raw + processed + external), P2 ≤ 6 GB (OOD raw, embeddings, EfficientNet-B3 checkpoints), P3 ≤ 10 GB (detector checkpoints, heatmaps), P4 ≤ 2 GB, and about 10 GB margin.
+
+**Git LFS:** only heads, `.npz`, `.parquet` and small `.pt` files under `artifacts/`, with total LFS kept < 1 GB (the GitHub free quota). Large checkpoints go to Google Drive, and their SHA-256 is recorded in D12, D14 and D17.
+
+---
+
+## 4. Interface contracts, handshakes and governance
+
+### 4.1 Contract rules
+
+- People exchange data **only** through the versioned files (C01–C18) and frozen Python entry points (R1–R4) below.
+- **Freeze:** all four sign off at the end of Week 1 (PR with 4 approvals, tag `contracts-v1`). After that, any change needs a CCR (`contracts/ccr/CCR-NNN.md`: what, why, affected consumers, migration). A CCR needs **2 approvals** (the producer and the affected consumer) and a notice to the P4 steward, bumps `schema_version`, and must update the producer's mock generator in the same PR. All four must approve only when the change touches `contracts/README.md`, the gate, or a contract that every stream consumes (C01, C14, C16, C18).
+- Every contract has **exactly one producer**. `tbcore` validators run in CI against both mocks and real files.
+- **Sealed data:** `tbcore.guard` refuses to load labels or images for `internal_test`, `challenge_test`, `external_test` and OOD role `ood_eval` unless the matching single-use unlock token from the gate (P4-09) exists. The one exception is `purpose="dedup"`, which reads images without labels (P2-04, H1).
+- Filenames carry `_vN`. Mocks sit at the same relative path under `mock/` and are selected with `TB_MOCK=1` (`tbcore.paths`).
+
+### 4.2 File contracts
+
+**C01 — Split file** · `data/splits/tbx11k_splits_v1.csv` (committed) · Producer **P1** (P1-04, P1-07) · Consumers P2, P3, P4, `tbcore.guard`
+
+| Field | dtype | Values / notes |
+|---|---|---|
+| image_id | str | e.g. `tb0042`, `h0311`, `s1207` |
+| rel_path | str | under `data/raw/tbx11k/` |
+| official_split | category | train, val, test |
+| split | category | train, development, calibration, internal_test, challenge_test, excluded_duplicate |
+| category | category | healthy, sick_non_tb, active_tb, latent_tb, active_latent_tb, uncertain_tb, unknown (challenge test) |
+| tb_label | int8 | 1 = any TB, 0 = not TB, −1 = withheld |
+| active_tb_label | Int8 (nullable) | 1 = active or active+latent, 0 = not TB, NA = latent-only or withheld (Section 2 secondary analysis) |
+| has_boxes / n_boxes | bool / int16 | radiologist boxes present / count |
+| dup_of | str (nullable) | image_id kept when this row was removed as a duplicate |
+| split_version / seed | str / int32 | `v1` / fixed seed |
+
+Example: `tb0042,imgs/tb/tb0042.png,val,calibration,active_tb,1,1,True,2,,v1,20260921`
+
+**C02 — External manifest** · `data/splits/external_v1.csv` · Producer **P1** (P1-11) · Consumers P2, P4
+
+| Field | dtype | Notes |
+|---|---|---|
+| image_id | str | `shz_0001`, `mcu_0001`, `fb_…` |
+| rel_path | str | raw path |
+| source | category | shenzhen, montgomery, fallback_<name> |
+| tb_label | int8 | 0 / 1 |
+| split | category | external_test |
+| orig_h / orig_w | int32 | before resampling to 512 |
+| manifest_version | str | `v1` |
+
+Example: `shz_0137,shenzhen/CHNCXR_0137_1.png,shenzhen,1,external_test,2939,2985,v1`
+
+**C03 — Held-out OOD collection** · `data/splits/ood_heldout_v1.csv` (committed) · Producer **P2** (P2-10) · Consumers P4 (12.6), P1 (view-head extension)
+
+| Field | dtype | Notes |
+|---|---|---|
+| image_id | str | `ood_lat_0001` … |
+| rel_path | str | under `data/raw/ood/` |
+| source | str | e.g. chexpert, a public other-body-part radiograph set, a CC-licensed natural-image set |
+| ood_type | category | lateral_cxr, other_body_part, non_medical |
+| role | category | ood_eval (sealed), viewhead_train, viewhead_dev, viewhead_test (lateral pool split, disjoint) |
+| licence | str | per source (also recorded in D15) |
+
+Example: `ood_lat_0217,chexpert/p00412_lateral.jpg,chexpert,lateral_cxr,ood_eval,Stanford-RUA`
+
+**C04 — Preprocessed image store** · `data/processed/v1/{dataset}/img512/{image_id}.png`, `…/img512_clahe/{image_id}.png`, manifest `data/processed/v1/manifest.parquet` · Producer **P1** (P1-06, P1-11) · Consumers P2, P3
+
+| Field | dtype | Notes |
+|---|---|---|
+| image_id / dataset | str / category | tbx11k, shenzhen, montgomery, fallback |
+| path_img512 / path_img512_clahe | str | uint8 grayscale 512×512 PNG; CLAHE parameters fixed a priori (clip 2.0, tile 8×8) |
+| orig_h / orig_w | int32 | |
+| src_format | category | png, dicom, jpg |
+| decode_status / error_msg | category / str | ok, unreadable / message |
+| phi_tags_removed | int16 | DICOM tags stripped on ingest |
+| sha256_img512 | str | reproducibility |
+
+Example: `h0311,tbx11k,…/img512/h0311.png,…/img512_clahe/h0311.png,512,512,png,ok,,0,9f2c…`
+
+**C05 — Lung ROI table** · `data/processed/v1/lung_roi.parquet` (+ masks `…/masks/{image_id}.png`) · Producer **P1** (P1-08–P1-10) · Consumers P2, P3, P4 (12.7)
+
+| Field | dtype | Notes |
+|---|---|---|
+| image_id | str | one row per (image_id, margin) |
+| mask_path | str | uint8 512×512 |
+| lung_area_frac | float32 | lung pixels / image pixels |
+| n_components | int8 | connected lung regions |
+| lung_x0, lung_y0, lung_x1, lung_y1 | int16 | tight lung box, 512 coordinates |
+| sanity_pass / fail_reasons | bool / str | pipe-separated: area, components, bbox_size, truncated |
+| margin | float32 | 0.00, 0.05, 0.10, 0.15 (fraction of lung-box size) |
+| crop_x0, crop_y0, crop_x1, crop_y1 | int16 | crop in 512 coordinates; (0,0,512,512) when fallback |
+| fallback_full | bool | true if sanity check failed |
+
+Example: `tb0042,…/masks/tb0042.png,0.281,2,51,40,466,452,True,,0.10,10,0,507,493,False`
+
+**C06 — Lesion boxes (COCO)** · `data/boxes/v1/coco_{split}_m{margin}.json` + `data/boxes/v1/outside_crop_v1.csv` · Producer **P1** (P1-10) · Consumers P3, P4
+
+| Element | Fields (dtype) |
+|---|---|
+| images[] | id (int), file_name (image_id), width/height (int, crop size), crop_box [x0,y0,x1,y1] (int, 512 coords) — includes non-TB images as negatives |
+| annotations[] | id, image_id (int), bbox [x,y,w,h] (float, crop coords), area (float), category_id = 1, iscrowd = 0, tb_subtype (active / latent), orig_bbox_512 [x,y,w,h] (float), clipped (bool) |
+| categories[] | [{id: 1, name: "tb_lesion"}] |
+| outside_crop_v1.csv | split, margin, n_boxes_total, n_fully_outside, n_clipped (int32) |
+
+Example annotation: `{"id": 88, "image_id": 412, "bbox": [291.0, 88.0, 71.0, 72.0], "area": 5112.0, "category_id": 1, "iscrowd": 0, "tb_subtype": "active", "orig_bbox_512": [301.0, 88.0, 71.0, 72.0], "clipped": false}`
+
+**C07 — RAD-DINO embeddings** · `artifacts/p2/emb/radino_{dataset}_{variant}_v1.npz` · Producer **P2** (P2-03, P2-06) · Consumers P2 (internal), P1 (view-head extension)
+
+| Key | dtype / shape | Notes |
+|---|---|---|
+| image_id | `<U32` [N] | |
+| emb | float16 [N, 768] | CLS embedding |
+| l2_normalised | bool | always true |
+| variant | str | e.g. `crop_m0.10_clahe0`, `full_clahe1` |
+| model_id / preproc_version | str | pinned HF revision / `v1` |
+
+Example: `image_id[0]="tb0042", emb[0,:3]=[0.031,-0.012,0.047], variant="crop_m0.10_clahe0"`
+
+**C08 — Classifier scores** · `artifacts/p2/scores/scores_{dataset}_{split}_v1.parquet` · Producer **P2** (P2-07, P2-12–P2-14) · Consumers P4
+
+| Field | dtype | Notes |
+|---|---|---|
+| image_id / dataset / split | str / category / category | |
+| model_id | str | registry id from D14, e.g. `radino_crop_m0.10_clahe0_bin`, `effb3_crop_m0.10_clahe0` |
+| head | category | binary, three_class |
+| variant / clahe / margin | str / bool / float32 (nullable) | |
+| logit_tb | float32 (nullable) | binary head logit |
+| logits_3c | list<float32>[3] (nullable) | healthy, sick_non_tb, tb |
+| p_tb_raw | float32 | uncalibrated TB probability |
+| p3_healthy, p3_sick_non_tb, p3_tb | float32 (nullable) | three-class auxiliary output |
+| is_primary | bool | true only for the D11-selected model |
+| model_sha / seed | str / int32 | |
+
+Example: `tb0042,tbx11k,calibration,radino_crop_m0.10_clahe0_bin,binary,crop_m0.10_clahe0,False,0.10,0.94,,0.719,0.11,0.27,0.62,True,3b9c…,17`
+
+**C09 — Gate scores** · `artifacts/p2/gate/gate_{dataset}_{split}_v1.parquet` · Producer **P2** (P2-05, P2-11, P2-14) · Consumers P4
+
+| Field | dtype | Notes |
+|---|---|---|
+| image_id / dataset / split_or_role | str / category / str | |
+| quality_pass / quality_reasons | bool / str | blank, under_exposed, over_exposed, heavily_cropped |
+| ood_score_k5 / ood_score_k1 | float32 | mean cosine distance to k NN in the training bank |
+| ood_threshold_k5 | float32 | from D13 |
+| ood_pass / gate_pass | bool / bool | gate_pass = quality_pass ∧ ood_pass |
+
+Example: `ood_lat_0217,ood,ood_eval,True,,0.412,0.377,0.241,False,False`
+
+**C10 — Detections** · `artifacts/p3/det/detections_{dataset}_{split}_v1.json` · Producer **P3** (P3-08, P3-13) · Consumers P4
+
+| Field | dtype | Notes |
+|---|---|---|
+| schema_version, model_id, input_size, conf_threshold | str, str, int, float | input_size ∈ {512, 640} from D16; threshold from D18 |
+| coords | str | always `full512` |
+| images[].image_id | str | |
+| images[].crop_box | int[4] | |
+| images[].boxes | float[k][5] | [x0, y0, x1, y1, score] in 512 coords; every box with score ≥ 0.01 is kept (needed for AP and FROC) |
+| images[].n_lesions_above_thr / max_score | int / float | |
+
+Example: `{"image_id": "tb0042", "crop_box": [10,0,507,493], "boxes": [[301,88,372,160,0.77]], "n_lesions_above_thr": 1, "max_score": 0.77}`
+
+**C11 — Grad-CAM heatmaps + localisation scores** · `artifacts/p3/xai/{model_id}/{split}/{image_id}.npy` + `artifacts/p3/xai/loc_{model_id}_{split}_v1.parquet` · Producer **P3** (P3-09, P3-10, P3-13) · Consumers P4 (12.5, Section 14), P1 (display via CaseResult)
+
+| Field | dtype | Notes |
+|---|---|---|
+| heatmap `.npy` | float16 [512, 512] | range [0, 1], 512 coordinates, zero outside the crop |
+| image_id / model_id | str | |
+| peak_x / peak_y | int16 | |
+| pointing_hit | bool | heatmap peak inside any annotated box |
+| energy_in_box | float32 | share of heatmap mass inside annotated boxes |
+| n_gt_boxes / tb_subtype | int16 / str | |
+
+Example: `tb0042,radino_crop_m0.10_clahe0_bin,330,121,True,0.46,2,active`
+
+**C12 — Triage table** · `artifacts/p4/triage/triage_{dataset}_{split}_v1.parquet` · Producer **P4** (P4-08, P4-11, P4-12) · Consumers P1 (demo worklists), P3 (review-case selection), P2 (report)
+
+| Field | dtype | Notes |
+|---|---|---|
+| image_id / split / model_id | str | |
+| p_tb_cal / temperature | float32 | |
+| t_lower / t_upper | float32 | from D23 |
+| category_pre_link | category | TB, REFER, NOT_TB |
+| link_fired | bool | detector moved NOT_TB → REFER |
+| category_final | category | TB, REFER, NOT_TB |
+| screen_positive_nolink / screen_positive | bool | TB ∪ REFER, without / with the link rule |
+| gate_pass / sanity_pass / n_lesions | bool / bool / int16 | |
+
+Example: `s1207,development,radino_crop_m0.10_clahe0_bin,0.12,1.37,0.18,0.83,NOT_TB,True,REFER,False,True,True,True,1`
+
+**C13 — Calibration operating curve** · `artifacts/p4/triage/operating_curve_calibration_v1.parquet` · Producer **P4** (P4-08) · Consumer P1 (threshold slider)
+
+| Field | dtype | Notes |
+|---|---|---|
+| t_lower | float32 | grid of candidate lower thresholds |
+| sensitivity / specificity | float32 | screen-positive, calibration split |
+| refer_rate / tb_rate | float32 | |
+| n_tb / n_non_tb | int32 | |
+| is_locked_default | bool | true on the D23 row (WHO-target default) |
+
+Example: `0.18,0.912,0.743,0.221,0.061,101,799,True`
+
+**C14 — CaseResult JSON** · schema `contracts/case_result.schema.json`, instances `runs/{run_id}/{case_id}.json` · Producer **P4** (P4-10, R4) · Consumers P1 (dashboard, slider), P3 (PDF, logger, latency)
+
+| Block | Fields (dtype) |
+|---|---|
+| top level | schema_version (str), case_id (str, salted hash, never a patient identifier), status (ANALYSED / REJECTED_GATE / UNREADABLE) |
+| input | format (str), phi_tags_removed (int), error (str\|null) |
+| gate | quality_pass (bool), quality_reasons (str[]), ood_score (float), ood_threshold (float), gate_pass (bool), view (str\|null, extension) |
+| segmentation | sanity_pass (bool), fail_reasons (str[]), crop_box (int[4]), fallback_full (bool) |
+| classifier | model_id (str), head (str), p_tb_raw (float), p_tb_cal (float), temperature (float), three_class {healthy, sick_non_tb, tb} (float) |
+| detector | model_id (str), conf_threshold (float), n_lesions (int), boxes [{xyxy (int[4]), score (float)}] |
+| triage | t_lower, t_upper (float), category_pre_link, category_final (str), link_fired (bool), screen_positive (bool), operating_point (locked_default / user_override) |
+| explainability | heatmap_path (str), overlay_path (str) |
+| versions | model_version, split_version, decisions_hash, git_sha (str) |
+| timing_ms | standardise, gate, segment, classify, detect, explain, total (int) |
+| disclaimer | str (single source: `tbcore`) |
+
+If `status = REJECTED_GATE`, the segmentation, classifier, detector and triage blocks are `null`. If `status = UNREADABLE`, only `input` and `versions` are filled.
+
+```json
+{"schema_version":"1.0","case_id":"c_7f3a9e21","status":"ANALYSED",
+ "input":{"format":"dicom","phi_tags_removed":14,"error":null},
+ "gate":{"quality_pass":true,"quality_reasons":[],"ood_score":0.183,"ood_threshold":0.241,"gate_pass":true,"view":null},
+ "segmentation":{"sanity_pass":true,"fail_reasons":[],"crop_box":[10,0,507,493],"fallback_full":false},
+ "classifier":{"model_id":"radino_crop_m0.10_clahe0_bin","head":"binary","p_tb_raw":0.71,"p_tb_cal":0.64,"temperature":1.37,
+               "three_class":{"healthy":0.12,"sick_non_tb":0.27,"tb":0.61}},
+ "detector":{"model_id":"dfine_512","conf_threshold":0.42,"n_lesions":1,"boxes":[{"xyxy":[301,88,372,160],"score":0.77}]},
+ "triage":{"t_lower":0.18,"t_upper":0.83,"category_pre_link":"REFER","link_fired":false,"category_final":"REFER",
+           "screen_positive":true,"operating_point":"locked_default"},
+ "explainability":{"heatmap_path":"runs/r0012/c_7f3a9e21_cam.npy","overlay_path":"runs/r0012/c_7f3a9e21_overlay.png"},
+ "versions":{"model_version":"reg-v1-3b9c","split_version":"v1","decisions_hash":"sha256:5e1d…","git_sha":"a1b2c3d"},
+ "timing_ms":{"standardise":40,"gate":210,"segment":95,"classify":180,"detect":260,"explain":420,"total":1205},
+ "disclaimer":"Decision support for TB triage only, not a diagnosis. Validated only on public research datasets; not prospectively clinically validated."}
+```
+
+**C15 — Prediction log** · `logs/predictions.jsonl` (append-only) · Producer **P3** (P3-14) · Consumers P4 (report traceability), P1 (writes overrides via R3 `log_case`)
+
+| Field | dtype | Notes |
+|---|---|---|
+| ts / run_id / case_id | str | ISO time; no patient identifiers |
+| status / category_final / link_fired / gate_pass | str / str / bool / bool | |
+| p_tb_cal / t_lower / t_upper | float | |
+| operating_point | str | locked_default, user_override |
+| model_version / split_version / decisions_hash / git_sha | str | required on every line |
+| latency_ms | int | |
+
+Example: `{"ts":"2026-11-30T10:02:11","run_id":"r0012","case_id":"c_7f3a9e21","status":"ANALYSED","category_final":"REFER","link_fired":false,"gate_pass":true,"p_tb_cal":0.64,"t_lower":0.18,"t_upper":0.83,"operating_point":"locked_default","model_version":"reg-v1-3b9c","split_version":"v1","decisions_hash":"sha256:5e1d…","git_sha":"a1b2c3d","latency_ms":1205}`
+
+**C16 — Decision file** · schema `contracts/decision.schema.json`, instances `decisions/pN_<name>.json` · Schema producer **P4** (P4-01). Each instance is produced by its named owner (Section 4.5). Consumers: the P4 gate and every runtime module that reads a locked setting.
+
+| Field | dtype | Notes |
+|---|---|---|
+| decision_id / owner / title | str | D01–D23 / pN |
+| criterion_preregistered / preregistered_at | str / date | written **before** the evidence is computed |
+| candidates / value | list / object | |
+| evidence | str[] | artifact paths |
+| data_used | str[] | ⊆ {none, train, development, calibration}; D02 and D06 may use `images_only_all_splits` |
+| reviewed_by / guide_ack | str / bool | the consumer reviewer; guide acknowledgement where required |
+| locked / locked_at / git_sha | bool / date / str | |
+
+Example: `{"decision_id":"D08","owner":"p2","title":"CLAHE on/off","criterion_preregistered":"TB sensitivity at 70% specificity on development; ROC-AUC breaks ties","preregistered_at":"2026-10-05","candidates":["off","on"],"value":{"clahe":false},"evidence":["artifacts/p2/select/clahe_margin_dev.csv"],"data_used":["train","development"],"reviewed_by":"p4","guide_ack":false,"locked":true,"locked_at":"2026-10-24","git_sha":"c0ffee1"}`
+
+**C17 — Near-duplicate candidates** · `artifacts/p2/dedup/near_dup_candidates_v1.csv` · Producer **P2** (P2-04) · Consumer P1
+
+| Field | dtype |
+|---|---|
+| image_id_a, split_a, image_id_b, split_b | str |
+| cosine / tau | float32 / float32 |
+
+Example: `h0311,train,h2877,internal_test,0.991,0.98`
+
+**C18 — Evaluation tables** · `artifacts/p4/tables/t{section}_{name}.csv` (e.g. `t12_3_triage.csv`, `t14_comparisons.csv`) · Producer **P4** (P4-12–P4-15, P4-17) · Consumers P1–P4 (report sections), P2 (slides)
+
+| Field | dtype | Notes |
+|---|---|---|
+| table_id / metric | str | |
+| value / ci_low / ci_high | float64 | |
+| ci_method | category | wilson, bootstrap_percentile |
+| n_tb / n_non_tb | int32 | **mandatory** (Section 12) |
+| dataset / split / model_id | str | |
+| with_link_rule | bool (nullable) | |
+| note | str | e.g. "Montgomery: 58 TB, wide CI"; **must** state the reason whenever n differs from the split size (gate rejections, unreadable files) |
+
+Example: `t12_3,sensitivity_screen_positive,0.921,0.851,0.959,wilson,101,797,tbx11k,internal_test,radino_crop_m0.10_clahe0_bin,True,2 gate-rejected cases excluded; n differs from C13 for that reason`
+
+### 4.3 Runtime (Python) entry points — frozen signatures, stubs shipped in Week 1
+
+| ID | Producer | Entry point (`module.function(inputs) → output`) | Consumers |
+|---|---|---|---|
+| R1 | P1 | `p1_data.api.standardise(path) → StdImage{img512 uint8, status, error, phi_tags_removed, src_format}`; `p1_data.api.lung_roi(img512) → Roi{mask, sanity_pass, fail_reasons, crop_box, fallback_full}` (margin and CLAHE read from D08/D09) | P4 pipeline |
+| R2 | P2 | `p2_gate.api.gate(img512) → GateResult{quality_pass, reasons, ood_score, ood_threshold, gate_pass}`; `p2_cls.api.classify(img_for_analysis) → ClsResult{model_id, head, logits, p_tb_raw, three_class}`; `p2_cls.api.classifier_module() → torch.nn.Module` | P4 pipeline, P3 Grad-CAM |
+| R3 | P3 | `p3_det.api.detect(img_for_analysis, crop_box) → DetResult{boxes_full512, scores, n_lesions_above_thr}`; `p3_xai.api.explain(img_for_analysis, crop_box) → heatmap[512,512]`; `p3_xai.api.render_overlay(img512, heatmap, boxes) → png_path`; `p3_ops.api.make_pdf(case_result) → pdf_path`; `p3_ops.api.log_case(case_result, operating_point)` | P4 pipeline, P1 dashboard |
+| R4 | P4 | `p4_pipeline.api.run_case(path) → CaseResult`; `p4_pipeline.api.run_batch(paths) → list[CaseResult]` (never raises per file); `p4_stats.api.triage(p_tb_cal, n_lesions, t_lower, t_upper) → category` | P1 dashboard/slider, P3 latency |
+
+### 4.4 Handshakes (circular dependencies resolved)
+
+| ID | Circularity | Resolution (who → what → file → when) |
+|---|---|---|
+| H1 | The near-duplicate check needs RAD-DINO embeddings, but the splits come first | P1 publishes C01 **v0** (W1 D5). P2 locks the threshold τ in D06 before computing anything, embeds all 11,200 full images without CLAHE (`purpose="dedup"`, images only) and writes C17 (W2 D3). P1 reviews every pair and removes each duplicate from the *later* split, in the order train → development → calibration → internal_test. If a challenge_test image is involved, the non-challenge image is removed. P1 then publishes C01 **v1**, D01 and D02, tagged `v-split-1` (W2 D5). Embeddings do not depend on splits, so no rework is needed. |
+| H2 | Segmentation sanity ranges need the development split | Ranges are fixed only after H1 (C01 v1). P1 locks D03 (W3). Before that, C05 carries provisional `sanity_pass` values. |
+| H3 | Choosing CLAHE and the crop margin needs classifier metrics, but preprocessing belongs to P1 | P1 produces **every candidate**: C04 with CLAHE off/on, and C05/C06 at margins {0, 0.05, 0.10, 0.15} (W3–4). P2 trains heads on each variant and locks D08 (CLAHE) and D09 (margin) on development (end W5). Consumers read the decisions and never ask P1 for new files: R1 reads D08/D09 at runtime, and P3 filters C05/C06 by the locked margin. |
+| H4 | The detector must start before H3 locks | P3 develops on **provisional** settings (margin 0.10, CLAHE off) in W5. The 512-vs-640 comparison that decides D16 is **re-run** on the locked D08/D09 in W6. Only locked-preprocessing results go into D16–D18. |
+| H5 | The OOD threshold needs the locked CLAHE variant, and the OOD collection must not steer selection | P2 freezes the C03 manifest (SHA written into the D13 draft) **before** scoring any OOD image, and the `ood_eval` role is sealed. After D08 locks, P2 builds the reference bank from training full-image embeddings and sets the threshold at 95% development pass. D13 is locked in W6. |
+| H6 | Temperature must be fitted after every selection, and the thresholds after the temperature | D08–D11 and D13 locked → P2 exports final development + calibration scores in C08 (W7 D1) → P4 fits T on development (D22) → P4 sets t_lower and t_upper on calibration (D23), W7. Nothing is fitted on both development and calibration. |
+| H7 | The link rule depends on a detector threshold that P3 chooses | P3 locks D18 on development (W7). P4's link rule has **no further parameter**, and its effect is only *measured* on sealed data (Section 14). |
+| H8 | Grad-CAM needs the final classifier, which is locked late | P2 ships an R2 stub in W1 (RAD-DINO + random head). P3 builds Grad-CAM on the stub. The real `classifier_module()` follows D11 (W6). P3 locks D19 in W7. |
+| H9 | The dashboard and PDF need real pipeline outputs | P4 ships 7 CaseResult fixtures (C14) in W1. P1 and P3 build against them, and the real `run_case` arrives in W8 with the **same schema**. |
+| H10 | The internal test may run only after everything is locked | D01–D23 exist and are valid, and the D14 SHAs match the files → P4 gate issues a single-use `internal_test` token → P2-14 and P3-13 score internal test → P4-12 builds the tables. W9. |
+| H11 | The challenge submission must come after the internal test | The gate issues the `challenge_test` token only after the internal-test run record exists. P2-14 and P3-13 then score challenge test, and P4-13 submits **once**. W9. |
+| H12 | External data may arrive late (**largely retired 2026-10-06**: Shenzhen and Montgomery download directly, so only a third site such as TB Portals is still subject to an application) | P1 locks D04 (NLM data or fallback) by W6. P1 builds C02 and the external C04. The gate issues the `external_test` token after H10. P2-14 scores, and P4-14 evaluates. W10. |
+| H13 | The view-head extension needs laterals that the OOD evaluation also uses | P2 splits the lateral pool in C03 into disjoint roles. P1 uses only the `viewhead_*` roles and runs P2's embedding CLI (import only), writing to `artifacts/p1/`. The core OOD results never use the view head. |
+| H14 | Extensions must not contaminate the core | After H10 the gate records `core_complete`. An extension may evaluate on sealed data once, under an `extension_eval` token, as a *comparison only*. It never overwrites D01–D23. |
+
+### 4.5 Governance: decisions registry and the no-test-tuning gate
+
+Each locked decision is one JSON file (schema C16), owned by the person who makes it. The criterion is committed **before** the evidence (the git log is checked).
+
+| ID | File | Owner | Lock by | Pre-registered criterion (summary) | data_used |
+|---|---|---|---|---|---|
+| D01 | `decisions/p1_splits.json` | P1 | W2 | Seed, stratification, exact counts, SHA-256 of C01 v1 | none |
+| D02 | `decisions/p1_dedup_resolution.json` | P1 | W2 | Remove from the later split (H1 order); pair verdict list | images_only_all_splits |
+| D03 | `decisions/p1_seg_sanity_ranges.json` | P1 | W3 | Area and lung-box size in [1st, 99th] percentile of development; 2 components; box not truncated | development |
+| D04 | `decisions/p1_external_source.json` | P1 | W6 | NLM Shenzhen + Montgomery, or a named fallback | none |
+| D05 | `decisions/p1_licences.json` | P1 | W1 | TBX11K CC BY 4.0, Shenzhen/Montgomery terms, TorchXRayVision Apache-2.0 | none |
+| D06 | `decisions/p2_dedup_threshold.json` | P2 | W1 | Cosine τ on L2-normalised full-image embeddings (proposed 0.98, guide ack) | images_only_all_splits |
+| D07 | `decisions/p2_quality_rules.json` | P2 | W3 | Blank / exposure / crop rules from synthetic degradations; ≤ 1% development rejected | development |
+| D08 | `decisions/p2_clahe.json` | P2 | W5 | Sensitivity at 70% specificity (development); AUC breaks ties | train, development |
+| D09 | `decisions/p2_crop_margin.json` | P2 | W5 | Same criterion over margins {0, 0.05, 0.10, 0.15} | train, development |
+| D10 | `decisions/p2_training_recipe.json` | P2 | W5 | Weighted sampler vs logit-adjusted loss; epochs by development early stopping | train, development |
+| D11 | `decisions/p2_head.json` | P2 | W5 | Three-class vs binary by sensitivity at 70% specificity | train, development |
+| D12 | `decisions/p2_effnet_baseline.json` | P2 | W7 | Epochs/checkpoint by development AUC; checkpoint SHA | train, development |
+| D13 | `decisions/p2_ood_gate.json` | P2 | W6 | k = 5, bank variant, threshold = 95% development pass, C03 SHA | train, development |
+| D14 | `decisions/p2_model_registry.json` | P2 | W8 | SHA-256 of every model entering sealed evaluation | none |
+| D15 | `decisions/p2_licences.json` | P2 | W1 (+W5 OOD) | RAD-DINO **MIT** licence with the pinned revision (verified from the model card and the LICENSE file, 29-09-2026), timm weights, OOD sources incl. CheXpert | none |
+| D16 | `decisions/p3_det_input_size.json` | P3 | W6 | 512 vs 640 by development AP@0.50 | train, development |
+| D17 | `decisions/p3_det_checkpoint.json` | P3 | W7 | Training length by development AP@0.50; weights SHA | train, development |
+| D18 | `decisions/p3_det_conf_threshold.json` | P3 | W7 | Proposed: lowest threshold with ≤ 5% of development non-TB images having any box (guide ack) | development |
+| D19 | `decisions/p3_gradcam_config.json` | P3 | W7 | Target layer = last RAD-DINO block, reshape rule, target class, crop→512 mapping | development |
+| D20 | `decisions/p3_licences.json` | P3 | W2 | D-FINE Apache-2.0, pytorch-grad-cam MIT, RT-DETRv2 (extension) | none |
+| D21 | `decisions/p4_analysis_plan.json` | P4 | W2 | α = 0.10; precision target (guide-agreed, e.g. 80%); Wilson and bootstrap (B = 2,000, stratified, fixed seed); ECE bins; handling of gate-rejected and fallback cases; ROC-selected comparator definition; detection evaluated in 512 coordinates against all original boxes; **primary backbone fixed a priori as RAD-DINO** (a higher development score for EfficientNet-B3 does not change the primary model; the difference is reported in Section 14); **challenge submission mapping** (Section 4.6); **detector contingency rule** (Section 8) | none |
+| D22 | `decisions/p4_temperature.json` | P4 | W7 | Minimise NLL on development after D08–D13 | development |
+| D23 | `decisions/p4_triage_thresholds.json` | P4 | W7 | Conformal lower (Section 9.1) and precision upper (Section 9.2) on calibration | calibration |
+
+**Gate script** (`python -m p4_eval.gate`, owner P4, task P4-09). It **refuses** to issue a token when any of the following holds:
+- any D01–D23 file is missing, fails schema validation or has `locked=false`
+- `data_used` falls outside the allowed set for that decision
+- `preregistered_at` is later than the evidence commit
+- the C01 SHA ≠ D01
+- a model file SHA ≠ D14, D12 or D17
+- the CI test suite is not green
+
+Further rules:
+- Tokens are **single-use** and are written to `artifacts/p4/gate/` together with an audit line in `docs/p4_gate_audit.md`.
+- `challenge_test` requires a completed `internal_test` run record, and `external_test` requires the same.
+- A re-run is possible only through a CCR that names the bug, and it is reported in the report.
+
+### 4.6 Challenge submission mapping (decided in W2, not in W9)
+
+The TBX11K online challenge does **not** score the task exactly as this project defines it, so the mapping is
+fixed in D21 before any model is trained and is reported as a known limitation.
+
+| What the challenge scores | What this project produces | Mapping used | Consequence, stated in advance |
+|---|---|---|---|
+| Detection with categories: ActiveTuberculosis (1) and ObsoletePulmonaryTuberculosis / latent TB (2), plus category-agnostic handling of uncertain TB | One `tb_lesion` class (methodology §7, D16–D18) | Every predicted box is submitted as category 1, ActiveTuberculosis | Latent-TB average precision will be near zero **by construction**, not by failure. The category-agnostic figure is the only detection number we treat as comparable |
+| Classification over healthy, active TB, latent TB and sick non-TB | Binary TB head, or three-class healthy / sick-non-TB / TB (D11) | `p(healthy)` and `p(sick_non_tb)` pass through; `p(active_tb) = p(tb)`, `p(latent_tb) = 0` | Any leaderboard metric that separates active from latent TB is not comparable with our internal numbers |
+
+The single submission is therefore a **calibration point against the public leaderboard, not a headline result**.
+Section 12.8 reports the returned metrics verbatim together with this mapping. If the challenge format has
+changed by W9, P4 records the difference in the Codabench log and submits under the format then published.
+
+### 4.7 Git rules
+
+- **Branches:** `p1/P1-05-dicom-ingest`, `p2/P2-11-knn-gate`, `p3/…`, `p4/…`, and `ccr/CCR-NNN`. Trunk-based: PR → `main`, squash merge, task ID in the PR title.
+- **Protection on `main`:** CI green (tests, contract validators, ownership check), CODEOWNERS approval, and **1 review by the consumer** of the changed output:
+
+  | Producer's change | Required reviewer |
+  |---|---|
+  | P1 splits / store / ROI / boxes (C01–C06) | P2 (C01–C05), P3 (C06) |
+  | P1 dashboard | P4 (CaseResult usage) |
+  | P2 embeddings / scores / gate (C07–C09, C17), R2 | P4 (C08–C09), P1 (C17), P3 (R2) |
+  | P3 detections / Grad-CAM (C10–C11), R3, PDF/logger | P4 (C10–C11), P1 (R3 PDF/logger) |
+  | P4 triage / CaseResult / tables (C12–C14, C18), R4, gate | P1 (C13–C14, R4), P2 (C18, gate) |
+  | `contracts/`, `README.md` | all four |
+  | `decisions/pN_*.json` | the owner + P4 (gate schema check) |
+
+- **CODEOWNERS (P4-01):**
+  ```
+  /src/p1_*/ /tests/p1_*/ /notebooks/p1/ /artifacts/p1/ /decisions/p1_* /data/splits/tbx11k_* /data/splits/external_* /docs/p1_* /report/p1_* /report/demo_video.md /mk/p1.mk  @tb-p1
+  /environment.yml /pyproject.toml /Makefile /requirements/base.txt /.gitattributes /.gitignore  @tb-p1
+  /src/p2_*/ /tests/p2_*/ /notebooks/p2/ /artifacts/p2/ /decisions/p2_* /data/splits/ood_* /docs/p2_* /report/p2_* /report/main.md /report/slides/ /mk/p2.mk  @tb-p2
+  /src/p3_*/ /tests/p3_*/ /notebooks/p3/ /artifacts/p3/ /decisions/p3_* /third_party/ /docs/p3_* /report/p3_* /.github/workflows/ /mk/p3.mk  @tb-p3
+  /src/tbcore/ /src/p4_*/ /tests/tbcore/ /tests/p4_*/ /notebooks/p4/ /artifacts/p4/ /decisions/p4_* /decisions/README.md /docs/p4_* /report/p4_* /mk/p4.mk /.github/CODEOWNERS  @tb-p4
+  /contracts/ /README.md  @tb-p1 @tb-p2 @tb-p3 @tb-p4
+  ```
+- **Always committed:** `data/splits/*.csv` (C01, C02, C03) and every `decisions/*.json`. **Never committed:** raw or processed images, anything under `runs/` or `logs/`, or any patient identifier.
+- **Tags:** `contracts-v1` (W1), `v-split-1` (W2), `v-lock-1` (W8, all decisions locked), `v-internal-test` (W9), `v-freeze` (W12).
+- **Seeds:** every entry point calls `tbcore.seed.set_all(seed)` with the seed recorded in its output. Tests are required for every task that produces a contract or a decision.
+
+---
+
+## 5. Workload balance
+
+Effort points: **1 point = 1 working day**, so a 4-point task is about one working week. Across 12 working weeks the 155 points come to **about three working days a week each**, every week, on top of a full 5th-semester course load. That is the deliberate choice recorded below: the full five-month scope delivered in three months. It leaves no slack, so the order in which work is dropped matters and is fixed in advance rather than argued about in W10. Phases: **A** W1–2 setup & data · **B** W3–5 components · **C** W6–8 locks & integration · **D** W9–10 sealed evaluation · **E** W11–12 product, report, freeze. **W13 is the only reserve week** and carries no planned work. Extensions are scheduled in W10–11 and start only after `core_complete` (H14).
+
+| Person | A | B | C | D | E | **Core** | Ext | **Total** | Core vs mean (34.25) | Total vs mean (38.75) |
+|---|---|---|---|---|---|---|---|---|---|---|
+| P1 | 10 | 13 | 4 | 2 | 5 | **34** | 3 | **37** | −0.7% | −4.5% |
+| P2 | 8 | 11 | 10 | 1 | 4 | **34** | 6 | **40** | −0.7% | +3.2% |
+| P3 | 6 | 8 | 12 | 4 | 4 | **34** | 6 | **40** | −0.7% | +3.2% |
+| P4 | 8 | 7 | 8 | 10 | 2 | **35** | 3 | **38** | +2.2% | −1.9% |
+| Team | 32 | 39 | 34 | 17 | 15 | 137 | 18 | 155 | all within ±5% | all within ±5% |
+
+**Cross-workstream exposure.** Every extension carries a named **reviewer from another workstream**, who reproduces the owner's result from the owner's script on their own machine before it enters C08 or C18, and who presents it at the teach-back. Half a day each, from the standing buffer. Swapping the extensions outright was considered and rejected: P2-18 writes C08 and P4-17 writes C18, so moving either task to the other person would put two producers on one contract and break rule 4.1. Reviewing gives the same exposure and keeps one producer per contract.
+
+The loads are shaped differently on purpose: P1 is front-loaded (data), P3 peaks mid-project (detector), and P4 peaks in sealed evaluation. Everyone has work in every phase, at least one extension, and report writing. Half a day a week stays free as buffer (proposal A.1). If the schedule slips, the detector extensions are cut first; the core evaluation is never cut.
+
+**Where the calendar is tight.** Two fortnights are effectively full-time for one person each. Phase A gives P1 10 points across W1–2, five days a week against the three-day average; three earlier changes keep it survivable (continuous integration moved to P3 as task P3-00, dataset checksums and the storage budget moved to W3 as P1-02b, and the CLAHE image store moved to W3 as P1-06b). The second is **P4's phase D**: 10 points of sealed evaluation across W9–10, also five days a week, and sequential because each step waits on a gate token. The fix is not more days, it is earlier days: tables 12.1–12.8 are written and tested against the P2 and P3 **mocks during phase C**, so phase D is only the run. If P1 slips anyway, P1-06a moves to W3 Day 1 and the split freeze moves from W2 Day 5 to W3 Day 2, which costs D03 two days and nothing downstream.
+
+**Full scope in three months: what gives, and what does not.** This plan carries the five-month scope on a twelve-week calendar, at Atul's call. The arithmetic above is the cost: three working days a week each, with only the standing half-day a week and the single reserve week W13 as slack. Two consequences are worth fixing now rather than discovering in W9.
+
+**The cut order, decided in advance.** When a week goes badly, drop in this order and tell the team in the weekly sync: (1) the extensions, all of them — P1-17, P2-17, P2-18, P3-16, P3-17, P4-17; (2) the second teach-back; (3) the comparative-experiment rows marked optional in Section 14. Never cut: the confidence intervals, the decision files, the single sealed run, or the external validation. A project with fewer experiments and honest numbers marks well. A project with many experiments and numbers nobody can defend does not.
+
+**Time pressure must not buy extra looks at held-out data.** The no-test-tuning gate is unchanged: internal test once, challenge submission once, external once. A compressed schedule is exactly when a second look starts to feel reasonable — the result disappoints, there are two weeks left, and one more run seems harmless. It is not: at that moment the held-out set stops being held out and every number downstream of it becomes unreportable. If a sealed result disappoints, report it with its interval and write what you would do differently. That is worth more marks than a better number obtained by peeking, and it is the one thing in this project that cannot be repaired later.
+
+**What the compression does to the risk profile.** On a three-month calendar the primary risk is simply running out of weeks, and the secondary one is that a slip in W2 is invisible until W9. The weekly 30-minute sync exists to make a slip visible the week it happens, not the month it happens: one written line per workstream saying what is done, what is blocked and whether the next milestone still holds. A milestone that will not hold is reported early and the cut order above is applied; it is never recovered by quietly skipping a confidence interval or a decision file.
+
+---
+
+## 6. Workstreams
+
+### 6.1 Person 1 — Data, preprocessing & segmentation → dashboard
+
+**Mission:** deliver clean, anonymised, leakage-controlled data and lung ROIs that every other stream builds on. Later, turn the pipeline's CaseResults into a usable, honest triage dashboard.
+
+**Owned folders:** `src/p1_data/`, `src/p1_app/`, `src/p1_viewhead/`, `tests/p1_*/`, `notebooks/p1/`, `artifacts/p1/`, `decisions/p1_*`, `data/raw/{tbx11k,shenzhen,montgomery,fallback}/`, `data/processed/`, `data/boxes/`, `data/splits/{tbx11k,external}_*`, `docs/p1_*`, `report/p1_*`, `report/demo_video.md`, `mk/p1.mk`, root environment files (Section 3; the CI workflow belongs to P3).
+
+| ID | Task | Inputs | Outputs (contract) | Depends on | Effort | Week | Acceptance criterion |
+|---|---|---|---|---|---|---|---|
+| P1-01 | Repo bootstrap: Python 3.11 env, `requirements/base.txt`, `pyproject.toml`, root Makefile including `mk/pN.mk`, pre-commit, `.gitignore`, Git LFS `.gitattributes` (CI itself is P3-00) | methodology §19 | repo skeleton | — | 1 | W1 | On a fresh clone `make setup && make test` passes on the laptop and on Kaggle; LFS tracks `artifacts/**/*.{pt,npz,parquet}` |
+| P1-02a | Dataset access: Shenzhen + Montgomery **downloaded directly** (no request: verified 2026-10-06, they are a public NLM bucket; `scripts/fetch_nlm_external.py`, 4.42 GB, 800 images, and they also carry 359 consensus TB boxes and lung masks); TBX11K download started; licence check | public sources | `docs/p1_datasets.md`, **D05** | — | 1 | W1 | NLM request date recorded; TBX11K download running; D05 locked |
+| P1-02b | SHA-256 manifest for all 11,200 images; storage budget with per-owner caps | P1-02a | `docs/p1_datasets.md`, `docs/p1_storage_budget.md` | P1-02a | 1 | W3 | 11,200 images checksummed; budget ≤ 50 GB with per-owner caps |
+| P1-03 | Mock generators for C01, C02, C04, C05, C06 | `contracts-v1` | `mock/` files | P4-01 | 1 | W1 | `make mocks-p1` output passes every `tbcore` validator by Day 3 |
+| P1-04 | Split file v0: development = stratified 10% of official train; official val halved (stratified) into calibration / internal_test; 5-category stratification; fixed seed; `tb_label` and `active_tb_label` | TBX11K annotations | **C01 v0** | P1-02 | 2 | W1 | Development = 660 ± 1 (60 TB); calibration and internal test = 900 ± 1 each (≈100 TB); per-category counts within ±1 of exact proportions; test asserts every image_id is in exactly one split |
+| P1-05 | Ingest: PNG/DICOM decode (VOI LUT, MONOCHROME1 inversion), grayscale, resize to 512×512, **DICOM anonymisation on ingest**, **corrupt-file robustness** (status + message, never raises) | raw files | R1 `standardise` | P1-01 | 3 | W2 | Tests: a DICOM fixture with PatientName/ID/BirthDate leaves 0 identifier strings in any output or log (grep test); zero-byte, truncated and wrong-extension files return `UNREADABLE` with a message; output `uint8[512,512]` |
+| P1-06a | Preprocessed store, plain variant: `img512` for TBX11K + manifest (unblocks the H1 near-duplicate check) | P1-05 | **C04** (`img512`) | P1-05 | 1 | W2 | 11,200 files; manifest validates; re-run is byte-identical (SHA match) |
+| P1-06b | Preprocessed store, CLAHE variant: `img512_clahe` (clip 2.0, tile 8×8) | P1-06a | **C04** (`img512_clahe`) | P1-06a | 1 | W3 | 11,200 files; manifest validates; needed before P2-06 variant embeddings |
+| P1-07 | Near-duplicate resolution (**H1**): review every candidate pair and remove duplicates from the later split | C17 | **C01 v1**, **D01**, **D02**, `artifacts/p1/dedup_review.csv` | P2-04 | 1 | W2 | Every C17 pair has a verdict; C01 v1 SHA recorded in D01; tag `v-split-1` |
+| P1-08 | Pretrained TorchXRayVision lung segmentation on all TBX11K images (no training) | C04 | masks (C05) | P1-06 | 2 | W3 | Masks for 100% of images; model name and weights version logged |
+| P1-09 | Segmentation sanity check (area range, two lung regions, box size / truncation); ranges fixed on development; full-image fallback flag; failure rate per split | C05 masks, C01 v1 | C05 `sanity_pass`, **D03**, `artifacts/p1/seg_failure.csv` | P1-08, P1-07 | 2 | W3 | D03 `data_used=[development]`; failure rate with n for every split; 30 failures + 30 passes reviewed in `artifacts/p1/seg_review.csv` |
+| P1-10 | Crop boxes at margins {0, 0.05, 0.10, 0.15}; public crop function; radiologist boxes shifted into crop coordinates → COCO per split × margin; boxes outside the crop counted | C05, TBX11K boxes | **C05** crop rows, **C06** | P1-09 | 3 | W3–4 | Crop ↔ 512 round-trip error < 1 px (test); C06 loads in pycocotools; annotation count equals the TBX11K count per split; outside/clipped counts reported for each margin |
+| P1-11 | External loaders: Shenzhen + Montgomery resampled to 512×512 (both CLAHE variants); **external-dataset fallback** decided by end of W6 | NLM data | **C02**, C04 (external), **D04** | P1-05 | 2 | W4–6 | 662 + 138 images (or a documented fallback) validated; D04 committed by end of W6 |
+| P1-12 | Runtime API R1 (`standardise`, `lung_roi`), reading D08/D09 | P1-05, P1-10 | **R1** | P1-10 | 2 | W5 | R1 reproduces C04/C05 bit-identically on 50 development images; segmentation + crop ≤ 300 ms/image on RTX 4050 |
+| P1-13 | Streamlit dashboard: single/batch DICOM/PNG upload; worklist sorted by `p_tb_cal` showing category, link-rule flag, lesion count and confidences, gate status, heatmap/box overlay and three-class auxiliary output; rejected cases → manual-review list; unreadable files → error list; batch continues | C14 fixtures → R4 | `src/p1_app/` | P4-02, P4-10 | 4 | W5–10 | Streamlit AppTest: a batch of 10 with 1 corrupt + 1 non-X-ray completes; the corrupt file shows a message; rows are in descending `p_tb_cal`; every Section 11 field is rendered |
+| P1-14 | **Threshold viewer/slider**: locked operating point (D23, WHO-target default) marked; what-if category and calibration-split sensitivity/specificity from C13; overrides logged | C13, D23, R3 `log_case` | dashboard page | P4-08, P4-11, P3-14 | 2 | W9–10 | Default equals D23 exactly; the slider never changes a stored `category_final`; an override writes `operating_point=user_override` to C15 |
+| P1-15 | **Usability at 1366×768**, **scope-honesty** + decision-support banner on every page, technician walkthrough, demo script | dashboard | `docs/p1_usability.md`, `docs/p1_demo_script.md` | P1-13 | 2 | W11 | Screenshots of every page at 1366×768 with no horizontal scroll; a test asserts the banner on all pages; a non-ML user completes upload → worklist → PDF in ≤ 5 min unaided |
+| P1-16 | Report sections (below) | C18, own artifacts | `report/p1_*.md` | P4-12 | 2 | W11–12 | Every number cites an artifact path; reviewed by P2 |
+| P1-18 | Backup demo video (in case the venue has no GPU), recorded from the P1-15 demo script | demo script, dashboard | `report/demo_video.md` | P1-15 | 1 | W12 | ≤ 5-minute video, upload → worklist → PDF; link recorded |
+
+**Extensions (only after `core_complete`):**
+
+| ID | Task | Inputs | Outputs | Depends on | Effort | Week | Acceptance criterion |
+|---|---|---|---|---|---|---|---|
+| P1-17 | Frontal/lateral view head on RAD-DINO embeddings (H13) | C03 `viewhead_*`, P2 embedding CLI, C07 train frontals | `artifacts/p1/viewhead/`, `decisions/p1_viewhead.json` (extension, not gate-required) | P2-10, P2-03 | 3 | W10–11 | Accuracy with Wilson CI on `viewhead_test`; threshold chosen on `viewhead_dev`; shown in the dashboard labelled "extension" |
+
+**Mocks used until upstream is ready:** C17 (P2 mock with planted duplicate pairs), C14 fixtures and C13 (P4), R3 overlay/PDF/logger stubs (P3), R4 stub (P4).
+**Decision files locked:** D01, D02, D03, D04, D05.
+**Report sections:** Data, splits & leakage control (§1, §2); Preprocessing (§3); Lung segmentation & ROI + failure rate (§5, 12.7 narrative); Worklist & dashboard (§11, §15 UI); Usability & scope honesty.
+**Definition of Done:** C01 v1 committed and tagged; C02, C04, C05, C06 validate; D01–D05 locked; R1 tests green; the dashboard passes P1-13, P1-14 and P1-15 on real `run_case` outputs; demo video recorded (P1-18); report sections merged.
+
+### 6.2 Person 2 — RAD-DINO classification & quality/OOD gate → baselines, report assembly
+
+**Mission:** turn preprocessed images into calibrated-ready TB scores using frozen RAD-DINO heads and an EfficientNet-B3 baseline, and gate unsuitable inputs. Own every development-split selection on the classifier side.
+
+**Owned folders:** `src/p2_cls/`, `src/p2_gate/`, `tests/p2_*/`, `notebooks/p2/`, `artifacts/p2/`, `decisions/p2_*`, `data/raw/ood/`, `data/splits/ood_*`, `docs/p2_*`, `report/p2_*`, `report/main.md`, `report/slides/`, `mk/p2.mk`, `requirements/p2.txt`.
+
+| ID | Task | Inputs | Outputs (contract) | Depends on | Effort | Week | Acceptance criterion |
+|---|---|---|---|---|---|---|---|
+| P2-01 | RAD-DINO licence check and pinned revision; **6 GB VRAM feasibility**: fp16 embedding extraction, forward + backward at batch 1 (for Grad-CAM), EfficientNet-B3 step sizing | model cards | `docs/p2_vram_feasibility.md`, **D15** | P1-01 | 2 | W1 | Peak `max_memory_allocated` ≤ 5.5 GB for embedding and Grad-CAM paths on RTX 4050; go/no-go recorded; D15 locked. **DONE 29-09-2026: GO.** Embedding peak 0.67 GB at batch 16 and 4.7 min for 11,200 images; Grad-CAM path 0.84 GB; EfficientNet-B3 usable laptop batch 8 at 512 px; revision `110cbc18`, MIT |
+| P2-02 | Mock generators for C03, C07, C08, C09, C17 + R2 stubs (RAD-DINO with random head) | `contracts-v1` | `mock/`, R2 stub, `docs/p2_mocks.md` | P4-01 | 1 | W1 | Mocks validate by Day 3; the stub `classifier_module()` runs forward + backward. **DONE 29-09-2026.** 8,400-row C07/C08/C09 plus C03 and C17, self-consistent (C17 is a real cosine search over the C07 mock, and C09's threshold is a real order statistic so D13's 95.0 +- 0.2 % holds on the mock itself) and carrying a recorded temperature answer key for P4-11; 36 tests green. Two rulings needed at sign-off: C08 `logits_3c` must be a variable-length list, because Parquet has no fixed-size list type and a null in one comes back as an empty list; and D06 must say whether the near-duplicate rule is `>=` or `>`, because a mock pair sits exactly on tau |
+| P2-03 | Embedding CLI (manifest + variant → npz); RAD-DINO input size and normalisation per model card; fp16; deterministic; resumable | C04, C05 | **C07** | P2-01 | 3 | W1–2 | Re-run cosine ≥ 0.9999 per image; 11,200 images ≤ 60 min on laptop; output validates |
+| P2-04 | Near-duplicate candidates (**H1**): lock τ first, then embed full images without CLAHE for all splits (`purpose="dedup"`) and list cross-split pairs ≥ τ | C04, C01 v0 | **C17**, **D06** | P2-03, P1-04 | 2 | W2 | D06 commit precedes the C17 commit; all cross-split pairs covered; C17 validates |
+| P2-05 | Image-quality check (blank, under/over-exposure, heavily cropped); rules from synthetic degradations, confirmed on development | C04 development | R2 `gate` (quality part), **D07** | P1-06 | 2 | W2–3 | Synthetic tests: black, white, low-exposure and 60%-cropped images each rejected with the correct reason; ≤ 1% of development rejected; D07 `data_used=[development]` |
+| P2-06 | Variant embeddings: full + 4 margins × CLAHE off/on (10 variants) for train / development / calibration | C04, C05 | C07 × 10 | P1-10, P2-03 | 1 | W3–4 | 10 files validate; image_id sets equal the non-excluded C01 rows of those splits |
+| P2-07 | Three-class and binary heads on frozen embeddings; imbalance via weighted sampler vs logit-adjusted loss; training length by development early stopping; 5 seeds (3 in the 12-week draft; the heads train on frozen embeddings, so two more seeds cost minutes and buy a real interval on the seed spread) | C07, C01 | C08 (development), **D10** | P2-06 | 3 | W4–5 | D10 records method + epochs with development evidence; seed-to-seed spread of development AUC reported; the loss config schema accepts only the two approved methods |
+| P2-08 | CLAHE on/off and crop-margin selection on development (**H3**) | C08 development | **D08**, **D09** | P2-07 | 2 | W5 | Candidate table: sensitivity at 70% specificity, AUC and n for every CLAHE × margin; criterion pre-registered; `data_used=[train, development]` |
+| P2-09 | Head selection (three-class vs binary) on development; three-class kept as auxiliary if binary wins | C08 development | **D11** | P2-08 | 1 | W5 | D11 lists both heads' sensitivity at 70% specificity with n |
+| P2-10 | Held-out OOD collection: lateral chest views (CheXpert), other-body-part radiographs, non-medical images; licences; disjoint lateral roles; manifest frozen **before** scoring (**H5**) | public sources | **C03**, D15 update | P1-02 | 2 | W4–5 | ≥ 200 images per `ood_type` in `ood_eval`; role-disjointness test; C03 SHA in the D13 draft precedes the first OOD score |
+| P2-11 | kNN OOD gate: bank = one unaugmented full-image embedding per training image; k = 5 mean cosine distance; k = 1 ablation; threshold = 95% development pass | C07, D08 | **C09** (train/development), **D13**, R2 `gate` | P2-08, P2-10, P2-05 | 3 | W6 | Development pass rate 95.0% ± 0.2; unit test on synthetic clusters; D13 `data_used=[train, development]` |
+| P2-12 | EfficientNet-B3 baseline (ImageNet-pretrained) fine-tuned on Kaggle T4 with the same crops (D08/D09), same imbalance method and own input size; checkpoints to Drive with P3-02 | C04, C05, C01 | C08 (effb3), **D12** | P2-08, P3-02 | 4 | W6–7 | Development AUC + sensitivity at 70% specificity with n; checkpoint SHA in D12; resume after a killed session demonstrated |
+| P2-13 | Final score export for all registry models (development + calibration); runtime API R2 (`classify`, `classifier_module`); model registry | P2-09, P2-11, P2-12 | **C08**, **R2**, **D14** | P2-09, P2-11, P2-12 | 3 | W7–8 | R2 reproduces C08 development scores to 1e-4; every D14 SHA matches its file; registry includes primary, alternate head, full-image variant, CLAHE-alternate, EfficientNet-B3 |
+| P2-14 | Sealed scoring (**H10–H12**): internal test, challenge test, external, OOD `ood_eval` for all D14 models + gate | gate tokens | C08, C09 (sealed) | P4-09 | 1 | W9–10 | Refused without a token (test); outputs validate; run hashes appear in the gate audit |
+| P2-15 | Report sections (below) | C18 | `report/p2_*.md` | P4-12 | 2 | W11–12 | Every number cites an artifact; reviewed by P3 |
+| P2-16 | Final report assembly (abstract, introduction, literature from the proposal, conclusion, `main.md`) + slide deck | `report/p*_*.md`, C18 | `report/main.md`, `report/slides/` | P1-16, P3-18, P4-16 | 2 | W11–12 | `main.md` builds to PDF; every table/figure has a source path; slides fit a 15-minute talk |
+
+**Extensions (only after `core_complete`):**
+
+| ID | Task | Inputs | Outputs | Depends on | Effort | Week | Acceptance criterion |
+|---|---|---|---|---|---|---|---|
+| P2-17 | RAD-DINO fine-tuning of the last transformer blocks on a Kaggle T4 | C04, C05, D08–D11 | C08 (`radino_ft`), `artifacts/p2/ext/` | P2-13, P3-02 | 4 | W10–11 | Development + one `extension_eval` sealed run with AUC CI; reported separately and never replaces D11 |
+| P2-18 | TorchXRayVision classifier comparison (Section 14 backbone row, extension) | C04, C05 | C08 (`txrv`) | P2-13 | 2 | W10–11 | Internal + external AUC with bootstrap CI in the C18 extension row |
+
+**Mocks used until upstream is ready:** C01, C04, C05 (P1 mocks, then a 200-image real TBX11K subset once downloaded); gate tokens (a P4 test token that unlocks only `mock/`).
+**Decision files locked:** D06, D07, D08, D09, D10, D11, D12, D13, D14, D15.
+**Report sections:** Quality & OOD gate (§4, 12.6 narrative); Classification (§6, 12.1 narrative); Research comparison (§17) and Section 14 rows on backbone, head, CLAHE, crop and kNN k; abstract, introduction, literature, conclusion; slide deck.
+**Definition of Done:** D06–D15 locked; C07, C08, C09 (including sealed runs), C03 and C17 validate; R2 tests green; P2-14 audited by the gate; report assembled and slides delivered.
+
+### 6.3 Person 3 — D-FINE detection & Grad-CAM → PDF, logging, latency
+
+**Mission:** localise TB lesions with D-FINE and produce scored Grad-CAM evidence. Then deliver the per-patient PDF, prediction log, latency experiment E6 and the cloud-training practice everyone uses.
+
+**Owned folders:** `src/p3_det/`, `src/p3_xai/`, `src/p3_ops/`, `tests/p3_*/`, `notebooks/p3/`, `artifacts/p3/`, `decisions/p3_*`, `third_party/D-FINE/`, `docs/p3_*`, `report/p3_*`, `.github/workflows/`, `logs/`, `mk/p3.mk`, `requirements/p3.txt`.
+
+| ID | Task | Inputs | Outputs (contract) | Depends on | Effort | Week | Acceptance criterion |
+|---|---|---|---|---|---|---|---|
+| P3-00 | **Continuous integration** (moved from P1 so that P1's first fortnight fits): GitHub Actions running pytest, the `tbcore` contract validators and the ownership check | P1-01 skeleton | `.github/workflows/ci.yml` | P1-01 | 2 | W1 | CI green on `main`; a test PR from `p2/…` touching a P1 path is failed by the ownership check; a PR staging `data/` images is failed |
+| P3-01 | D-FINE official repo as a pinned submodule; licence check; T4 feasibility at 512 and 640 on mock COCO (AMP, batch size, epoch time) | C06 mock | `docs/p3_dfine_feasibility.md`, **D20** | P1-03 | 2 | W1–2 | Peak memory and s/epoch recorded for both sizes on T4; chosen batch ≤ 14 GB; D20 locked |
+| P3-02 | **Kaggle/Colab checkpoint-to-Drive** helper (every epoch, auto-resume) + runbook; used by P2-12, P2-17, P3-06 | — | `src/p3_ops/cloud`, `docs/p3_kaggle_runbook.md` | P1-01 | 1 | W1–2 | A deliberately killed session resumes losing ≤ 1 epoch (log in runbook) |
+| P3-03 | Mock generators for C10, C11, C15 + R3 stubs (detect, explain, overlay, PDF, logger) | `contracts-v1` | `mock/`, R3 stubs | P4-01 | 1 | W1 | Mocks validate by Day 3 |
+| P3-04 | Detector dataset adapter: crop on the fly from C04 + C05, COCO from C06, resize to input size, box-safe augmentation | C04, C05, C06 | `src/p3_det/data` | P1-10 (mock earlier) | 2 | W3–4 | Boxes stay in bounds after augmentation (test); resize round-trip < 1 px; 50 samples visually checked |
+| P3-05 | Detection metrics: AP@IoU 0.50 (single class), image-level lesion sensitivity, FROC at 1/2/4 FP/image, subtype stratification (active / latent / active+latent); computed in 512 coordinates against all original boxes (D21) | C06, C10 | `src/p3_det/metrics` (imported by P4) | P4-03 | 3 | W3–4 | AP50 equals pycocotools on 3 fixtures within 1e-3; FROC exact on a hand-computed fixture |
+| P3-06 | D-FINE, single TB-lesion class, at 512 and 640 on T4; provisional preprocessing, then re-run on locked D08/D09 (**H4**). Only about 540 training images carry boxes, so non-TB images are included as negatives (C06) and COCO-pretrained weights are used | C06, C05 | checkpoints, **D16** | P3-04, P3-05, P2-08, P3-02 | 4 | W5–7 | Both sizes use the same schedule and seed; development AP50 with bootstrap CI for each; D16 `data_used=[train, development]`. **Contingency:** if the better size still scores development AP50 < 0.05, P3 raises the Section 8 detector contingency in W7 rather than tuning further |
+| P3-07 | Training length / checkpoint and confidence threshold on development (pre-registered rule) | development detections | **D17**, **D18** | P3-06 | 2 | W7 | D18 rule committed before the threshold is computed (git log); guide ack recorded |
+| P3-08 | Detection export and runtime API R3 `detect` (laptop inference, boxes mapped back to 512 coordinates, lesion count above D18) | checkpoint, D16–D18 | **C10** (development/calibration), **R3** | P3-07 | 2 | W7–8 | ≤ 500 ms/image on RTX 4050; R3 output equals C10 on 50 development images; C10 validates |
+| P3-09 | Grad-CAM for ViT on the last RAD-DINO block: reshape transform (drop CLS/register tokens → patch grid), TB target, crop → 512 mapping (**H8**) | R2 `classifier_module` | R3 `explain`, **D19** | P2-02, P2-13 | 3 | W5–7 | Heatmap float16[512,512], zero outside the crop; model-randomisation sanity test (Spearman < 0.5 on 20 development images); ≤ 5.5 GB VRAM |
+| P3-10 | Localisation agreement: pointing accuracy and energy-in-box; development scoring for the primary and full-image models (Section 14 crop row) | C11 heatmaps, C06 | **C11** (development) | P3-09 | 2 | W7–8 | Synthetic tests (peak in box → hit; uniform map → energy = box-area share); development table with n |
+| P3-11 | Overlay renderer: heatmap + boxes + scores, captioned "attention evidence, not a finding" | R3 outputs | R3 `render_overlay` | P3-08, P3-09 | 1 | W8 | Caption present (test); legible in the 1366×768 viewer |
+| P3-12 | **Grad-CAM review session with the guide**: 20 correct + 20 incorrect development cases | C12 (development), overlays | `docs/p3_gradcam_review.md` | P4-11, P3-11 | 1 | W8 | Minutes with case IDs and the guide's comments, signed off |
+| P3-13 | Sealed runs (**H10–H11**): detections, heatmaps and localisation scores on internal test and challenge test for registry models | gate tokens | C10, C11 (sealed) | P4-09 | 1 | W9 | Refused without a token (test); outputs validate; audited |
+| P3-14 | **Prediction logger** (append-only JSONL, no PHI) + R3 `log_case` | C14 | **C15** | P4-02 | 1 | W9 | One line per case with model_version, split_version, decisions_hash, git SHA; grep test finds no identifiers |
+| P3-15 | **Per-patient PDF** (ReportLab): image, overlay, `p_tb_cal`, category, link-rule flag, lesions, **decision-support disclaimer + scope-honesty text**, versions | C14 | R3 `make_pdf` | P3-11 | 2 | W10 | A PDF renders for each of the 7 fixture types; text extraction finds the disclaimer and scope statement; no identifiers |
+| P3-16 | **Latency E6**: `run_batch` on RTX 4050 and CPU-only (8 GB RAM), 100-image batch, median and p95 total and per stage | R4 | `artifacts/p3/latency/e6_{gpu,cpu}.csv` | P4-10 | 2 | W11 | Median + p95 reported; pass/fail stated against < 2 s (GPU) and < 10 s (CPU) per image |
+| P3-18 | Report sections (below) | C18, own artifacts | `report/p3_*.md` | P4-12 | 2 | W11–12 | Every number cites an artifact; latent-TB caveat stated; reviewed by P4 |
+
+**Extensions (only after `core_complete`):**
+
+| ID | Task | Inputs | Outputs | Depends on | Effort | Week | Acceptance criterion |
+|---|---|---|---|---|---|---|---|
+| P3-19 | RT-DETRv2 comparison detector on the same data and D16 input size | C06, C05 | C10 (`rtdetrv2`) | P3-13 | 3 | W10–11 | Development + one `extension_eval` run: AP50 and FROC with CIs in the Section 14 extension row |
+| P3-20 | Pixel-level lesion segmentation (box-supervised) | C06, C04 | `artifacts/p3/ext/lesion_masks/` | P3-13 | 3 | W10–11 | Mask-in-box agreement and pointing comparison reported separately; not wired into triage |
+
+**Mocks used until upstream is ready:** C04, C05, C06 (P1 mocks); R2 stub `classifier_module` (P2); C12 development and C14 fixtures (P4); R4 stub for latency harness dry runs (P4).
+**Decision files locked:** D16, D17, D18, D19, D20.
+**Report sections:** Lesion detection (§7, 12.4 narrative, latent-TB caveat, D-FINE licence); Explainability (§10, 12.5 narrative, guide review); PDF & logging; Latency E6 and hardware (§20).
+**Definition of Done:** CI green from W1 (P3-00); D16–D20 locked; C10, C11 (including sealed runs) and C15 validate; R3 tests green; PDF, logger and E6 results delivered; review minutes committed.
+
+### 6.4 Person 4 — Statistics, calibration, conformal triage, pipeline, evaluation & governance
+
+**Mission:** own the numbers and the rules: CIs, calibration, conformal triage, the link rule and every reported table. Assemble the end-to-end `run_case` and enforce no-test-tuning.
+
+**Owned folders:** `src/tbcore/`, `src/p4_stats/`, `src/p4_pipeline/`, `src/p4_eval/`, `tests/tbcore/`, `tests/p4_*/`, `notebooks/p4/`, `artifacts/p4/`, `decisions/p4_*`, `decisions/README.md`, `contracts/` (steward), `runs/`, `docs/p4_*`, `report/p4_*`, `README.md`, `.github/CODEOWNERS`, `mk/p4.mk`, `requirements/p4.txt`.
+
+| ID | Task | Inputs | Outputs (contract) | Depends on | Effort | Week | Acceptance criterion |
+|---|---|---|---|---|---|---|---|
+| P4-01 | `tbcore`: validators C01–C18, CaseResult (C14) and decision (C16) schemas, sealed-split guard, seed utility, mock-path switch, version stamps, single-source disclaimer / **scope-honesty text**; CODEOWNERS; ownership CI check; run W1 contract sign-off | this README | `contracts-v1`, `tbcore` | — | 3 | W1 | Tag `contracts-v1` with 4 approvals by Day 5; validators pass on every mock; the ownership check fails a test PR touching another owner's path; the guard refuses sealed splits without a token (test) |
+| P4-02 | Mock generators for C12, C13 + 7 CaseResult fixtures (TB, REFER, NOT TB, link fired, gate rejected, unreadable, segmentation fallback) + R4 stub | C14 schema | `mock/`, fixtures | P4-01 | 1 | W1 | All fixtures validate by Day 3 |
+| P4-03 | Statistical analysis plan with the guide: α, precision target, CI methods, bootstrap settings, ECE bins, handling of rejected/fallback cases, ROC-selected comparator definition, detection coordinate frame, primary-backbone rule, challenge mapping (4.6), detector contingency (Section 8) | methodology §9, §12; TBX11K challenge page | **D21** | — | 1 | W1–2 | D21 locked with guide ack by end of W2; the challenge mapping is written down before any model is trained |
+| P4-04 | Statistics library: Wilson CI, stratified bootstrap CI, ROC-AUC, sensitivity at fixed specificity, PPV/NPV, ECE, reliability diagram | D21 | `src/p4_stats` | P4-03 | 3 | W2–3 | Wilson matches statsmodels to 1e-9; bootstrap CI coverage ≥ 93% in a 1,000-rep simulation; sensitivity-at-specificity tests pass |
+| P4-05 | Temperature scaling (binary logit and three-class logits, NLL minimisation) | — | `src/p4_stats` | P4-04 | 1 | W3 | Recovers a known T within 2% on synthetic data; ECE falls on synthetic miscalibrated data |
+| P4-06 | **Conformal lower threshold in NumPy** (§9.1) + unit tests | — | `src/p4_stats` | P4-04 | 2 | W3–4 | With n = 100, α = 0.10: t is the largest value with ≤ 9 calibration TB scores below it (ties covered); 10,000-rep exchangeable simulation gives mean FN risk ≤ 0.10 + Monte Carlo error |
+| P4-07 | Precision-constrained upper threshold (§9.2) with clamps | — | `src/p4_stats` | P4-04 | 2 | W4 | Tests: upper < lower → set equal; unattainable target → TB category empty, all screen-positive cases REFER; lowest qualifying threshold chosen |
+| P4-08 | Triage assembly, detector link rule (§9.3), calibration operating curve | C08, C10, D18 | **C12**, **C13**, R4 `triage()` | P4-06, P4-07 | 2 | W5–6 | Property test: the link rule only ever moves NOT_TB → REFER; C12/C13 validate on mocks |
+| P4-09 | **No-test-tuning gate**: validation, single-use tokens, audit log, `core_complete` and `extension_eval` states | `decisions/`, C01, D14 | `artifacts/p4/gate/`, `docs/p4_gate_audit.md` | P4-01 | 3 | W4–8 | Tests: a missing, invalid or wrong-`data_used` decision → refusal with message; a second internal-test unlock is refused; challenge/external unlock is refused before the internal-test record |
+| P4-10 | `run_case` / `run_batch` (R4) per methodology Figure 1: R1 → R2 gate → R1 ROI → R2 classify ‖ R3 detect → calibrate → triage → link rule → R3 explain/overlay → CaseResult; per-file error isolation; timings; versions | R1–R3, D22, D23 | **C14**, **R4** | P1-12, P2-13, P3-08, P3-09 | 4 | W6–8 | The 7 fixture scenarios reproduced from real inputs; a batch with a corrupt file completes; a rejected image has null analysis blocks; CaseResult equals offline C12 on 50 development images |
+| P4-11 | **H6**: fit temperature on development, then set thresholds on calibration | C08 (development, calibration) | **D22**, **D23**, C12 (development/calibration), C13 | P2-13, P2-11, P4-08 | 1 | W7 | D22 `data_used=[development]`; D23 `data_used=[calibration]`; development reliability diagram saved |
+| P4-12 | Evaluation tables 12.1–12.7 + orchestration of the single internal-test run (**H10**); 12.4 uses P3-05 functions, 12.5 uses C11, 12.7 uses C05 | sealed C08–C11, C05, C06 | **C18** `t12_*`, figures | P4-09, P2-14, P3-13 | 4 | W8–10 | Every row has n_tb, n_non_tb and a CI (the generator refuses rows without n); the run occurs once (gate audit); secondary active-TB-only sensitivity included; triage measures reported with and without the link rule |
+| P4-13 | Challenge submission (**H11**): classification scores and boxes converted with the **Section 4.6 mapping** (every box submitted as ActiveTuberculosis; `p(active_tb) = p(tb)`, `p(latent_tb) = 0`); exactly one submission; **Codabench log** | C08, C10 (challenge_test), D21 | `artifacts/p4/challenge/`, `docs/p4_codabench_log.md`, C18 `t12_8` | P4-12 | 2 | W9 | Submission validates against the format published on the challenge page, checked in W2 and re-checked in W8; one log entry (date, file SHA, returned metrics); `t12_8` equals the returned metrics verbatim and carries the mapping caveat |
+| P4-14 | External validation (§13) on Shenzhen and Montgomery | C08, C09 (external), D23 | C18 `t13_*` | P2-14, P1-11 | 2 | W10 | Per dataset: AUC (bootstrap CI), sensitivity/specificity (Wilson), conformal FN-target check (share of TB below t_lower with CI vs α), gate pass rate; Montgomery wide-CI note |
+| P4-15 | Comparative experiments (§14): one row per question with the development choice and sealed result | C08–C12, decisions | C18 `t14_comparisons.csv` | P4-12, P4-14 | 2 | W10 | 9 core rows + extension rows, each with deciding metric, CI and n; the ROC-selected vs conformal row uses the D21 definition; if the detector contingency fired, the link-rule row reads "not evaluable" with the reason |
+| P4-16 | Report sections (below) + README upkeep | C18 | `report/p4_*.md` | P4-15 | 2 | W11–12 | Every number traces to C18; limitations & scope-honesty section present; reviewed by P1 |
+
+**Extensions (only after `core_complete`):**
+
+| ID | Task | Inputs | Outputs | Depends on | Effort | Week | Acceptance criterion |
+|---|---|---|---|---|---|---|---|
+| P4-17 | **(PROMOTED TO CORE 2026-10-06 — this is the research contribution: the published CAD4TB threshold for a 90% sensitivity target ranges from 9 to 20 across countries, and per-site calibration is skipped because it is assumed to need a prevalence survey. Conformal risk control needs only n labelled local images, with the guarantee explicit in n. The deliverable is the curve that says what n must be.)** Recalibration on external data: labelled Shenzhen subsets (e.g. 25/50/100 images, stratified, fixed seed) refit T and thresholds; test on the rest | C08 (Shenzhen), `p4_stats` | C18 `t13_recal` | P4-14 | 3 | W11 | Sensitivity vs n_local curve with CIs; reported separately from the main external result |
+
+**Mocks used until upstream is ready:** C08 (P2 mock: two Gaussian logit populations with known AUC), C09 (P2), C10 and C11 (P3), C05/C06 (P1), R1–R3 stubs.
+**Decision files locked:** D21, D22, D23.
+**Report sections:** Calibration (§8, 12.2); Triage & link rule (§9, 12.3); Evaluation protocol & CIs (§12 intro, 12.8 challenge); External validation (§13); Comparative experiments summary (§14); Limitations & scope honesty; no-test-tuning audit.
+**Definition of Done:** D21–D23 locked; the gate passes and has run once per sealed set; C12–C14 and C18 validate; `run_case` end-to-end tests green; one challenge submission logged; report sections merged.
+
+---
+
+## 7. Integration milestones
+
+| Week | Milestone | P1 | P2 | P3 | P4 |
+|---|---|---|---|---|---|
+| W1 (end) | **Contract sign-off** `contracts-v1`; mocks published by Day 3 | Repo skeleton, external sets downloaded + TB Portals application sent, C01 v0, mocks | VRAM check, D06, D15, mocks, R2 stub | CI pipeline, D-FINE feasibility, Kaggle helper, mocks | `tbcore`, CODEOWNERS, fixtures, sign-off chair |
+| W2 (end) | **Splits frozen** `v-split-1` (H1) | Ingest, C04, dedup review, C01 v1 | C17 near-duplicate candidates | D20 | D21 analysis plan, stats library |
+| W5 (end) | **Preprocessing & classifier locked** (D03, D07–D11) | Segmentation, crops, COCO, R1 | Heads, CLAHE/margin/head selection | Metrics lib, adapter, provisional D-FINE | Conformal, upper threshold, triage |
+| W8 | **Mid-project demo** (development images only): one image in → CaseResult → dashboard with triage category, probability, three-class auxiliary output, boxes and heatmap. **All decisions locked** `v-lock-1`; gate dry-run passes | Dashboard on real `run_case` | D12, D13, D14, R2 | D16–D19, R3, overlay, guide Grad-CAM review | `run_case`, D22, D23, gate check |
+| W8 (end) | **Teach-back 1** (half a day, from the standing buffer): each person explains a *different* workstream's component at the whiteboard, from that person's code and decision files, and takes the guide's questions | Explains P2: gate, OOD, embeddings | Explains P3: detector and Grad-CAM | Explains P4: calibration and conformal triage | Explains P1: ingest, segmentation, splits |
+| W9 | **Internal test run (once)** (H10) | — | P2-14 scores internal test | P3-13 detections + heatmaps | Gate unlock → tables 12.1–12.7 |
+| W9 (end) | **Challenge submission (once)** (H11) | — | Scores challenge test | Detections challenge test | Bundle, submit, Codabench log, `t12_8` |
+| W10 | **External validation** (H12) + Section 14 | Slider, logging integration | Scores external + OOD `ood_eval` | PDF | External tables, Section 14 table; `core_complete` |
+| W10–11 | Extensions (H14) | View head | RAD-DINO fine-tune, TorchXRayVision | RT-DETRv2, lesion segmentation | External recalibration |
+| W11 | Product finish | 1366×768 usability, demo script | Report assembly starts | Latency E6 | Report sections |
+| W11 (end) | **Teach-back 2**, rotation shifted the other way, on the extensions and the sealed results | Explains P4: Section 14 and external tables | Explains P1: dashboard, slider, demo | Explains P2: heads, baselines, registry | Explains P3: D-FINE, PDF, latency |
+| W12 | **Freeze** `v-freeze` | Demo video, report sections | `main.md` + slides | Report sections | Final audit, README |
+| W13 | **Reserve.** No planned work. Used for internal-assessment weeks, or to absorb a slip; if unused, the project simply finishes early | — | — | — | — |
+
+---
+
+## 8. Risks and mitigations
+
+| Risk | Mitigation | Owner |
+|---|---|---|
+| Compressed calendar: three days a week each with no buffer, so one bad week cascades, and decisions made in W2 are half-remembered by W9 | Weekly 30-minute sync with a written one-line status per workstream; every decision is a committed JSON file with its criterion pre-registered, never a conversation; teach-backs in W8 and W11 force each person to re-read someone else's decisions; W13 held in reserve for assessment weeks | All, P4 stewards |
+| Class imbalance and the tiny latent class (1,200 TB vs 10,000 non-TB; 212 latent, 54 combined) | Weighted sampler or logit-adjusted loss chosen on development (D10); single-class detector; subtype-stratified results reported with an explicit "not reliable" caveat for latent TB; balanced metrics only | P2, P3 |
+| Challenge labels withheld → accidental tuning on reported data | Committed split file, sealed-split guard, decisions registry, single-use gate tokens, exactly one challenge submission recorded in the Codabench log | P4 |
+| Model and data licences | D-FINE (Apache-2.0) replaces the proposal's copyleft detector risk; RAD-DINO is MIT (verified 29-09-2026), so the backbone carries no academic-use restriction; CheXpert and other OOD sources remain under their own research terms; all recorded in D05/D15/D20 and stated in the report | P1, P2, P3 |
+| Shortcut learning / cross-dataset collapse | Lung crop with margin (no black border); "Does lung cropping help?" comparison (AUC drop internal → external, pointing accuracy); Grad-CAM review with the guide; external results reported as they are | P2, P3, P4 |
+| 6 GB VRAM and Kaggle limits | Frozen RAD-DINO with offline embeddings verified in W1 (P2-01); detector trained on T4 with AMP and small batches; checkpoint to Drive every epoch (P3-02); EfficientNet-B3 and D-FINE runs on separate Kaggle accounts; Colab as backup | P2, P3 |
+| A third external site does not arrive (Shenzhen and Montgomery no longer carry this risk: downloaded directly, no application) | TB Portals application sent in W1; fallback decided by W6 (D04), e.g. a public TB CXR set checked for overlap with TBX11K; the report names the external set actually used | P1 |
+| Over-reading explanations | Heatmaps captioned "attention evidence, not a finding"; localisation agreement reported as overlap with incomplete boxes, not proof of clinical correctness; same caveat in the PDF | P3 |
+| Over-claiming clinical readiness | Single-source disclaimer + scope-honesty text on every screen and PDF; report states there has been no prospective clinical validation | P4 (text), P1 (screens), P3 (PDF) |
+| Conformal guarantee does not transfer (exchangeability broken externally) | Measured on external data (P4-14); recalibration extension shows local-data needs (P4-17); stated as finite-sample control under assumptions only | P4 |
+| Precision target unreachable on calibration | By design the TB category is left empty and all screen-positive cases go to REFER; reported, not tuned | P4 |
+| Small calibration split (~100 TB) → coarse thresholds, wide CIs | Every result reports n and a CI; no post-hoc threshold change | P4 |
+| Segmentation fails on external images | Full-image fallback, logged; failure rate reported per dataset (12.7) | P1 |
+| OOD gate rejects valid external X-rays | External pass rate reported (12.6, §13); threshold not retuned on external data | P2, P4 |
+| Contract drift / integration slip | Frozen contracts, validators in CI, mocks from Day 3, CCR with 4 approvals, weekly integration check against mocks | P4 |
+| Detector AP too low to be useful: only about 540 training images carry boxes | Trigger in P3-06 (development AP50 < 0.05 at the better input size). **Contingency, pre-registered in D21:** the detector is reported as an honest negative result with its CI; the link rule is disabled and its Section 14 row records "not evaluable, detector below threshold"; the worklist and PDF drop the lesion panel and keep the Grad-CAM evidence; the classifier path remains the deliverable. Never fixed by re-tuning on sealed data | P3, P4 |
+| Challenge scoring does not match the project's task definition | Mapping fixed in D21 and Section 4.6 in W2, long before the single submission; latent-TB AP expected near zero by construction and reported as such; the submission is treated as a leaderboard calibration point, not a headline result | P4 |
+| P1 front-loaded: W1–2 is exactly 10 points with no buffer | CI moved to P3-00; P1-02b and P1-06b moved to W3. If P1 still slips, P1-06a moves to W3 Day 1 and the split freeze to W3 Day 2 | P1, P3 |
+| Process overhead crowds out the science | Formal JSON Schema kept only for C01, C14, C16 and C18; the rest are short specs with dtype checks; a CCR needs 2 approvals, not 4. The split file, decisions registry, sealed-split guard and gate are **not** negotiable | P4 |
+| Team member unavailable | Consumer-reviewer knows each interface; every task has written acceptance tests; weekly half-day buffer | All |
+
+---
+
+## 9. Traceability matrix
+
+### 9.1 Methodology (source of truth)
+
+| Section | Requirement | Task ID(s) | Owner |
+|---|---|---|---|
+| Intro | Target ≥ 90% sensitivity, ≥ 70% specificity (WHO TPP) | P4-03, P4-12 | P4 |
+| Intro | Decision-support, not diagnosis; core vs extensions | P4-01, P4-09 (`core_complete`) | P4 |
+| 1 | Accept DICOM or PNG | P1-05 | P1 |
+| 1.1 | TBX11K acquisition, official splits | P1-02a, P1-02b, P1-04 | P1 |
+| 1.2 | Training / development (10%) / calibration / internal test / challenge test | P1-04 | P1 |
+| 1.2 | Development used for all selection, then temperature | P2-08, P2-09, P2-11, P3-06, P3-07, P4-11 | P2, P3, P4 |
+| 1.2 | Calibration used only for triage thresholds | P4-11 | P4 |
+| 1.2 | Internal test once; challenge once | P4-09, P4-12, P4-13 | P4 |
+| 1.2 | Stratified proportions, exact counts, fixed seed, split file committed | P1-04, P1-07 | P1 |
+| 1.3 | One X-ray per individual (stated) | P1-16 | P1 |
+| 1.3 | Near-duplicate embedding check, removal from later split | P2-04, P1-07 | P2, P1 |
+| 1.3 | No-test-tuning rule | P4-09 | P4 |
+| 1.4 | Shenzhen + Montgomery obtained, never used for training/selection | P1-02, P1-11, P4-09 | P1, P4 |
+| 2 | Positive class = any TB; secondary active-only sensitivity | P1-04, P4-12 | P1, P4 |
+| 3 | DICOM decoding, grayscale, 512×512 source resolution | P1-05, P1-06a | P1 |
+| 3 | External images resampled to 512 first | P1-11 | P1 |
+| 3 | Per-model input size + normalisation (model card) | P2-03, P2-12, P3-04 | P2, P3 |
+| 3 | CLAHE tested on/off once (sensitivity at 70% specificity, AUC tie-break) | P1-06b, P2-08 | P1, P2 |
+| 4 | Basic image-quality check | P2-05 | P2 |
+| 4 | RAD-DINO L2-normalised kNN OOD score, k = 5, bank of training images | P2-11 | P2 |
+| 4 | Threshold = 95% development pass | P2-11 | P2 |
+| 4 | k = 1 ablation | P2-11, P4-15 | P2, P4 |
+| 4 | Frontal/lateral view head (extension) | P1-17 | P1 |
+| 4 | Rejected images → manual review | P4-10, P1-13 | P4, P1 |
+| 4 | Held-out OOD collection (laterals, other body parts, non-medical) | P2-10 | P2 |
+| 4 | Pass rate on Shenzhen and Montgomery | P4-14 | P4 |
+| 5 | Pretrained TorchXRayVision segmentation | P1-08 | P1 |
+| 5 | Sanity check (area, two regions, box size/truncation), ranges on development | P1-09 | P1 |
+| 5 | Fallback to full image, logged, failure rate reported | P1-09, P4-12 | P1, P4 |
+| 5 | Crop to lung box with development-chosen margin | P1-10, P2-08 | P1, P2 |
+| 5 | Boxes shifted into crop; outside boxes counted | P1-10 | P1 |
+| 6 | Frozen RAD-DINO, offline embeddings | P2-03, P2-06 | P2 |
+| 6 | 6 GB verification in week 1 | P2-01 | P2 |
+| 6 | Fine-tuning last blocks on T4 (extension) | P2-17 | P2 |
+| 6 | Three-class and binary heads; selection by sensitivity at 70% specificity; three-class auxiliary output | P2-07, P2-09, P2-13, P1-13 | P2, P1 |
+| 6 | Weighted sampler / logit-adjusted loss | P2-07 | P2 |
+| 6 | EfficientNet-B3 ImageNet baseline | P2-12 | P2 |
+| 6 | TorchXRayVision classifier (extension) | P2-18 | P2 |
+| 7 | D-FINE on the lung crop | P3-04, P3-06 | P3 |
+| 7 | 512 vs 640 by development AP50 | P3-06 | P3 |
+| 7 | Single TB class; subtypes kept for stratified analysis | P1-10, P3-05 | P1, P3 |
+| 7 | Confidence threshold on development, locked | P3-07 | P3 |
+| 7 | Train on T4, infer on laptop | P3-02, P3-06, P3-08 | P3 |
+| 7 | Outputs: boxes, confidences, lesion count | P3-08 | P3 |
+| 7 | RT-DETRv2 and pixel-level segmentation (extensions) | P3-19, P3-20 | P3 |
+| 8 | Temperature scaling fitted on development after all choices, locked | P4-05, P4-11 | P4 |
+| 8 | Not fitted on calibration | P4-09 | P4 |
+| 8 | Reliability diagram, ECE before/after on internal test | P4-12 | P4 |
+| 9 | TB / REFER / NOT TB from two thresholds | P4-08 | P4 |
+| 9.1 | Conformal lower threshold, α = 0.10, NumPy | P4-06, P4-11 | P4 |
+| 9.2 | Precision-constrained upper threshold with clamps | P4-07, P4-11 | P4 |
+| 9.2 | Screen-positive = TB or REFER | P4-08, P4-12 | P4 |
+| 9.3 | Detector link rule; effect on sensitivity and REFER rate measured | P4-08, P4-15 | P4 |
+| 10 | Grad-CAM on last RAD-DINO block with ViT reshape | P3-09 | P3 |
+| 10 | Detector evidence (boxes + scores) | P3-11 | P3 |
+| 10 | Pointing accuracy, energy in box on internal test TB images with boxes | P3-10, P3-13, P4-12 | P3, P4 |
+| 10 | Agreement is not proof of clinical correctness | P3-11, P3-18 | P3 |
+| 11 | Worklist fields and sort by calibrated probability | P1-13, P4-10 | P1, P4 |
+| 12 | Targets; n for every result; Wilson and bootstrap CIs | P4-04, P4-12 | P4 |
+| 12.1 | ROC-AUC, three-class confusion matrix, active-only sensitivity | P4-12 | P4 |
+| 12.2 | ECE before/after, reliability diagram | P4-12 | P4 |
+| 12.3 | Screen-positive sensitivity/specificity/PPV/NPV, TB precision, TB share, REFER share, with/without link rule | P4-12 | P4 |
+| 12.4 | AP50, image-level lesion sensitivity, FROC 1/2/4, subtype stratification | P3-05, P3-13, P4-12 | P3, P4 |
+| 12.5 | Pointing accuracy, energy in box | P3-10, P4-12 | P3, P4 |
+| 12.6 | OOD ROC-AUC, rejection rate on collection, external pass rate | P2-14, P4-12, P4-14 | P2, P4 |
+| 12.7 | Sanity-check failure rate | P1-09, P4-12 | P1, P4 |
+| 12.8 | Challenge metrics from one submission, reported with the Section 4.6 mapping caveat | P4-03 (D21 mapping), P4-13 | P4 |
+| 13 | External: AUC, sensitivity, specificity, conformal target, gate pass rate, n + CI; Montgomery caveat | P2-14, P4-14 | P2, P4 |
+| 13 | Recalibration on external data (extension) | P4-17 | P4 |
+| 14 | Backbone: RAD-DINO vs EfficientNet-B3 (vs TorchXRayVision) | P2-12, P2-18, P4-15 | P2, P4 |
+| 14 | Output head | P2-09, P4-15 | P2, P4 |
+| 14 | Does lung cropping help (AUC drop, pointing accuracy) | P2-13, P3-10, P4-15 | P2, P3, P4 |
+| 14 | Does CLAHE help | P2-08, P4-15 | P2, P4 |
+| 14 | Does calibration help (ECE) | P4-15 | P4 |
+| 14 | ROC-selected vs conformal lower threshold | P4-03, P4-15 | P4 |
+| 14 | Does the link rule help | P4-15 | P4 |
+| 14 | kNN k = 5 vs k = 1 | P2-11, P4-15 | P2, P4 |
+| 14 | Detector input size | P3-06, P4-15 | P3, P4 |
+| 14 | D-FINE vs RT-DETRv2 (extension) | P3-19 | P3 |
+| 15 | Complete pipeline (Figure 1), assembled from R1–R3 | P4-10, P1-12, P2-13, P3-08, P3-09 | P4, P1, P2, P3 |
+| 16 | Implementation order | Section 7 milestones; P4-16 (upkeep) | P4 |
+| 17 | Research comparison (classification, detection) | P2-12, P2-18, P3-06, P3-19, P4-15 | P2, P3, P4 |
+| 18.1 | Core system deliverables | "Prototype done" (Section 1); all core tasks | All |
+| 18.2 | Extensions | P2-17, P2-18, P3-19, P1-17, P3-20, P4-17 | All |
+| 19 | Software stack (Python 3.11 …) | P1-01, P3-00 (CI) | P1, P3 |
+| 19 | Git and Git LFS | P1-01 | P1 |
+| 19 | Model licences checked before use | P1-02 (D05), P2-01 (D15), P3-01 (D20) | P1, P2, P3 |
+| 20 | RTX 4050 6 GB verified in week 1 | P2-01 | P2 |
+| 20 | T4 for detector, EfficientNet-B3 and fine-tuning | P3-01, P3-02 | P3 |
+| 20 | Deployment ≥ 8 GB RAM, GPU recommended | P3-16 | P3 |
+| 20 | Storage 30 GB (50 GB margin) | P1-02 | P1 |
+| 21 | Final objective | "Prototype done" (Section 1); P4-16 | P4 |
+
+### 9.2 Retained proposal-only requirements
+
+| Requirement | Task ID(s) | Owner |
+|---|---|---|
+| DICOM anonymisation on ingest; no identifiers on disk or logs | P1-05, P3-14 | P1, P3 |
+| Corrupt-file robustness (batch continues) | P1-05, P1-13, P4-10 | P1, P4 |
+| Threshold viewer/slider with the WHO default marked | P1-14 | P1 |
+| Prediction logging with model version and split version | P3-14 | P3 |
+| Per-patient PDF with the decision-support disclaimer | P3-15 | P3 |
+| Latency E6 (< 2 s GPU, < 10 s CPU; median + p95, 100 images) | P3-16 | P3 |
+| 1366×768 usability (non-ML technician) | P1-15 | P1 |
+| Scope-honesty text: single source / every screen / every report | P4-01 / P1-15 / P3-15 | P4, P1, P3 |
+| Codabench submission log | P4-13 | P4 |
+| Kaggle checkpoint-to-Drive practice | P3-02 | P3 |
+| External-dataset fallback plan | P1-11 (D04) | P1 |
+| Grad-CAM review session with the guide | P3-12 | P3 |
+| Heatmap labelled as attention evidence | P3-11 | P3 |
+| Single and batch upload | P1-13 | P1 |
+| Reproducibility: seeds, versioned weights, committed split file | P4-01, P2-13 (D14), P1-07 | P4, P2, P1 |
+| Backup demo video; slide deck; demo script | P1-18, P2-16, P1-15 | P1, P2 |
+| Latent-TB result reported with caveat | P3-18 | P3 |
+
+### 9.3 Engineering hygiene
+
+| Item | Task ID(s) | Owner |
+|---|---|---|
+| Environment setup | P1-01 | P1 |
+| Detector contingency if AP50 < 0.05 | P3-06 (trigger), P4-03 (D21 rule), P4-15 (reporting) | P3, P4 |
+| Git LFS rules and quota | P1-01 | P1 |
+| Seeds | P4-01 (utility); every training task records its seed | P4 |
+| Tests + CI + ownership check | P3-00 (CI), P4-01 (validators, ownership) | P3, P4 |
+| Model-licence checks | P1-02a, P2-01, P3-01 | P1, P2, P3 |
+| Storage budget 30–50 GB | P1-02b | P1 |
+| 6 GB VRAM feasibility in week 1 | P2-01 | P2 |
+| Mocks-first (every producer, Day 3) | P1-03, P2-02, P3-03, P4-02 | All |
+| Report / documentation writing (per-person share) | P1-16, P2-15, P3-18, P4-16 (+ P2-16 assembly) | All |
+
+**Coverage check:** every row in 9.1, 9.2 and 9.3 maps to at least one task ID with an owner. **No row is unassigned.** Each task ID belongs to exactly one person, each contract (C01–C18) has exactly one producer, and each decision file (D01–D23) has exactly one owner.

@@ -1,0 +1,51 @@
+{
+ "decision_id": "D06",
+ "owner": "p2",
+ "title": "Near-duplicate cosine threshold for the split freeze (handshake H1)",
+ "criterion_preregistered": "tau is fixed BEFORE the search runs and is never adjusted after seeing the candidate list. Primary value tau = 0.98 on cosine similarity between L2-normalised full-image RAD-DINO CLS embeddings (C07, variant full_clahe0), comparison '>=' so a pair landing exactly on tau is a candidate. Because Person 1 reviews every candidate by hand (P1-07), a lower tau costs review effort but not correctness, while too high a tau silently misses real duplicates and nobody ever learns. The threshold sweep at 0.95/0.96/0.97/0.98/0.99 is therefore run first, and this rule decides the final value: if the band [0.95, 0.98) adds 150 or fewer cross-split pairs, tau is lowered to 0.95 and all of them are reviewed; otherwise tau stays at 0.98 and the number of pairs left unreviewed in that band is recorded here and reported in the limitations section.",
+ "preregistered_at": "2026-10-05",
+ "candidates": [
+  0.95,
+  0.96,
+  0.97,
+  0.98,
+  0.99
+ ],
+ "value": {
+  "tau": 0.95,
+  "comparison": ">=",
+  "embedding_variant": "full_clahe0",
+  "embedding_space": "L2-normalised RAD-DINO CLS, 768-d, fp16",
+  "scope": "cross-split pairs only; within-split duplicates are counted and reported but do not block the split freeze",
+  "split_precedence": "train < development < calibration < internal_test < challenge_test; the later split loses the image",
+  "sweep_result": {
+   "run_on": "2026-10-06, provisional official train/val/test splits, 12,278 images, variant full_clahe0",
+   "cross_split_candidates": {
+    "0.95": 158,
+    "0.96": 150,
+    "0.97": 145,
+    "0.98": 145,
+    "0.99": 144
+   },
+   "band_0.95_to_0.98_adds": 13,
+   "preregistered_limit": 150,
+   "rule_outcome": "13 <= 150, so the rule lowers tau from 0.98 to 0.95 and all 158 candidates are reviewed by hand (P1-07)."
+  },
+  "pairs_unreviewed_below_tau": 0
+ },
+ "why_full_image_not_crop": "A lung crop discards the borders, collimation edges and burned-in markers that make two scans of the same patient distinguishable from one file stored twice, which is exactly the signal this search needs.",
+ "evidence": [
+  "artifacts/p2/dedup/near_dup_candidates_v1.csv",
+  "artifacts/p2/dedup/near_dup_candidates_v1.csv.json",
+  "mock/mock_manifest_p2.json"
+ ],
+ "data_used": [
+  "tbx11k images only, no labels, purpose=dedup (the single exception to the sealed-split guard, contract rule 4.1)"
+ ],
+ "reviewed_by": "p1",
+ "guide_ack": false,
+ "locked": false,
+ "locked_at": null,
+ "git_sha": null,
+ "note": "Rule applied 2026-10-06 on real embeddings. tau = 0.95 was DECIDED BY THE PRE-REGISTERED RULE, not chosen from the output: the sweep was run first and the rule in criterion_preregistered selected the value. tau is now fixed and must not move again. Re-running on Person 1's real C01 will change the candidate COUNT, because train/development/calibration/internal_test is a finer partition than train/val, but it must not change tau. What the pass found is more serious than a threshold question: 133 of 145 cross-split pairs have cosine 1.0000 and the twelve strongest are byte-identical files, so TBX11K stores the same image under two names in two different splits. See docs/p2_duplicate_finding.md. Still to lock: Person 1's review (P1-07) and the guide acknowledgement."
+}

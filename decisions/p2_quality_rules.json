@@ -1,16 +1,34 @@
 {
-  "decision_id": "D07",
-  "owner": "p2",
-  "title": "Image Quality Gate Rules",
-  "criterion_preregistered": "Blank, under/over-exposure, and crop rules derived from synthetic degradations; <= 1% development rejected",
-  "preregistered_at": "2026-09-21",
-  "candidates": ["Heuristic quality thresholds"],
-  "value": {"min_std": 5.0, "max_clip_frac": 0.35, "max_crop_frac": 0.50},
-  "evidence": ["artifacts/p2/gate/synthetic_eval.csv"],
-  "data_used": ["development"],
-  "reviewed_by": "p4",
-  "guide_ack": false,
-  "locked": true,
-  "locked_at": "2026-10-08",
-  "git_sha": "c0ffee1"
+ "decision_id": "D07",
+ "owner": "p2",
+ "title": "Image-quality rejection rules for the gate (R2 gate, quality half)",
+ "criterion_preregistered": "Thresholds are derived from a synthetic degradation sweep, not chosen by eye. For each statistic, the distribution over clean images and the distribution over degraded images are measured; a threshold is admissible only if the two do not overlap, and it is then placed at the midpoint of the gap (in log space where the statistic is a variance). If the distributions overlap, the rule is rejected and rethought rather than tuned, because no threshold can then satisfy both halves of the acceptance criteria. The rules are confirmed once on the development split before this decision is locked, and must reject at most 1% of it. They are never fitted or adjusted on calibration, internal test, challenge test or external data.",
+ "preregistered_at": "2026-10-06",
+ "value": {
+  "blank_std": 0.02,
+  "dark_mean": 0.12,
+  "bright_mean": 0.88,
+  "saturated_frac": 0.5,
+  "min_side": 256,
+  "max_aspect": 1.6,
+  "reasons_vocabulary": ["blank", "under_exposed", "over_exposed", "heavily_cropped"],
+  "development_rejection_rate": null
+ },
+ "rule_notes": {
+  "blank": "A uniform field is reported as 'blank' whatever its brightness. A black, white or mid-grey frame is the same failure and must not be reported as three different ones.",
+  "exposure": "Mean intensity catches a globally dark or bright image; the saturated-pixel fraction catches one that is correctly exposed on average but clipped over half its area.",
+  "heavily_cropped": "Triggered by a side below 256 pixels, half of a 512 radiograph, or an aspect ratio past 1.6 which is outside any plausible chest field.",
+  "vocabulary": "Only the four reasons in contract C09 may be emitted. A fifth failure mode requires a contract change request, not a new string."
+ },
+ "evidence": [
+  "src/p2_gate/quality.py",
+  "tests/p2_gate/test_p2_05_quality.py"
+ ],
+ "data_used": ["synthetic degradations only; development confirmation still pending"],
+ "reviewed_by": "p4",
+ "guide_ack": false,
+ "locked": false,
+ "locked_at": null,
+ "git_sha": null,
+ "note": "Built and tested 2026-10-06 against synthetic degradations: black, white, under-exposed, over-exposed and 60%-cropped images are each rejected with the correct reason, mild degradations and clean images pass, and every threshold is verified to sit in a genuine gap between the clean and degraded distributions. Lock this after the development confirmation run, recording development_rejection_rate here. The rules supersede the placeholder thresholds in the Week 1 R2 gate stub."
 }

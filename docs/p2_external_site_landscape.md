@@ -9,17 +9,28 @@ and that a small local sample re-establishes it. That claim is only testable aga
 that is genuinely independent of TBX11K.
 
 We learned the hard way that "external" is not the same as "independent". Shenzhen and
-Montgomery were listed as our external validation sets throughout the methodology. They are
-**inside TBX11K** — all 800 of them, 400 in `imgs/extra/mc+shenzhen/` and 400 in the test
-split (see `p2_duplicate_finding.md`). Every candidate below is therefore judged on one
-criterion before any other: is it already in TBX11K?
+Montgomery were listed as our external validation sets throughout the methodology, and the
+TBX11K archive ships 400 of their images under `imgs/extra/mc+shenzhen/` with 400 more inside
+its anonymised test split (see `p2_duplicate_finding.md`). Every candidate below is therefore
+judged on one criterion before any other: could it have entered *our* training set?
+
+> **Correction, 2026-10-16 — see `p2_tbx11k_composition_corrected.md`.** The row below
+> originally read "**No** — verified inside TBX11K at cosine 0.999", and that judgement was
+> too strong. The NLM images ship in the archive but are referenced only from `all_*.txt`;
+> **our manifest uses the core lists, so none of them is in our training set** — max cosine
+> 0.8389 against all 8,400 training embeddings, zero pairs above 0.90. Shenzhen (336 TB / 326
+> normal) and Montgomery (58 / 80) are therefore **usable external validation for this
+> project**, with the bonus that each carries same-hospital controls. The same reasoning
+> applies to DA/DB, which are also core-list-excluded (but are not on our disk).
+>
+> This mattered: writing them off left the project with no external number at all for weeks.
 
 ## The landscape
 
-| Dataset | TB cases | Total | Access | Independent of TBX11K? |
+| Dataset | TB cases | Total | Access | Usable as external validation *for this project*? |
 |---|---|---|---|---|
-| Shenzhen + Montgomery | 394 | 800 | open | **No** — verified inside TBX11K at cosine 0.999 |
-| DA and DB | 125 | 278 | Kaggle / SourceForge | **No** — TBX11K ships `imgs/extra/da+db/` |
+| **Shenzhen + Montgomery** | 394 | 800 | open, already downloaded | **Yes** — shipped in the archive but excluded from the core lists we train on; verified unseen |
+| DA and DB | 125 | 278 | Kaggle / SourceForge | **Yes** in principle — same core-list exclusion; not currently on disk |
 | TB Chest X-ray Database (Qatar/Dhaka) | 700 | 4,200 | Kaggle | **No** — assembled from Shenzhen, Montgomery, Belarus and NIAID, so it inherits the overlap |
 | Belarus | 305 | 306 (169 patients) | see below | Probably — different country, programme and equipment |
 | VinDr-CXR | 479 | 18,000 | PhysioNet, credentialed | Probably — Vietnam, independent collection |
@@ -28,8 +39,11 @@ criterion before any other: is it already in TBX11K?
 | PadChest | 176 studies | 160,861 | registration | Probably, but 1.02 TB for 176 TB cases |
 
 **The public TB imaging landscape is small, and most of it is the same images recirculated.**
-Three of the eight entries are wholly or partly inside TBX11K. That is worth a sentence in the
-paper: cross-dataset validation in this field is frequently not cross-dataset at all.
+Three of the eight entries are wholly or partly shipped inside the TBX11K archive, and the
+Qatar/Dhaka set additionally draws its positives and negatives from different sources — so a
+model can score highly on it by recognising the acquisition pipeline rather than the disease.
+That is worth a sentence in the paper: cross-dataset validation in this field is frequently
+not cross-dataset at all, and "external" is a claim that has to be checked against the bytes.
 
 ## The two real options
 

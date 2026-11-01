@@ -27,6 +27,7 @@ Re-run against C04 when it lands; the stamp is how anyone notices it has not bee
 import hashlib
 import json
 import os
+import pathlib
 import re
 import time
 from dataclasses import dataclass
@@ -99,9 +100,16 @@ def load_manifest(manifest_path, variant, roi_path=None, raw_dir=None):
     if col not in man.columns:
         raise SystemExit("manifest %s has no column %r; is this a C04 manifest?" % (mp, col))
     base = mp.parent
+    repo = pathlib.Path(__file__).resolve().parents[2]
+    def _resolve(p):
+        p = str(p)
+        if os.path.isabs(p):
+            return p
+        # C04 records repo-relative paths; older manifests may be manifest-relative
+        cand = repo / p
+        return str(cand) if cand.exists() else str(base / p)
     df = man[["image_id", col]].rename(columns={col: "src_path"}).copy()
-    df["src_path"] = [str(p) if os.path.isabs(str(p)) else str(base / str(p))
-                      for p in df["src_path"]]
+    df["src_path"] = [_resolve(p) for p in df["src_path"]]
     df["crop_box"] = None
 
     if variant.kind == "crop":
