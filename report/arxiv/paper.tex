@@ -1,0 +1,217 @@
+% Near parity, not superiority -- arXiv-ready preprint source (pdflatex)
+% Built from report/paper_draft_v2.md (2026-11-01). Venue template (ML4H Findings) to be
+% applied later by swapping the class and front matter; the body is template-agnostic.
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.3cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xcolor}
+\setlength{\parskip}{0.35em}
+\setlength{\parindent}{0pt}
+\captionsetup{font=small,labelfont=bf}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+\newcommand{\ci}[2]{[$#1$, $#2$]}
+\newcommand{\code}[1]{\texttt{#1}}
+
+\title{\textbf{Near parity, not superiority: what a frozen foundation model can and cannot do for tuberculosis screening on a real cohort}}
+\author{Tharun \quad Atul Dhull \quad Ritika \quad Kunal\\[0.4em]
+\normalsize Department of Artificial Intelligence and Machine Learning,\\
+\normalsize BMS Institute of Technology and Management, Bengaluru, India}
+\date{\small Preprint, November 2026. All TBX11K numbers are on a provisional split; every Vietnam number is on an exposed cohort (Section~\ref{sec:exposure}).}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Published methods report above 0.99 AUROC on TBX11K, the largest annotated tuberculosis chest-radiograph benchmark. We measure what survives when the same frozen model is evaluated on a programmatic Vietnamese active-case-finding cohort with a microbiological reference standard and a commercial CAD comparator evaluated on the same patients, and we report every attempt to close the gap, including the ones that failed.
+
+A frozen RAD-DINO encoder (86.6\,M parameters) with a regional head of 769 trainable parameters per seed (3,845 across five seeds; max over a $12\times12$ grid of region logits) reaches 0.9368 on TBX11K development and \textbf{0.7242} \ci{0.6843}{0.7618} on the reserved half of a 2,708-participant Vietnamese screening cohort, against the comparator's 0.7862. The deficit concentrates in participants with previous tuberculosis ($0.7720 \rightarrow 0.6392$), reproducing a published effect; whether we degrade \emph{more} than the comparator is not statistically supported ($+0.048$ \ci{-0.017}{+0.111}). Scanner-subspace removal ($-0.0002$), head refitting on local labels (0 of 30 comparisons), lesion-box supervision ($+0.0019$ \ci{-0.0019}{+0.0061}) and encoder ensembling ($+0.0006$ \ci{-0.0067}{+0.0076}) are each a null on their declared primary endpoint; multi-source training is a real but sub-threshold $+0.0033$ \ci{+0.0006}{+0.0064}. Three changes help on the screening cohort and are invisible on the benchmark---training to the active-TB label ($+0.020$), a related encoder ($+0.019$), and a twelve-field screening questionnaire fused by logistic regression ($+0.058$)---and they overlap rather than add. The best configuration reaches 0.7941 fused on the tuning half, numerically above the comparator's 0.7780 with an interval that includes zero; a field ablation shows the part above the comparator is a two-column scanner-associated adjustment, which unlabelled per-scanner centering recovers (0.7795 with 25 images per scanner; paired $+0.0281$ \ci{+0.0074}{+0.0486} at 100) under the nominal sampling condition tested, and which fails a pre-registered stability bound under population shift. A concept-probing instrument built on radiology-report embeddings was found to be negation-blind and its apparent findings are withdrawn. The decision region of the head overlaps an annotated active-TB lesion in 95.9\% \ci{89.8}{100} of 49 development images.
+
+The candidate achieved a numerically higher AUROC point estimate than the comparator on the exposed tuning cohort; the paired confidence interval included zero, and no formal superiority, equivalence or non-inferiority claim is supported. The system has a measured low-memory inference footprint on a consumer laptop GPU, exact attribution and a measured localisation result. We give the protocol additions that made these distinctions visible and the reasons no superiority claim is available from public data.
+\end{abstract}
+
+\section{Introduction}
+Chest radiography is the dominant triage modality for tuberculosis where the disease is most prevalent, and automated reading is correspondingly well studied. On TBX11K, purpose-built architectures report 99.1\% AUROC~\cite{liu2024tbx11k}, and general-purpose vision--language models reach about 0.80 zero-shot on the same benchmark~\cite{akhtar2026audit}. The standard response to scepticism is external validation on Shenzhen and Montgomery~\cite{jaeger2014}, two small curated case-control collections, and a strong result there is generally taken as evidence of generalisation.
+
+We evaluated one frozen model along a ladder---benchmark, curated external sites, a programmatic screening cohort with Xpert MTB/RIF Ultra reference for every participant and a commercial reader scored on the same images~\cite{codlin2025}---and then spent the rest of the project trying to close the gap that appeared at the last rung. This paper reports both halves. It makes no architectural claim: patch-level aggregation over a frozen chest-radiograph foundation model is established prior art~\cite{rege2026radar,yang2025chexfound}. Its contributions are evaluative and methodological:
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.1em]
+\item \textbf{The ladder.} The same regional model loses approximately 0.21 AUROC between TBX11K development and the Vietnamese screening cohort, illustrating the substantial difference between curated benchmark evaluation and programmatic screening evaluation (Section~\ref{sec:ladder}). A quantified border-reading shortcut explains part of the benchmark figure and does not transfer.
+\item \textbf{Where the loss is.} It concentrates in previous tuberculosis, a published effect~\cite{codlin2025,kagujje2023,qin2024} that we reproduce rather than discover; removing the scanner-predictive embedding subspace did not improve screening AUROC, although scanner-associated score offsets later proved to matter for pooled ranking (Sections~\ref{sec:loss}, \ref{sec:decomp}).
+\item \textbf{Eleven interventions, pre-registered, evaluated against their declared decision criteria}---several negligible or adverse, one positive but sub-threshold on the primary split, three positive on the exposed screening cohort (which does not constitute independent validation), and the finding that those three overlap (Section~\ref{sec:interventions}).
+\item \textbf{Clinical-context fusion} that benefits our score and not the comparator's, decomposed into a scanner-associated adjustment and a diffuse questionnaire contribution, with a label-free calibration method that worked under the nominal sampling condition tested and failed under population shift.
+\item \textbf{A negative result on concept probing}: text-anchored concept scores from a radiology vision--language model cannot separate a finding from its negation, and conclusions drawn from them are withdrawn (Section~\ref{sec:concept}).
+\item \textbf{An exact-attribution result}: the decision region of a max-pooled head is the region that decided, and it overlaps an annotated active lesion $2.6\times$ as often as a random lung region.
+\end{enumerate}
+We also report what we did \emph{not} achieve, because the field's incentives run the other way: nothing here establishes superiority over the commercial comparator, and Section~\ref{sec:exposure} explains why no evaluation on public data could.
+
+\section{Data and model}\label{sec:data}
+\textbf{TBX11K}~\cite{liu2024tbx11k}: 11,200 radiographs from Chinese hospitals, one per individual; we use the 8,400 core train/val images (800 tuberculosis, with lesion boxes labelled \emph{ActiveTuberculosis} or \emph{ObsoletePulmonaryTuberculosis}) and re-split them, since official test labels are withheld: train 5,941 / development 659 / calibration 899 / internal test 901 (provisional split C01; the internal test partition was scored once during a rehearsal and is not used here). Training rows are healthy plus tuberculosis (3,241 images, 541 positive under \code{tb\_label}, 447 under \code{active\_tb\_label}); the 2,700 sick-non-TB train images are excluded for the production head (see Section~\ref{sec:negclass}).
+
+\textbf{Vietnam screening cohort}~\cite{codlin2025}: 2,708 participants from 127 mobile active-case-finding events in Ho Chi Minh City, 2019--2021, with Xpert Ultra for every participant, three radiography systems, a twelve-field screening questionnaire, and Lunit INSIGHT CXR 3.9.0.1 scores. 280 are Xpert-positive; 36\% of participants report previous tuberculosis. The cohort was split once, before any tuning, stratified by outcome and scanner, into a tuning half (TUNE, 1,352, 139 positive) and a reporting half (REPORT, 1,356, 141 positive). The published AUROCs of~\cite{codlin2025} reproduce from our copy to two decimals, which is how we identified it as that paper's test library. Enrolment was risk-based mobilisation, not unselected consecutive enrolment.
+
+\textbf{Curated external sites}: Shenzhen (662, 336 TB), Montgomery (138, 58 TB), and the TBX11K DA/DB lists (176, 74 TB).
+
+\textbf{Model.} RAD-DINO ViT-B/14~\cite{perezgarcia2025raddino}, revision pinned, frozen (86,580,480 parameters). Images are standardised to 512\,px, lung-masked with a public segmenter (outside-lung pixels set to the image mean), encoded at 518\,px, and the $37\times37$ patch tokens are average-pooled to a \textbf{$12\times12$ grid of 768-d L2-normalised region vectors}. The head is one $\mathrm{Linear}(768\to1)$ applied to every region; the image logit is the \textbf{maximum over the 144 region logits}. Training: AdamW $3\mathrm{e}{-3}$, batch 256, weight decay $10^{-4}$, logit adjustment by the training prior, early stopping on development AUROC, seeds 17/29/43/61/79, scores averaged over seeds. Trainable parameters: 769 per seed, 3,845 in total; the optional fusion layer (Section~\ref{sec:fusion}) adds 13.
+
+\textbf{Baseline model versus research candidate.} Two configurations appear in this paper. The \emph{baseline} is the production head above. The \emph{research candidate (v3)} is the configuration behind the 0.7941 result of Section~\ref{sec:fusion}; it is frozen and not promoted (Table~\ref{tab:candidate}).
+
+\begin{table}[t]\centering\small
+\caption{Baseline model versus research candidate v3.}\label{tab:candidate}
+\begin{tabularx}{\textwidth}{@{}lLL@{}}\toprule
+component & baseline & research candidate v3\\\midrule
+encoder (frozen) & \code{microsoft/rad-dino} @ \code{110cbc18\ldots} & \code{microsoft/rad-dino-maira-2} @ \code{a6132efb\ldots} (same ViT-B/14 architecture, continued self-supervised training)\\
+training target & \code{tb\_label}: active, latent and mixed TB positive; healthy negative & \code{active\_tb\_label}: active and mixed TB positive; latent (obsolete-only) TB \textbf{relabelled negative} alongside healthy\\
+training rows & 3,241 (541 positive) & 3,241 (447 positive)\\
+region aggregation & $12\times12$ maximum & $12\times12$ maximum\\
+head & $\mathrm{Linear}(768\to1)$, 769 parameters per seed, 5 seeds & identical\\
+clinical fusion & optional, 12 fields & optional, 12 fields including two scanner indicators\\
+status & served default (bundle v2) & frozen research candidate (bundle v3), not promoted\\\bottomrule
+\end{tabularx}
+\end{table}
+
+\textbf{Statistics.} Paired bootstrap on shared indices (2,000--4,000 resamples, fixed seed); every intervention carried a protocol hashed before fitting, a minimum meaningful effect of $+0.02$ with the interval excluding zero, and a reproduction gate requiring the production arm to be reproduced to 0.0005 before any contrast was read. Resampling is at the participant level (one image per participant). The released data carry no screening-event identifier, so clustering of participants within the 127 events cannot be modelled; if outcomes cluster within events, participant-level intervals understate uncertainty.
+
+\section{The ladder}\label{sec:ladder}
+Table~\ref{tab:ladder} gives the same frozen model along the ladder. What was pre-registered is the aggregator's effect within the tuning half: \code{mean} over the same regions---mathematically global pooling---stays at 0.636--0.642 across every grid size while \code{max} reaches 0.7239, and a learned gated-attention aggregator is worse (0.6416). Selection optimism between the tuning and reporting halves is $-0.0005$.
+
+\begin{table}[htbp]\centering\footnotesize
+\caption{AUROC along the ladder. The global column is the earlier full-image probe, on the full 2,708 cohort for Vietnam (0.6151 against the comparator's 0.7827 there); the regional column is on the reserved REPORT half. The two Vietnam figures are different denominators and not a before/after pair.}\label{tab:ladder}
+\begin{tabularx}{\textwidth}{@{}lLrrcc@{}}\toprule
+rung & cohort & $n$ & TB & global (full image) & regional $12\times12$ max\\\midrule
+benchmark & TBX11K development & 659 & 59 & 0.9949 & 0.9368\\
+curated external & Shenzhen & 662 & 336 & 0.9382 & 0.9690\\
+curated external & Montgomery & 138 & 58 & 0.8183 & 0.9690\\
+curated external & DA / DB & 72 / 104 & 22 / 52 & 0.7932 (pooled) & 0.9755 / 0.9497\\
+\textbf{screening} & \textbf{Vietnam REPORT} & \textbf{1,356} & \textbf{141} & --- & \textbf{0.7242} \ci{0.6843}{0.7618}\\
+\emph{same patients, commercial} & \emph{Lunit 3.9.0.1} & & & & \emph{0.7862}\\\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{The benchmark figure is partly a border}
+The global probe reaches \textbf{0.9094 from the outer 12\% of the image alone}---shoulders, collimation, background, no lung---so 82.7\% of its above-chance performance is available without the anatomy of interest. Dilating the erased lung region by 48\,px costs 0.0039; horizontal flipping changes nothing ($+0.0001$). The shortcut does not transfer: the border-only model scores 0.52--0.62 at the four external sites, while a lungs-only model tracks the full image within 0.015 everywhere and beats it at the two most distant sites. The internal figure is the contaminated one, which is why the production model is lung-masked.
+
+\subsection{The screening failure is the negative class}\label{sec:negclass}
+TB-versus-healthy on TBX11K is AUROC 1.0000; TB-versus-sick is 0.9861. A screening queue is the second case and worse: its Xpert-negatives include healed tuberculosis and chronic lung disease. Median scores on the cohort are 0.953 for cases and 0.886 for non-cases under the global probe---the model learned abnormality, and in a screening queue abnormality is the base rate. A distance-based out-of-distribution gate does not detect this: the cohort sits at the same measured distance as Shenzhen (median 0.531 vs 0.533) and the gate passes 99.2\% of it.
+
+\section{Where the loss is}\label{sec:loss}
+\textbf{Previous tuberculosis.} Under the construction used by the published literature (active TB vs Xpert-negative, within history strata), our regional head scores 0.7720 \ci{0.740}{0.803} in participants without previous TB and \textbf{0.6392} \ci{0.586}{0.692} with it---degradation \textbf{$+0.1328$} \ci{0.0718}{0.1951}. The comparator degrades too ($0.8170 \rightarrow 0.7192$). The difference in differences, \textbf{$+0.0481$} \ci{-0.0170}{+0.1113}, includes zero: the claim that we degrade \emph{more} than the comparator is not supported. The effect itself was published on this very cohort by its depositors~\cite{codlin2025} and earlier by others~\cite{kagujje2023,qin2024}; we reproduce it. \code{past\_tb} is self-reported history, not a radiological annotation, and is treated as such throughout.
+
+\textbf{Scanner-predictive embedding directions.} Removing the 44 of 768 embedding directions that predict the radiography system did not improve screening AUROC ($-0.0002$ \ci{-0.0009}{+0.0004}) while scanner decodability stayed at 0.91. Subsequent experiments nevertheless identified scanner-associated score \emph{offsets} that materially affect pooled ranking and operating-point behaviour (Sections~\ref{sec:decomp}--\ref{sec:labelfree}); the two findings are different and both stand.
+
+\section{Interventions}\label{sec:interventions}
+Every row of Table~\ref{tab:interventions} was a pre-registered run with a hashed protocol; the primary split is TBX11K calibration (899; 81 active-TB positives, scored against the active label); the screening tuning half is reported as context and is exposed. Rows 1, 2, 4, 6 and 11 act on cohort-specific quantities (scanner subspace, aggregator selection, local-site refit, questionnaire fusion, per-scanner centering) and by design have no calibration endpoint; their declared criteria were on the screening cohort (row 1 on REPORT, before the exposure audit) and they are exploratory. Rows 3, 5 and 7--10 have the calibration endpoint as primary.
+
+\begin{table}[htbp]\centering\footnotesize
+\caption{Eleven pre-registered interventions. $\Delta$ = paired AUROC change against the production head.}\label{tab:interventions}
+\begin{tabular}{@{}r@{\hspace{0.6em}}p{0.29\textwidth}p{0.21\textwidth}p{0.27\textwidth}p{0.13\textwidth}@{}}\toprule
+\# & intervention & calibration $\Delta$ (primary) & screening TUNE $\Delta$ & verdict\\\midrule
+1 & scanner-subspace removal (INLP) & --- & $-0.0002$ \ci{-0.0009}{+0.0004} (REPORT) & null\\
+2 & gated-attention MIL instead of max & --- & $-0.082$ & worse\\
+3 & \textbf{active-TB label} (latent $\to$ negative) & $-0.0037$ \ci{-0.0081}{+0.0002} & \textbf{$+0.0203$ \ci{+0.0127}{+0.0279}} & external only\\
+4 & head refit on local labels vs threshold only & 0 of 30 comparisons help; max $+0.0031$ & --- & null\\
+5 & lesion-box region supervision ($\lambda=1$) & $+0.0019$ \ci{-0.0019}{+0.0061} & $-0.0108$ \ci{-0.0182}{-0.0037} & null / worse\\
+6 & \textbf{clinical-context fusion} (12 fields, LR) & --- & \textbf{$+0.058$ \ci{+0.030}{+0.085}} & external only\\
+7 & three training sources (+ Shenzhen, Montgomery) & $+0.0033$ \ci{+0.0006}{+0.0064} & $+0.0036$ & real, sub-threshold\\
+8 & encoder ensemble (RAD-DINO + MAIRA-2 + XraySigLIP) & $+0.0006$ \ci{-0.0067}{+0.0076} & $+0.011$ & null\\
+9 & \textbf{RAD-DINO-MAIRA-2 as drop-in encoder} & $-0.0004$ \ci{-0.0076}{+0.0067} & \textbf{$+0.0188$ \ci{+0.0015}{+0.0364}} & external only\\
+10 & levers 3 + 7 + 9 stacked & $-0.0010$ \ci{-0.0099}{+0.0083} & $+0.0286$ \ci{+0.0089}{+0.0490} (predicted $+0.047$) & not additive\\
+11 & label-free per-scanner centering & --- & $+0.0281$ \ci{+0.0074}{+0.0486} ($n=100$) & worked under nominal sampling; fails stability bound\\\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Three levers, invisible internally, overlapping externally}
+The active-TB label, the related encoder and the extra sources each leave calibration unchanged and move the screening cohort. The label effect is a \emph{relabelling} effect: dropping the latent images instead is worth $+0.0023$. The three are not additive---the stack recovers $+0.029$ of a predicted $+0.047$, and once the encoder is MAIRA-2 the extra sources subtract ($-0.0062$ \ci{-0.0124}{+0.0001}). The best image-only head on the screening cohort is MAIRA-2 with the active label and TBX11K alone: \textbf{0.7585} \ci{0.722}{0.796}, $+0.0348$ \ci{+0.0160}{+0.0542} over production, $-0.0032$ on calibration.
+
+\subsection{Capacity transfers worse}
+A 2,304-d head on the concatenated features of three encoders has the best development AUROC of anything fitted (0.9505) and loses on the screening cohort ($-0.0137$ \ci{-0.0324}{+0.0041}). The pattern ``more internal, less external'' held across every configuration in the project---global heads 0.957--0.995 internally and 0.67 externally; attention 0.9495 / 0.6416; regional 0.9368 / 0.7242---and is our reason for not fine-tuning the backbone.
+
+\subsection{Attribution is exact, and it lands on lesions}\label{sec:loc}
+Because the image logit \emph{is} the maximum region logit, the arg-max region is the decision region with no approximation. Attribution is exact at the \textbf{$12\times12$ region level} (cells of $\approx43$\,px at 512\,px), not at pixel-level lesion boundaries. The spatial unit of evaluation is the pooled $12\times12$ region cell, not the original $37\times37$ ViT patch: a cell counts as overlapping a box if the cell's pixel footprint shares at least one 14-px ViT patch with the box's footprint after the exact preprocessing chain (box $\to$ 512 $\to$ 518\,px $\to$ patch grid $\to$ pooling bins). On the 49 development images carrying an active-lesion box, the production head's arg-max cell overlaps a box---a \textbf{top-1 region-cell hit}---in \textbf{95.9\%} \ci{89.8}{100.0} (top-3 cells: 100\%), against 36.7\% for a random lung cell, 18.4\% for a random cell, 8.2\% for the centre cell, and a mean box coverage of 19.7\% of cells. The box-supervised head (Table~\ref{tab:interventions}, row 5) has a top-1 region-cell hit rate of 0.939 on the same images---no improvement. This is ``the strongest region is on a lesion'', not a detector; it is exploratory, on 49 curated images with large boxes.
+
+\subsection{Clinical-context fusion helps us and not the comparator}\label{sec:fusion}
+A logistic regression ($C=1$) on the standardised image score plus twelve questionnaire and acquisition fields (sex, age group, cough, fever, weight loss, night sweats, contact, previous TB, diabetes and unknown-diabetes, two scanner indicators), 10-fold $\times$ 20 repeats on the tuning half (Table~\ref{tab:fusion}).
+
+\begin{table}[htbp]\centering\footnotesize
+\caption{Clinical-context fusion, tuning half, repeat-averaged out-of-fold AUROC.}\label{tab:fusion}
+\begin{tabular}{@{}lcclc@{}}\toprule
+image score & raw & fused & $\Delta$ & previous TB raw $\to$ fused\\\midrule
+production head & 0.7237 & 0.7809 & $+0.058$ \ci{+0.030}{+0.085} & $0.6144 \to 0.7122$\\
+MAIRA-2 + active head & 0.7585 & \textbf{0.7941} & $+0.037$ \ci{+0.015}{+0.058} & $0.6501 \to 0.7349$\\
+comparator & 0.7780 & 0.7778 & $+0.001$ \ci{-0.018}{+0.019} & $0.7062 \to 0.7144$\\\bottomrule
+\end{tabular}
+\end{table}
+
+Fused MAIRA-2 vs comparator raw: \textbf{$+0.0170$ \ci{-0.0193}{+0.0527}}; in previous TB $+0.030$ \ci{-0.046}{+0.107}. The previous-TB improvement under fusion should not be read as the questionnaire repairing the previous-TB deficit of Section~\ref{sec:loss}: Section~\ref{sec:decomp} shows that in that subgroup the scanner term carries most of it and the \code{past\_tb} field almost none. Sensitivity at 70\% specificity: 0.741 vs 0.708. The comparator keeps the better AUPRC (0.328 vs 0.300). We state only what was measured: the comparator's score gains nothing from these twelve fields in this experiment; we do not claim it cannot use clinical context.
+
+\subsection{The gain decomposes into a scanner-associated adjustment and a questionnaire}\label{sec:decomp}
+Leave-one-field-out on the fused MAIRA-2 model: the only field whose removal costs with an interval excluding zero is the \textbf{scanner identifier} ($-0.0138$ \ci{-0.0250}{-0.0029}; $-0.0429$ \ci{-0.0702}{-0.0180} in previous TB). Removing \code{past\_tb} changes the previous-TB AUROC by $+0.004$. With the ten questionnaire fields and no scanner term the fused model is \textbf{0.7803} against the comparator's raw 0.7780, a difference within noise, and image + scanner alone is 0.7788. The point estimate above the comparator is a per-scanner intercept. Scanner indicators produced a substantial improvement in our candidate ($\approx0.02$ overall, 0.04 in previous TB), while adding the same fields to the comparator produced no material improvement in this experiment ($+0.001$ \ci{-0.018}{+0.019}). This does not independently establish scanner invariance in either system---that would need scanner-stratified performance and calibration analysis including an unseen scanner; it says that a scanner-associated adjustment is available to our score and was not, in this experiment, to the comparator's.
+
+\subsection{The scanner offset can be removed without labels---under a condition}\label{sec:labelfree}
+On the tuning half the raw candidate's score sits 1.3 logits higher on one of the three scanners at similar prevalence, and the pooled AUROC (0.7546 on a patient-disjoint evaluation group of 677 participants, 70 Xpert-positive; the calibration pools hold the other 675) is 0.03--0.07 below every scanner's own. Centering each scanner's scores on an \textbf{unlabelled} batch of its own images, with calibration and evaluation groups disjoint (Table~\ref{tab:labelfree}):
+
+\begin{table}[htbp]\centering\footnotesize
+\caption{Label-free per-scanner calibration, evaluation group $n=677$ (70 Xpert-positive); 50 draws per batch size.}\label{tab:labelfree}
+\begin{tabularx}{\textwidth}{@{}lLL@{}}\toprule
+$n$ per scanner & supervised scanner term & unlabelled centering\\\midrule
+25 & 0.7667 \ci{0.697}{0.784} & \textbf{0.7795 \ci{0.769}{0.786}}\\
+100 & 0.7786 & 0.7818\\
+$\Delta$ vs raw at $n=100$ (paired) & $+0.0281$ \ci{+0.0070}{+0.0484} & \textbf{$+0.0281$ \ci{+0.0074}{+0.0486}}; previous TB $+0.0557$ \ci{+0.0065}{+0.1004}\\\bottomrule
+\end{tabularx}
+\end{table}
+
+Within-scanner AUROC is identical under every arm; the effect is pooled ranking and the operating point. Referral burden at a label-free top-30\% rule moves from 31\% / 24\% / 50\% across scanners to 40\% / 31\% / 32\%.
+
+The failure mode, pre-registered and found: a calibration batch drawn from previous-TB patients only lowers that scanner's sensitivity from 0.677 to 0.555 (move 0.122; bound 0.10), because centering removes population differences as readily as acquisition ones. The supervised term fails worse in the opposite direction (sensitivity 0.18 on a negatives-only batch; 46\% referral burden on an enriched one). By the rule written before the numbers the method is \textbf{not usable as is}; it needs a consecutive-sample calibration batch and a fail-closed guard whose safety would have to be established prospectively. The positive result holds under the nominal sampling condition tested---random draws from each scanner's pool---and is not a general representative-sampling guarantee.
+
+\subsection{Cost}
+Encoder throughput on a 6\,GB laptop GPU: 0.030\,s/image (fp16), peak 0.69\,GB; 1.25\,s/image on an 8-thread CPU. Head fit on 3,241 cached images: 6.6\,s. With the lung segmenter on the same GPU (float32; masks agree with the CPU-built training cache at 99.998\% of pixels, IoU $\geq 0.9999$ on 16 images) the full pipeline runs at a median 0.13\,s/image, p90 0.15\,s, after a $\sim$40\,s first-call model load; on CPU the segmenter alone is $\approx 2.1$\,s/image. Threshold recalibration to a new site reaches the oracle operating point with 25 local labelled images; head refitting adds nothing to it.
+
+\section{A negative result on concept probing}\label{sec:concept}
+To ask \emph{what} the score responds to, we projected the cohort through a public radiology vision--language model~\cite{han2026clear} and correlated the TB score with similarity to single-phrase text anchors (\emph{scarring}, \emph{fibrosis}, \emph{consolidation}, \ldots), using only exact vocabulary entries and excluding concepts without one. Among 1,213 Xpert-negatives, \emph{scarring} correlates with our score at $\rho=0.566$ while carrying no information about TB (AUROC vs Xpert 0.494); \emph{consolidation}, the canonical active-TB finding, correlates \emph{negatively} ($-0.300$).
+
+A forensic pass explained the anomaly and disqualified the instrument. The anchors cannot distinguish a finding from its negation: the text embedding of \emph{no scarring} sits at cosine 0.906 to \emph{scarring}, and the image-side correlation of \emph{no scarring} with the score is \textbf{$+0.301$, the same sign}; \emph{no consolidation} correlates at \textbf{$-0.534$}, more negative than \emph{consolidation}, because 27.6\% of vocabulary sentences containing ``consolidation'' are negated normal-report language and the anchor sits in the normality region of the embedding (\emph{no acute cardiopulmonary process}: $-0.601$). Every association reported from this instrument is therefore a \emph{topic-neighbourhood} association, not evidence of reliance on a finding, and we withdraw the mechanistic readings an earlier draft had built on them. A re-labelled head (lever 3) moved \emph{scarring} by $-0.0344$ and \emph{no scarring} by $-0.0343$. The method's limit is a method limitation and is reported as one.
+
+\section{Exposure, and why no superiority claim is available}\label{sec:exposure}
+Every Vietnam number in this paper is on an exposed cohort. The tuning half was used for selection by design. The reporting half was intended as read-once and was not: a provenance audit found six scoring events across five runs, four of which influenced a decision, including the characterisation of the previous-TB effect on the pooled 2,708. Levers 3, 6 and 9 were each identified on the tuning half, so their combination inherits that exposure; the fused 0.7941 is a best case designed on the cohort, not an estimate of it. TBX11K's split is provisional and ships no patient identifier, so no fold is patient-grouped; 23 of 899 calibration images have a cross-split near-duplicate (effect on the primary endpoint: 0.0003). HIV status was unavailable in every cohort. The localisation result is on 49 development images.
+
+The defensible statement is: \emph{on an exposed screening cohort, a frozen-encoder regional head with clinical-context fusion achieved a numerically higher AUROC point estimate than the commercial comparator ($+0.017$ \ci{-0.019}{+0.053}); the paired interval includes zero, and no formal superiority, equivalence or non-inferiority claim is supported; without the scanner term the point estimate is 0.7803 against 0.7780.} Confidence intervals are participant-level (Section~\ref{sec:data}). Turning that into a comparison that survives outside this environment requires a cohort nobody here has touched, the frozen candidate and the comparator scored on the same patients, previous TB as a pre-specified subgroup, and a protocol fixed before the first score.
+
+\section{What we propose}
+Four protocol additions, none requiring new annotation, that made every distinction in this paper visible:
+\begin{enumerate}[leftmargin=1.6em,itemsep=0.1em]
+\item \textbf{A region-ablation baseline} (mask the anatomy, re-run the head) evaluated \emph{externally as well as internally}, to separate a dataset-specific shortcut from a genuine signal.
+\item \textbf{A programmatic screening cohort with a commercial comparator on the same patients.} It converted ``0.72 seems low'' into ``0.72 against 0.79 on identical images''. Later, the same comparison produced a numerically higher candidate point estimate (0.794 against 0.778) whose paired confidence interval included zero, with the difference substantially associated with the scanner indicator fields.
+\item \textbf{A primary split the levers were not chosen on, and a reproduction gate.} Three of our eleven interventions would have been adopted on the tuning half alone; none met its bar on the primary split.
+\item \textbf{A negation probe before any text-anchored concept score is interpreted.} Cosine between \emph{X} and \emph{no X} above $\approx0.75$ means the instrument cannot say what it appears to say.
+\end{enumerate}
+
+\section{Conclusion}
+A frozen radiology foundation model with a regional head of 769 trainable parameters per seed reaches 0.94 on a benchmark and 0.72 on a screening cohort; a commercial reader reaches 0.79 on the same patients. Eleven pre-registered interventions found three levers that move the screening number and none that moves the benchmark, and the three overlap. With a twelve-field screening questionnaire the best configuration reaches 0.794, numerically above the comparator with a paired interval that includes zero---no superiority, equivalence or non-inferiority claim is supported---and the margin above the comparator is a scanner-associated adjustment that unlabelled centering recovered under the nominal sampling condition tested and lost under population shift. The system's measured properties are a low-memory inference footprint on a consumer laptop GPU, exact attribution with a lesion-localisation result, and a clinical layer from which the comparator's score did not benefit in this experiment; its measured disadvantage is a scanner-associated score offset that the comparator did not show here. We describe it as a scanner-aware screening research system with an experimentally investigated label-free calibration mechanism---not a self-calibrating one, and not a better one---and we think the honest version is the publishable one.
+
+\section*{Reproducibility}
+Every number traces to a run directory in the project repository with a protocol hashed before fitting, result tables, a test suite and a SHA-256 manifest. The encoders are public with revisions pinned; the benchmark, the two NLM sets and the Vietnam cohort are public. The ablations run in minutes on a 6\,GB laptop GPU.
+
+\begin{thebibliography}{12}\small
+\bibitem{liu2024tbx11k} Y. Liu, Y.-H. Wu, S.-C. Zhang, L. Liu, M. Wu, M.-M. Cheng, ``Revisiting computer-aided tuberculosis diagnosis,'' \emph{IEEE Trans. Pattern Anal. Mach. Intell.} 46(4):2316--2332, 2024, doi:10.1109/TPAMI.2023.3330825.
+\bibitem{jaeger2014} S. Jaeger, S. Candemir, S. Antani, Y.-X. J. W\'ang, P.-X. Lu, G. Thoma, ``Two public chest X-ray datasets for computer-aided screening of pulmonary diseases,'' \emph{Quant. Imaging Med. Surg.} 4(6):475--477, 2014, doi:10.3978/j.issn.2223-4292.2014.11.20.
+\bibitem{codlin2025} A. J. Codlin, L. N. Q. Vo, T. P. Dao, R. J. Forse, H. T. M. Dang, L. H. Nguyen, H. B. Nguyen, L. V. Dinh, K. Sidney Annerstedt, J. Lundin, K. L\"onnroth, ``Comparison of different Lunit INSIGHT CXR software versions when reading chest radiographs for tuberculosis,'' \emph{PLOS Digit. Health} 4(4):e0000813, 2025, doi:10.1371/journal.pdig.0000813; data: Dryad doi:10.5061/dryad.5tb2rbpcv.
+\bibitem{rege2026radar} A. A. Rege, A. M. Dukre, S. S. Shah, I. Razzak, ``RADAR: Acquisition-adversarial attention pooling over a frozen chest-radiograph foundation model for tuberculosis screening,'' in \emph{MICCAI 2026 Satellite Events --- TREAT-MMTB}, Springer (camera-ready, paper TREAT-MMTB\_012); code: github.com/adinathdukre/RADAR-TB. Cited for its architecture; no numerical comparison is made.
+\bibitem{yang2025chexfound} Z. Yang, X. Xu, J. Zhang, G. Wang, M. K. Kalra, P. Yan, ``Chest X-ray foundation model with global and local representations integration,'' \emph{IEEE Trans. Med. Imaging} 44(12):4787--4799, 2025, doi:10.1109/TMI.2025.3581907.
+\bibitem{kagujje2023} M. Kagujje, A. D. Kerkhoff, M. Nteeni, I. Dunn, K. Mateyo, M. Muyoyeta, ``The performance of computer-aided detection digital chest X-ray reading technologies for triage of active tuberculosis among persons with a history of previous tuberculosis,'' \emph{Clin. Infect. Dis.} 76(3):e894--e901, 2023, doi:10.1093/cid/ciac679.
+\bibitem{qin2024} Z. Z. Qin, M. Van der Walt, S. Moyo, F. Ismail, P. Maribe, C. M. Denkinger, S. Zaidi, R. Barrett, L. Mvusi, N. Mkhondo, K. Zuma, \emph{et al.}, ``Computer-aided detection of tuberculosis from chest radiographs in a tuberculosis prevalence survey in South Africa: external validation and modelled impacts of commercially available artificial intelligence software,'' \emph{Lancet Digit. Health} 6(9):e605--e613, 2024, doi:10.1016/S2589-7500(24)00118-3.
+\bibitem{perezgarcia2025raddino} F. P\'erez-Garc\'ia, H. Sharma, S. Bond-Taylor, K. Bouzid, V. Salvatelli, M. Ilse, S. Bannur, D. C. Castro, A. Schwaighofer, M. P. Lungren, M. T. Wetscherek, N. Codella, S. L. Hyland, J. Alvarez-Valle, O. Oktay, ``Exploring scalable medical image encoders beyond text supervision,'' \emph{Nat. Mach. Intell.} 7:119--130, 2025, doi:10.1038/s42256-024-00965-w.
+\bibitem{han2026clear} T. Han, R. Wu, Y. Tian, F. Khader, L. C. Adams, K. K. Bressem, C. Davatzikos, J. N. Kather, L. Shen, D. A. Mankoff, E. Mortani Barbosa Jr., D. Truhn, ``CLEAR: an auditable foundation model for radiology grounded in clinical concepts,'' \emph{Nat. Biomed. Eng.}, 2026, doi:10.1038/s41551-026-01741-4; code and vocabulary: github.com/peterhan91/CLEAR.
+\bibitem{xraysiglip} Stanford AIMI, \emph{XraySigLIP (ViT-B/16, SigLIP, 512 px)}, Hugging Face model card, model id \code{StanfordAIMI/XraySigLIP\_\_vit-b-16-siglip-512\_\_webli}, revision \code{e2ad64ee\ldots}, accessed 2026-11-01. The card cites Z. Chen \emph{et al.}, ``CheXagent: Towards a foundation model for chest X-ray interpretation,'' arXiv:2401.12208, 2024, which is not itself an XraySigLIP paper.
+\bibitem{akhtar2026audit} M. Akhtar, M. Tanveer, M. Arshad, ``Beyond benchmark scores: Auditing medical vision-language models for chest X-ray tuberculosis screening,'' arXiv:2609.21763, 2026.
+\end{thebibliography}
+
+\end{document}
