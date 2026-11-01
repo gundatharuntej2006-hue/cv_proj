@@ -720,6 +720,7 @@ exactly. What has repeatedly needed repair is **interpretation**.
 | which clinical fields carry the fusion gain | **DECOMPOSED** (R23) — only the scanner identifier carries it (−0.0138 [−0.0250, −0.0029]; −0.043 in previous TB); questionnaire-only fusion 0.7803 against comparator raw 0.7780 (within noise); image + scanner alone 0.7788 |
 | research candidate v3 frozen | **BUILT, NOT PROMOTED** (R24) — `artifacts/p2/bundle_v3_candidate` (MAIRA-2 `a6132efb…`, active target, R22 head copied not retrained, dev-only thresholds, 12-field fusion with scanner flagged as site calibration); runtime reproduces cache to max |diff| 0.0046 on 16 images; `serve_v2.py --bundle` selects it; v2 stays default |
 | label-free per-scanner calibration | **WORKS, NOT USABLE AS IS** (R25) — mean-centering on 25 unlabelled images/scanner recovers the full supervised gain (+0.028 [+0.007, +0.049]; +0.056 previous TB); fails the pre-registered stability bound on one stress condition (previous-TB-only batch: scanner sensitivity −0.122, bound 0.10); supervised term fails worse under prevalence shift; requires a consecutive-sample calibration batch — guard not yet tested |
+| untouched-cohort head-to-head vs comparator | **PRE-REGISTERED, AWAITING DATA** — `artifacts/headtohead_prereg_v1/` (PROTOCOL v1 sha `16b44ec1…` hashed 2026-11-01; non-inferiority margin 0.03, previous TB pre-specified but exploratory, scanner-stratified; ≥ 400 confirmed cases for power; one-shot scorer with LOCK, no training path; DATA_REQUEST.md ready to send) |
 | consecutive-sample calibration guard | **IMPLEMENTED AS A FAIL-CLOSED PROPOSAL ENDPOINT, STILL UNVALIDATED** (`src/p2_cls/site_calibration.py`, `/v2/calibration/propose`; 6 tests) — ≥ 25 unlabelled consecutive screening images, questionnaire composition checked against a site reference, **fail closed**: composition uncertain or outside validated limits → no correction, frozen uncorrected model, human review flag. Software cannot prove a batch is consecutive; that needs auditable enrolment records. Establishing that these safeguards make calibration safe requires a prospective evaluation, not another TUNE run |
 | served model = research model | **FIXED** (R18) — bundle_v2_regional + pipeline_v2 + serve_v2, smoke-verified |
 | scanner composition in the consolidation association | quantified, not decomposed |
@@ -738,7 +739,9 @@ as a radiological finding with the bounded wording, and record negation-blindnes
 method limitation. The numbers stand; only the words need repair.
 
 **The next milestone is not another model experiment.** Candidate v3 is frozen and
-reproducible. The question that can change the product is whether it beats the commercial
+reproducible, and the evaluation that can test it is pre-registered and hashed
+(`artifacts/headtohead_prereg_v1/`, protocol v1 `16b44ec1…`): send `DATA_REQUEST.md`, build the
+manifest on receipt, dry-run, then the single `--run`. The question that can change the product is whether it beats the commercial
 comparator on a cohort nobody here has touched — same patients, same reference standard,
 previous TB as a pre-specified primary subgroup, protocol fixed before the first score.
 Both Vietnam partitions are exposed (TUNE by design; REPORT by the six events at R7), so
