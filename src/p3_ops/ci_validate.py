@@ -33,8 +33,13 @@ def main() -> int:
         files = {"C10": make_c10.generate(root=tmp), "C11": make_c11.generate(root=tmp),
                  "C15": make_c15.generate(root=tmp)}
         for cid, path in files.items():
-            ad.validate(cid, path)                     # raises on an invalid file
-            print(f"{cid}: {Path(path).name} valid (tbcore)")
+            if cid == "C11":
+                from p3_xai.c11 import validate_table
+                validate_table(Path(path))
+                print(f"{cid}: {Path(path).name} valid (strict producer validator; P4 has no C11 validator)")
+            else:
+                ad.validate(cid, path)
+                print(f"{cid}: {Path(path).name} valid (tbcore)")
     return 0
 
 

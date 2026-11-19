@@ -68,7 +68,7 @@ def test_rejected_and_unreadable_write_nulls_but_keep_versions(log):
         assert line["t_lower"] is None and line["t_upper"] is None
         assert all(isinstance(line[k], str) and line[k] for k in logger.VERSION_FIELDS)
     assert rej["gate_pass"] is False and unr["gate_pass"] is None
-    assert unr["latency_ms"] is None
+    assert unr["latency_ms"] == P4_SCENARIOS["unreadable"]["timing_ms"]["total"]
 
 
 def test_each_call_appends_exactly_one_line(log):

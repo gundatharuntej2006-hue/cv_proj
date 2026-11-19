@@ -23,7 +23,9 @@ def test_p4_conformal_triage():
     assert res_refer.triage_category == TriageCategory.REFER
 
 
-def test_p4_orchestrator(mock_cxr_image_path):
+def test_p4_orchestrator(mock_cxr_image_path, monkeypatch, tmp_path):
+    monkeypatch.setenv("TB_MOCK", "1")
+    monkeypatch.setenv("TB_RUNS_DIR", str(tmp_path / "runs"))
     orch = TriagePipelineOrchestrator()
     img = np.random.uniform(0.1, 0.9, (512, 512)).astype(np.float32)
     meta = InputCXR(

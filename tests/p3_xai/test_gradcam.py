@@ -88,6 +88,16 @@ def test_heatmap_shape_dtype_range_and_zero_outside_crop(model, img):
     assert not h[outside].any()
 
 
+def test_frozen_classifier_still_produces_gradient_explanation(model, img):
+    import copy
+    frozen = copy.deepcopy(model)
+    for p in frozen.parameters():
+        p.requires_grad_(False)
+    with torch.no_grad():
+        h = GradCamExplainer(frozen)(img, CROP)
+    assert h.shape == (512, 512) and h.max() > 0
+
+
 def test_deterministic_and_crop_dependent(model, img):
     e = GradCamExplainer(model)
     a, b = e(img, CROP), e(img.copy(), CROP)

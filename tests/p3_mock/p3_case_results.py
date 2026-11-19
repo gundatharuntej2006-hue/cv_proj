@@ -49,7 +49,8 @@ LINK_FIRED = _variant("c_0b11a7e3", "ANALYSED", triage={
 REJECTED = _variant("c_9a2c44d0", "REJECTED_GATE", segmentation=None, classifier=None, detector=None,
                     triage=None, gate={**ANALYSED["gate"], "gate_pass": False, "ood_score": 0.51})
 UNREADABLE = _variant("c_31f0e9b5", "UNREADABLE", gate=None, segmentation=None, classifier=None,
-                      detector=None, triage=None, explainability=None, timing_ms=None,
+                      detector=None, triage=None, explainability=None,
+                      timing_ms={k: 0 for k in ANALYSED["timing_ms"]},
                       input={"format": "png", "phi_tags_removed": 0, "error": "cannot decode image"})
 
 CASES = {"analysed": ANALYSED, "link_fired": LINK_FIRED, "rejected_gate": REJECTED, "unreadable": UNREADABLE}

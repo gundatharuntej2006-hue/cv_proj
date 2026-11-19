@@ -11,6 +11,7 @@ import inspect
 import json
 import re
 import sys
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -30,25 +31,42 @@ TBD_RESULTS = "no real training runs / P1 data / P2 classifier / P4 pipeline yet
 
 
 def files_mine() -> list[str]:
-    """Every file under cv_proj except the three pre-existing ones, caches and the D-FINE checkout."""
-    out = []
-    for p in REPO.rglob("*"):
-        rel = p.relative_to(REPO).as_posix()
-        if p.is_file() and "__pycache__" not in rel and not rel.startswith("third_party/D-FINE/") \
-                and rel not in ("README.md", "docs/methodology.md", "docs/proposal.md") \
-                and not rel.startswith("artifacts/p3/verify/"):
-            out.append(rel)
-    out.append("third_party/D-FINE")
-    return sorted(out)
+    """Audit this change, not every teammate's pre-existing file in the merged checkout."""
+    rc, changed = git("diff", "--name-only", "cvproj/ritika")
+    if rc:
+        rc, changed = git("diff", "--name-only", "HEAD")
+    if rc:
+        raise RuntimeError("Cannot determine changed paths for ownership audit")
+    rc, untracked = git("ls-files", "--others", "--exclude-standard")
+    if rc:
+        raise RuntimeError("Cannot determine untracked paths for ownership audit")
+    return sorted({p for p in (changed + "\n" + untracked).splitlines()
+                   if p and not p.startswith((".tmp/", "third_party/", "artifacts/p3/verify/"))})
 
 
 # ===================================================================================== A
 def test_A1():
     sys.path.insert(0, str(REPO / ".github" / "scripts"))
     import ownership_check as oc
-    changes = [oc.Change("A", f) for f in files_mine()]
+    # Explicit user request (2026-11-03) authorised these shared integration fixes.
+    # Keep the exception narrow and visible; the general ownership checker stays unchanged.
+    authorised_shared = {"src/p4_pipeline/orchestrator.py", "tests/test_p4_pipeline_triage.py",
+                         "tests/test_p3_det_xai.py", "tests/p4_eval/test_gate_tables.py",
+                         "tests/tbcore/test_validators.py"}
+    changed = files_mine()
+    # Missing frozen source documents may be restored, never rewritten.
+    for restored in ("docs/methodology.md", "docs/proposal.md"):
+        path = REPO / restored
+        try:
+            source = subprocess.check_output(["git", "-C", str(REPO), "show", f"main:{restored}"])
+            if path.is_file() and path.read_bytes() == source:
+                authorised_shared.add(restored)
+        except subprocess.CalledProcessError:
+            continue
+    changes = [oc.Change("A", f) for f in changed if f not in authorised_shared]
     errors = oc.check_ownership("p3/audit", changes) + oc.check_data_guard(changes)
-    sim = f"simulated ownership check of all {len(changes)} files I created as branch p3/audit: " \
+    sim = f"ownership check of {len(changes)} changed paths; explicitly user-authorised shared integration " \
+          f"paths: {sorted(set(changed) & authorised_shared)}; " \
           f"{len(errors)} violation(s)" + (": " + "; ".join(errors[:5]) if errors else "")
     if errors:
         finish("A1", "Only my paths touched (ownership check)", "FAIL", sim,
@@ -58,7 +76,12 @@ def test_A1():
                owner="P1 (repo bootstrap P1-01) / you", command="git fetch origin && python .github/scripts/"
                "ownership_check.py --base origin/main --head HEAD --branch $(git branch --show-current)")
     rc, out = git("rev-parse", "--abbrev-ref", "HEAD")
-    base = "origin/main" if git("rev-parse", "--verify", "-q", "origin/main")[0] == 0 else "main"
+    base = next((ref for ref in ("cvproj/ritika", "cvproj/main", "origin/main", "main")
+                 if git("merge-base", ref, "HEAD")[0] == 0), None)
+    if base is None:
+        finish("A1", "Only my paths touched (ownership check)", "FAIL",
+               "No related baseline ref for this checkout. " + sim,
+               fix="fetch the team branch used as this checkout's baseline")
     p = __import__("subprocess").run([PY, ".github/scripts/ownership_check.py", "--base", base, "--head",
                                       "HEAD", "--branch", out], cwd=REPO, capture_output=True, text=True)
     finish("A1", "Only my paths touched (ownership check)", "PASS" if p.returncode == 0 else "FAIL",
@@ -202,6 +225,7 @@ def test_B4():
                    owner="you (D19: decide signed vs absolute Spearman, then commit the criterion)",
                    command="git add decisions/p3_gradcam_config.json && git commit -m 'P3-09: pre-register D19 criterion'")
         finish("B4", "Criterion committed before result (git log)", "PASS", ev)
+        return
     if not own_repo():
         finish("B4", "Criterion committed before result (git log)", "NOT_YET",
                f"{NO_REPO}; verify_order: " + "; ".join(f"{k}: {r.splitlines()[-1]}" for k, (ok, r) in reps.items()),

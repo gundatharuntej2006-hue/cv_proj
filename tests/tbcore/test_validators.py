@@ -45,7 +45,9 @@ def test_validate_c16_all_decisions():
     for df in dec_files:
         rec = validate_c16_decision(df)
         assert isinstance(rec, DecisionRecord)
-        assert rec.locked is True
+        # A valid draft decision is unlocked. Readiness is enforced by the gate,
+        # not by the C16 format validator or by fabricating research locks.
+        assert rec.locked == json.loads(df.read_text())["locked"]
         assert rec.decision_id.startswith("D")
 
 

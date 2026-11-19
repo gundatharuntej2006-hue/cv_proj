@@ -72,7 +72,7 @@ artifacts/p3/xai/loc_<model_id>_internal_test_v1.parquet and P4's C18 table t12_
 
 ## Grad-CAM review with the guide
 
-We reviewed 40 development cases with the guide: 20 classified correctly and 20 incorrectly, 10 per cell (true
+The pending review will use 40 development cases with the guide: 20 classified correctly and 20 incorrectly, 10 per cell (true
 and false positives, true and false negatives) [docs/p3_gradcam_review.md, section 1]. They were drawn with a pre-registered seeded rule, without
 looking at the heatmaps, and shown in shuffled order [docs/p3_gradcam_review.md, section 1].
 

@@ -142,7 +142,8 @@ def _results(c, cr: dict, x: float, y: float, w: float) -> float:
         ("Calibrated TB probability (p_tb_cal)", f"{cls.get('p_tb_cal'):.3f}" if cls.get("p_tb_cal") is not None else "-"),
         ("Thresholds", f"t_lower {tri.get('t_lower')}  /  t_upper {tri.get('t_upper')}"),
         ("Category before link rule", CAT_LABEL.get(tri.get("category_pre_link"), "-")),
-        ("Detector link rule", "fired (NOT TB moved to REFER)" if link else "applied, did not fire" if link is False else "-"),
+        ("Detector link rule", "not applied (detector unavailable or disabled)" if not cr.get("detector") else
+         "fired (NOT TB moved to REFER)" if link else "applied, did not fire" if link is False else "-"),
         ("Operating point", {"locked_default": "locked default", "user_override": "user override"}.get(
             tri.get("operating_point"), "-")),
     ]

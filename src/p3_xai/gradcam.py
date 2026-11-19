@@ -25,6 +25,9 @@ from torch import nn
 
 THREE_CLASS_ORDER = ("healthy", "sick_non_tb", "tb")   # C08 / ClsResult.three_class
 
+# Original demo spelling, retained separately from the real D19 explainer.
+from .legacy import GradCAMExplainer  # noqa: F401,E402
+
 
 @dataclass(frozen=True)
 class ClassifierSpec:
@@ -185,9 +188,10 @@ class GradCamExplainer:
     def __call__(self, img512: np.ndarray, crop_box) -> np.ndarray:
         from pytorch_grad_cam import GradCAM
         from pytorch_grad_cam.utils.model_targets import ClassifierOutputTarget
-        x = self.spec.preprocess(crop_gray(img512, crop_box)).to(self.device)
-        with GradCAM(model=self.model, target_layers=[self.layer], reshape_transform=make_reshape(self.spec)) as cam:
-            g = cam(input_tensor=x, targets=[ClassifierOutputTarget(self.spec.tb_index)])[0]
+        with torch.enable_grad():
+            x = self.spec.preprocess(crop_gray(img512, crop_box)).to(self.device).requires_grad_(True)
+            with GradCAM(model=self.model, target_layers=[self.layer], reshape_transform=make_reshape(self.spec)) as cam:
+                g = cam(input_tensor=x, targets=[ClassifierOutputTarget(self.spec.tb_index)])[0]
         return to_canvas(g, crop_box)
 
 

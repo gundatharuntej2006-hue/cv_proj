@@ -1,27 +1,52 @@
 """Tests for p4_eval: No-test-tuning gate, table generators, challenge mapping, and comparisons."""
 
 from pathlib import Path
+import json
 import pandas as pd
 import pytest
 
 from p4_eval.challenge import format_challenge_submission, generate_table_12_8_challenge
 from p4_eval.comparisons import generate_table_14_comparisons
 from p4_eval.external import run_all_external_evaluations
-from p4_eval.gate import check_all_decisions, issue_token
+from p4_eval.gate import check_all_decisions, issue_token, GateValidationError
 from p4_eval.tables import export_evaluation_tables
 from tbcore.validators import validate_c18_tables
 
 
-def test_gate_check_all_decisions():
+@pytest.fixture
+def locked_test_decisions(tmp_path, monkeypatch):
+    """Gate mechanics use synthetic test copies, never lock the research decisions."""
+    import p4_eval.gate as gate
+    target = tmp_path / "synthetic_decisions"
+    target.mkdir()
+    for path in gate.get_decisions_dir().glob("*.json"):
+        data = json.loads(path.read_text())
+        data.update(locked=True, value=data.get("value") or {"synthetic_test_fixture": True})
+        (target / path.name).write_text(json.dumps(data))
+    monkeypatch.setattr(gate, "get_decisions_dir", lambda: target)
+    monkeypatch.setattr(gate, "resolve_path", lambda rel: tmp_path / rel)
+    return target
+
+
+def test_gate_check_all_decisions(locked_test_decisions):
     decs = check_all_decisions()
     assert len(decs) == 23
     for d_id, rec in decs.items():
         assert rec.locked is True
 
 
-def test_gate_issue_token(tmp_path):
+def test_gate_issue_token(tmp_path, locked_test_decisions):
     token_path = issue_token("internal_test", out_dir=tmp_path)
     assert token_path.exists()
+
+
+def test_gate_refuses_unlocked_decision(locked_test_decisions):
+    path = locked_test_decisions / "p3_det_input_size.json"
+    data = json.loads(path.read_text())
+    data["locked"] = False
+    path.write_text(json.dumps(data))
+    with pytest.raises(GateValidationError, match="D16.*not locked"):
+        check_all_decisions()
 
 
 def test_table_generation_c18(tmp_path):

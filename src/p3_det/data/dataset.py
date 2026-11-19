@@ -96,6 +96,17 @@ class TBDetectionDataset(Dataset):
         for a in coco["annotations"]:
             anns.setdefault(coco_img[a["image_id"]]["file_name"], []).append(a)
         coco_crop = {im["file_name"]: im.get("crop_box") for im in coco["images"]}
+        full_gt = None
+        if cfg.eval_mode:
+            full_path = p.root / f"data/boxes/v1/coco_{cfg.split}_full.json"
+            if full_path.is_file():
+                from .boxes import original_boxes
+                full_gt = original_boxes(p, cfg.split)
+            elif not self.provisional:
+                raise FileNotFoundError(f"{full_path}: locked evaluation requires all original boxes")
+            else:
+                warnings.warn("PROVISIONAL evaluation: no full-image annotations; cropped GT is incomplete",
+                              stacklevel=2)
 
         samples = []
         for r in rows:
@@ -117,7 +128,7 @@ class TBDetectionDataset(Dataset):
             if coco_crop.get(iid) is not None and tuple(coco_crop[iid]) != crop:
                 raise ValueError(f"{iid}: C06 crop_box {coco_crop[iid]} != C05 crop {crop}")
             a = anns.get(iid, [])
-            if tb == 1 and not a:
+            if tb == 1 and not a and full_gt is None:
                 # every box may lie fully outside the crop (C06 outside_crop); then it is not usable
                 self.stats["skipped_tb_all_boxes_outside_crop"] += 1
                 continue
@@ -125,6 +136,16 @@ class TBDetectionDataset(Dataset):
                 raise ValueError(f"{iid}: non-TB image has C06 boxes")
             boxes = xywh_to_xyxy([x["orig_bbox_512"] for x in a]) if a else np.zeros((0, 4))
             self._check_c06_bbox(iid, a, boxes, crop)
+            subtypes = [x.get("tb_subtype") for x in a]
+            if full_gt is not None:
+                if iid not in full_gt:
+                    raise ValueError(f"{iid}: missing from full-image evaluation annotations")
+                boxes = full_gt[iid]["boxes"]
+                subtypes = full_gt[iid]["subtypes"]
+                if tb == 0 and len(boxes):
+                    raise ValueError(f"{iid}: non-TB image has full-image boxes")
+                if tb == 1 and not len(boxes):
+                    raise ValueError(f"{iid}: C01 has_boxes but full-image annotations are empty")
             det, _ = full512_to_det(boxes, crop, cfg.input_size, min_size=0.0)
             if tb == 1 and not cfg.eval_mode and not len(
                     clip_boxes(det, cfg.input_size, cfg.input_size, cfg.min_box_size)[0]):
@@ -132,7 +153,7 @@ class TBDetectionDataset(Dataset):
                 self.stats["skipped_tb_boxes_too_small_after_crop"] += 1
                 continue
             rel =m["path_img512_clahe"] if self.clahe else m["path_img512"]
-            samples.append(Sample(iid, self._resolve(rel), crop, boxes, tb, [x.get("tb_subtype") for x in a]))
+            samples.append(Sample(iid, self._resolve(rel), crop, boxes, tb, subtypes))
             self.stats["positives" if tb else "negatives"] += 1
         return samples
 

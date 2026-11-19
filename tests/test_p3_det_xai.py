@@ -1,10 +1,17 @@
 from pathlib import Path
 import numpy as np
+import pytest
 from p3_det.dfine_detector import DFINEDetector
 from p3_xai.gradcam import GradCAMExplainer
 from p3_ops.pdf_generator import TriagePDFReportGenerator
 from p2_cls.classifier import TBClassifier
 from tbcore.schemas import PipelineResult
+
+
+@pytest.fixture(autouse=True)
+def explicit_demo_mode(monkeypatch, tmp_path):
+    monkeypatch.setenv("TB_MOCK", "1")
+    monkeypatch.setenv("TB_RUNS_DIR", str(tmp_path / "runs"))
 
 
 def test_p3_detector():

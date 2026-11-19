@@ -215,8 +215,11 @@ def measure(inputs: Sequence[Path], run_batch: Callable, n_warmup: int = N_WARMU
         if len(results) != 1:
             raise RuntimeError(f"run_batch returned {len(results)} results for one input")
         cr = results[0]
-        cr = cr if isinstance(cr, dict) else getattr(cr, "__dict__", {})
+        cr = cr if isinstance(cr, dict) else (cr.model_dump(mode="json") if hasattr(cr, "model_dump")
+                                             else getattr(cr, "__dict__", {}))
         t = cr.get("timing_ms") or {}
+        if hasattr(t, "model_dump"):
+            t = t.model_dump()
         out.append({"case_id": cr.get("case_id"), "status": cr.get("status"), "wall_clock": round(wall, 1),
                     **{s: t.get(s) for s in STAGES}})
     return out
@@ -224,9 +227,16 @@ def measure(inputs: Sequence[Path], run_batch: Callable, n_warmup: int = N_WARMU
 
 def _p4_run_batch() -> Callable:
     try:
-        from p4_pipeline.api import run_batch
+        from p4_pipeline.api import run_batch, get_default_orchestrator
     except ImportError as e:
         raise RuntimeError("p4_pipeline.api.run_batch (R4, P4) is not available") from e
+    if os.environ.get("TB_MOCK") == "1":
+        raise RuntimeError("Reported E6 measurements cannot use TB_MOCK=1")
+    orch = get_default_orchestrator()
+    missing = [name for name in ("r1", "r2_cls", "r2_gate", "r3_det", "r3_xai")
+               if getattr(orch, name, None) is None]
+    if missing:
+        raise RuntimeError(f"R4 has unconfigured stages {missing}; refusing to time fallback outputs")
     return run_batch
 
 

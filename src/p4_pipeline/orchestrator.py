@@ -1,6 +1,8 @@
 """End-to-end pipeline orchestrator connecting R1, R2, R3, R4 per methodology Figure 1."""
 
 import hashlib
+import logging
+import os
 import time
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -250,29 +252,41 @@ class TriagePipelineOrchestrator:
         # Step 5: Detector (R3)
         # -------------------------------------------------------------------
         t0 = time.perf_counter()
-        det_model_id = "dfine_512"
-        boxes_list = [DetectedBox(xyxy=[301, 88, 372, 160], score=0.77)] if p_cal >= 0.5 else []
-        n_lesions = len(boxes_list)
+        det_model_id = "unavailable"
+        boxes_list = []
+        n_lesions = 0
+        detector_available = False
 
         try:
             if self.r3_det is not None and hasattr(self.r3_det, "detect"):
-                det_res = self.r3_det.detect(analysis_img, crop_box)
+                det_res = self.r3_det.detect(img512, crop_box)
+                if hasattr(self.r3_det, "detector_info"):
+                    info = self.r3_det.detector_info()
+                    det_model_id = info["model_id"]
+                    threshold = float(info["conf_threshold"])
+                else:
+                    threshold = self.det_conf_threshold
                 det_model_id = getattr(det_res, "model_id", det_model_id)
-                n_lesions = int(getattr(det_res, "n_lesions_above_thr", 0))
                 raw_boxes = getattr(det_res, "boxes_full512", [])
+                scores = getattr(det_res, "scores", [])
+                if len(raw_boxes) != len(scores):
+                    raise ValueError("Detector boxes and scores have different lengths")
                 boxes_list = [
-                    DetectedBox(xyxy=[int(b[0]), int(b[1]), int(b[2]), int(b[3])], score=float(b[4]))
-                    for b in raw_boxes if len(b) >= 5 and float(b[4]) >= self.det_conf_threshold
+                    DetectedBox(xyxy=[int(v) for v in b], score=float(s))
+                    for b, s in zip(raw_boxes, scores) if len(b) == 4 and float(s) >= threshold
                 ]
-        except Exception:
-            pass
+                n_lesions = len(boxes_list)
+                detector_available = True
+        except Exception as exc:
+            logging.getLogger(__name__).warning("Detector unavailable: %s", type(exc).__name__)
+            boxes_list, n_lesions = [], 0
 
         det_block = DetectorBlock(
             model_id=det_model_id,
-            conf_threshold=self.det_conf_threshold,
+            conf_threshold=threshold,
             n_lesions=n_lesions,
             boxes=boxes_list,
-        )
+        ) if detector_available else None
         timing.detect = int((time.perf_counter() - t0) * 1000)
 
         # -------------------------------------------------------------------
@@ -293,19 +307,39 @@ class TriagePipelineOrchestrator:
         # Step 7: Explainability (R3)
         # -------------------------------------------------------------------
         t0 = time.perf_counter()
-        heatmap_path = f"runs/r0012/{case_id}_cam.npy"
-        overlay_path = f"runs/r0012/{case_id}_overlay.png"
+        heatmap_path = None
+        overlay_path = None
+        heatmap = None
 
         try:
             if self.r3_xai is not None and hasattr(self.r3_xai, "explain"):
-                _ = self.r3_xai.explain(analysis_img, crop_box)
+                heatmap = self.r3_xai.explain(img512, crop_box)
+                from p3_xai.api import runs_root
+                run_id = os.environ.get("TB_RUN_ID", "adhoc")
+                if not run_id.replace("_", "").replace("-", "").isalnum():
+                    raise ValueError("Invalid run id")
+                target = runs_root() / run_id / f"{case_id}_cam.npy"
+                target.parent.mkdir(parents=True, exist_ok=True)
+                np.save(target, heatmap)
+                heatmap_path = str(target)
             if self.r3_xai is not None and hasattr(self.r3_xai, "render_overlay"):
-                overlay_p = self.r3_xai.render_overlay(img512, None, boxes_list)
+                if hasattr(self.r3_xai, "render_overlay_to"):
+                    from p3_xai.api import runs_root
+                    run_id = os.environ.get("TB_RUN_ID", "adhoc")
+                    if not run_id.replace("_", "").replace("-", "").isalnum():
+                        raise ValueError("Invalid run id")
+                    overlay_p = self.r3_xai.render_overlay_to(img512, heatmap,
+                        [b.model_dump() for b in boxes_list], case_id=case_id,
+                        out_path=runs_root() / run_id / f"{case_id}_overlay.png")
+                else:
+                    overlay_p = self.r3_xai.render_overlay(img512, heatmap,
+                        [b.model_dump() for b in boxes_list])
                 overlay_path = str(overlay_p)
-        except Exception:
-            pass
+        except Exception as exc:
+            logging.getLogger(__name__).warning("Explanation unavailable: %s", type(exc).__name__)
 
-        exp_block = ExplainabilityBlock(heatmap_path=heatmap_path, overlay_path=overlay_path)
+        exp_block = (ExplainabilityBlock(heatmap_path=heatmap_path, overlay_path=overlay_path)
+                     if heatmap_path or overlay_path else None)
         timing.explain = int((time.perf_counter() - t0) * 1000)
 
         timing.total = int((time.perf_counter() - start_total) * 1000)

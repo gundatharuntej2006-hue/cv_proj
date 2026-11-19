@@ -88,12 +88,26 @@ def test_notebook_cells_are_plain_python_and_end_with_the_paste_block():
     assert "--n-train" in code[-2] and "--n-dev" in code[-2]
 
 
-def test_kaggle_bundle_is_code_only(tmp_path):
+def test_kaggle_bundle_contains_only_code_and_decision_snapshots(tmp_path):
+    import hashlib
     import zipfile
     from p3_ops import kaggle_bundle
     p = kaggle_bundle.build(tmp_path / "b.zip")
-    names = zipfile.ZipFile(p).namelist()
+    archive = zipfile.ZipFile(p)
+    names = archive.namelist()
     assert "notebooks/p3/p3_01_dfine_feasibility.py" in names and "src/p3_det/fill_training_config.py" in names
     assert "requirements/p3.txt" in names and "src/p3_ops/cloud/demo.py" in names
-    assert all(Path(n).suffix in {".py", ".yaml", ".ipynb", ".txt"} for n in names)
-    assert not [n for n in names if n.startswith(("third_party", "artifacts", "decisions", "mock")) or "__pycache__" in n]
+    assert all(Path(n).suffix in {".py", ".yaml", ".ipynb", ".txt", ".json"} for n in names)
+    assert not [n for n in names if n.startswith(("third_party", "artifacts", "mock", "data", ".git")) or "__pycache__" in n]
+    assert "decisions/p2_clahe.json" in names and "decisions/p2_crop_margin.json" in names
+    manifest = json.loads(archive.read("p3_bundle_manifest.json"))
+    assert set(manifest["files"]) == set(names) - {"p3_bundle_manifest.json"}
+    for name, sha in manifest["files"].items():
+        assert hashlib.sha256(archive.read(name)).hexdigest() == sha
+
+
+def test_training_notebook_is_executable_without_shell_magics():
+    nb = json.loads((REPO / "notebooks/p3/p3_06_train_dfine.ipynb").read_text(encoding="utf-8"))
+    for cell in nb["cells"]:
+        if cell["cell_type"] == "code":
+            compile("".join(cell["source"]), "<training-cell>", "exec")

@@ -13,6 +13,13 @@ DISCLAIMER = ("TEST-DISCLAIMER: decision support only, not a diagnosis (placehol
 SCOPE_HONESTY = ("TEST-SCOPE: validated only on public research datasets (placeholder text for tests; the real "
                  "text is owned by P4 in tbcore).")
 
+# When the team package is installed, assertions must compare against its
+# single-source wording rather than the obsolete placeholder constants.
+try:
+    from tbcore.disclaimer import DISCLAIMER_TEXT as DISCLAIMER, SCOPE_HONESTY_TEXT as SCOPE_HONESTY
+except ImportError:
+    pass
+
 
 def install(monkeypatch) -> None:
     """Make ``from tbcore import disclaimer`` return this stand-in for the duration of a test."""

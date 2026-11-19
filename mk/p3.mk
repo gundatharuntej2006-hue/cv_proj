@@ -7,14 +7,12 @@ P3_DFINE_COMMIT := 956d1709314c2c6a4df6f34de232054578a7449f
 
 ## p3-setup: fetch the pinned D-FINE submodule and install P3 dependencies
 p3-setup:
-	git submodule update --init $(P3_DFINE)
-	@test "$$(git -C $(P3_DFINE) rev-parse HEAD)" = "$(P3_DFINE_COMMIT)" || \
-		(echo "D-FINE is not at the pinned commit $(P3_DFINE_COMMIT)"; exit 1)
+	PYTHONPATH=src $(PYTHON) -m p3_det.setup --fetch
 	$(PYTHON) -m pip install -r requirements/p3.txt
 
 ## p3-test: P3 tests (gpu-marked tests skipped)
 p3-test:
-	$(PYTHON) -m pytest tests/p3_* -m "not gpu" -q
+	PYTHONPATH=src $(PYTHON) -m pytest tests/p3_* -m "not gpu" -q
 
 ## p3-feasibility: D-FINE T4 feasibility, 512 and 640 with AMP (run on Kaggle/Colab T4)
 p3-feasibility:
@@ -71,3 +69,14 @@ p3-previews:
 	PYTHONPATH=src $(PYTHON) notebooks/p3/p3_04_viz_check.py --fake
 	PYTHONPATH=src $(PYTHON) notebooks/p3/p3_11_overlay_preview.py
 	PYTHONPATH=src $(PYTHON) notebooks/p3/p3_15_pdf_preview.py
+
+.PHONY: p3-preflight p3-runtime-check p3-kaggle-bundle
+p3-preflight:
+	PYTHONPATH=src $(PYTHON) -m p3_ops.preflight
+
+## Real locked detector: 50-image C10 agreement and <=500 ms GPU median.
+p3-runtime-check:
+	PYTHONPATH=src $(PYTHON) -m p3_det.verify_runtime --device cuda
+
+p3-kaggle-bundle:
+	PYTHONPATH=src $(PYTHON) -m p3_ops.kaggle_bundle

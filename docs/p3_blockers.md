@@ -1,5 +1,8 @@
 # P3: what is blocked on other people (and on me)
 
+> Historical blocker list. The team repository, P4 tbcore and R4 now exist; current work is tracked in
+> [Role 3 completion status](p3_completion_status.md). Do not resend the obsolete requests below unchanged.
+
 Status on 2026-10-10 (D19 rule committed; first written 2026-10-09 after the audit fixes). Check IDs refer to docs/p3_verification_report.md.
 
 ## Blockers by owner

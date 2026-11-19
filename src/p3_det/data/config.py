@@ -41,6 +41,8 @@ def check_split(split: str, dataset: str = "tbx11k") -> None:
         except _tbcore_adapter.TbcoreUnavailable as e:   # guard unreachable: refuse (fail closed)
             raise SealedSplitError(f"split '{split}' is sealed and the tbcore guard is not available ({e}); "
                                    "refusing") from None
+        except PermissionError as e:
+            raise SealedSplitError(f"split '{split}' is sealed: {e}") from e
         return
     raise SealedSplitError(f"split '{split}' may not be loaded by the detector adapter")
 

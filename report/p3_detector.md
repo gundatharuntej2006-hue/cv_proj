@@ -74,7 +74,8 @@ boxes (D21). CIs are percentile bootstrap over images, stratified TB / non-TB [s
 
 ## Results on the sealed internal test (from P4's tables)
 
-Detection was run once on the internal test, under P4's gate token (P3-13). The tables are produced by P4.
+Detection must be run once under P4's gate token (P3-13), after decisions are locked. No P3 sealed-run result
+is currently available. The tables below are pending; they do not describe an executed evaluation.
 
 | Measure | Value | 95% CI | n (TB / non-TB images, boxes) | Source |
 |---|---|---|---|---|

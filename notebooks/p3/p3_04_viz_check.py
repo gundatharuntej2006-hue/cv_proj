@@ -99,10 +99,7 @@ def main(argv=None) -> int:
                                                                    else "det/viz_check"))
     out.mkdir(parents=True, exist_ok=True)
     if not a.fake and not (out / ".gitignore").exists():   # images derived from real X-rays: never committed
-        (out / ".gitignore").write_text("# P3: derived from real images, never commit
-*
-!.gitignore
-")
+        (out / ".gitignore").write_text("# P3: derived from real images, never commit\n*\n!.gitignore\n")
     prefix = "SYNTHETIC_" if a.fake else ""
     rng = np.random.default_rng(a.seed)
     idx = rng.choice(len(ds), size=min(a.n, len(ds)), replace=False)

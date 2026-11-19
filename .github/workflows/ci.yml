@@ -23,6 +23,8 @@ jobs:
     env:
       PYTHONPATH: src
       TB_MOCK: "1"
+      OMP_NUM_THREADS: "2"
+      MKL_NUM_THREADS: "2"
       PIP_EXTRA_INDEX_URL: https://download.pytorch.org/whl/cpu   # CPU wheels only: no GPU on runners
     steps:
       - uses: actions/checkout@v4
@@ -50,7 +52,7 @@ jobs:
       - name: pytest (not gpu), skip reasons shown
         run: |
           set +e
-          python -m pytest tests -m "not gpu" -rs -p no:cacheprovider 2>&1 | tee pytest.log
+          python -m pytest tests -m "not gpu" -rs -p no:cacheprovider -o tmp_path_retention_policy=failed 2>&1 | tee pytest.log
           code=${PIPESTATUS[0]}
           set -e
           # a P3 test skipped because a PACKAGE is missing means CI is not really testing P3: fail the job

@@ -36,7 +36,13 @@ def _case_id(case_result: dict) -> str:
 def log_case(case_result: dict, operating_point: str) -> None:
     """Append exactly one C15 line to logs/predictions.jsonl (p3_ops.logger). P1's threshold slider
     calls this with operating_point="user_override"."""
-    _logger.log_case(case_result, operating_point)
+    _logger.log_case(_as_dict(case_result), operating_point)
+
+
+def _as_dict(case_result):
+    if hasattr(case_result, "model_dump"):
+        return case_result.model_dump(mode="json")
+    return case_result
 
 
 # --- make_pdf --------------------------------------------------------------------------------------
@@ -76,6 +82,7 @@ def make_pdf(case_result: dict) -> str:
 def make_pdf_with_original(case_result: dict, *, image=None, out_path: str | os.PathLike | None = None) -> str:
     """make_pdf plus the original 512x512 ``image`` next to the overlay and/or a chosen ``out_path``.
     Not part of the frozen R3 interface (callers that have the image, e.g. P4's run_case, may use it)."""
+    case_result = _as_dict(case_result)
     cid = _case_id(case_result)
     path = Path(out_path) if out_path is not None else _default_pdf_path(case_result, cid)
     path.parent.mkdir(parents=True, exist_ok=True)

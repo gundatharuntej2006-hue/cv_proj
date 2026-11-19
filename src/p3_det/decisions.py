@@ -66,13 +66,19 @@ def load_for_result(path: Path, criterion: str) -> dict:
         raise Refused("criterion in the decision file differs from the pre-registered one")
     if doc.get("locked"):
         raise Refused(f"{doc.get('decision_id')} is already locked")
+    if history(path):
+        ordered, report = verify_order(path)
+        if not ordered:
+            raise Refused("Decision history conflicts with pre-registration; resolve with P4 before recording "
+                          f"new results.\n{report}")
     return doc
 
 
 # --- git ---------------------------------------------------------------------------------------------
 
 def _git(cwd: Path, *args: str) -> str:
-    return subprocess.run(["git", "-C", str(cwd), *args], capture_output=True, text=True, check=True).stdout
+    return subprocess.run(["git", "-C", str(cwd), *args], capture_output=True, text=True,
+                          encoding="utf-8", check=True).stdout
 
 
 def _rel_in_repo(path: Path) -> tuple[Path, str]:
