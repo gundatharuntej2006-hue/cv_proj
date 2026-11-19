@@ -13,8 +13,8 @@
     "Detector contingency: if AP50 < 0.05, link rule disabled and reported as honest negative result"
   ],
   "value": {
-    "alpha": 0.10,
-    "target_precision": 0.80,
+    "alpha": 0.1,
+    "target_precision": 0.8,
     "bootstrap_replicates": 2000,
     "seed": 42,
     "ece_bins": 10,
@@ -30,9 +30,9 @@
   "data_used": [
     "none"
   ],
-  "reviewed_by": "p1",
-  "guide_ack": true,
-  "locked": true,
-  "locked_at": "2026-09-28",
-  "git_sha": "c0ffee1"
+  "reviewed_by": "",
+  "guide_ack": false,
+  "locked": false,
+  "locked_at": null,
+  "git_sha": null
 }

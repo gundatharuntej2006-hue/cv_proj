@@ -1,5 +1,8 @@
 # Conformal 3-Way Triage & Detector Link Rule (Section 9, Table 12.3)
 
+> **Governance status (2026-11-19):** Figures and decision values in this section are unverified legacy examples, not approved sealed-evaluation results. See `docs/p4_governance_review_2026-11-19.md`.
+
+
 **Author:** Person 4 (`@tb-p4`)  
 **Artifacts:** `artifacts/p4/triage/`, `artifacts/p4/tables/t12_3_triage.csv`
 

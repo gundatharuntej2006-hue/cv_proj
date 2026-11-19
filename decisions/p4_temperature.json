@@ -20,9 +20,9 @@
   "data_used": [
     "development"
   ],
-  "reviewed_by": "p2",
+  "reviewed_by": "",
   "guide_ack": false,
-  "locked": true,
-  "locked_at": "2026-10-24",
-  "git_sha": "c0ffee1"
+  "locked": false,
+  "locked_at": null,
+  "git_sha": null
 }
