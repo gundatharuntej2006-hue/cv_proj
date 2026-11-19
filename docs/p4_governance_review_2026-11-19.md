@@ -9,7 +9,7 @@ This review covers the state of `origin/main` before any new sealed evaluation. 
 - D22 cites `artifacts/p4/calibration/dev_temperature_fit.json` and `reliability_dev.csv`; neither is present. The recorded temperature `1.37` is therefore unverified.
 - D23 cites `artifacts/p4/triage/operating_curve_calibration_v1.parquet` and `calibration_split_metrics.json`; neither is present. The recorded thresholds `0.18` and `0.83` are therefore unverified.
 - D01/D02 and the other owners' records also require owner review. D02's claimed review and 14 duplicate removals are not supported by its missing cited evidence. D06 conflicts with an unlocked D06 candidate on `origin/atul`.
-- `origin/atul` reverts default token consumption in `src/tbcore/guard.py` and permits a consumed token through the `consume_token=True` path. It also removes the authoritative C16 schema note. These changes should not merge as written.
+- Correction after Atul's reply: `origin/atul` branched before the P4 fixes in commits `0768b33` and `41a5ffe`. It has no commits changing `src/tbcore/guard.py` or `contracts/README.md`. A two-tip diff showed the later `main` fixes in reverse; it did not show an Atul-authored regression. The P4 single-use guard and authoritative C16 schema note must still be preserved when branches merge.
 
 ## P4 action
 
