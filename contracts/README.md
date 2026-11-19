@@ -34,11 +34,13 @@
 | **C13** | `artifacts/p4/triage/operating_curve_calibration_v1.parquet` | P4 | P1 | Parquet | `specs/c13_operating_curve.md` |
 | **C14** | `runs/{run_id}/{case_id}.json` | P4 | P1, P3 | JSON | `case_result.schema.json` |
 | **C15** | `logs/predictions.jsonl` | P3 | P4, P1 | JSONL | `specs/c15_prediction_log.md` |
-| **C16** | `decisions/pN_*.json` | All | P4 Gate, All | JSON | `decision.schema.json` |
+| **C16** | `decisions/pN_*.json` | All | P4 Gate, All | JSON | `schemas/c16_decision.schema.json` |
 | **C17** | `artifacts/p2/dedup/near_dup_candidates_v1.csv` | P2 | P1 | CSV | `specs/c17_near_duplicates.md` |
 | **C18** | `artifacts/p4/tables/t{section}_{name}.csv` | P4 | P1, P2, P3 | CSV | `schemas/c18_tables.schema.json` |
 
 ---
+
+`schemas/c16_decision.schema.json` is the authoritative C16 JSON Schema. The identical root-level `decision.schema.json` is retained as a compatibility mirror for existing consumers; schema changes must be made in the authoritative file and synchronized to the mirror.
 
 ## 3. Runtime Python APIs (R1–R4)
 

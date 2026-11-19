@@ -1,8 +1,8 @@
 """Fit temperature scaling on development, compute conformal thresholds on calibration, and export C12/C13."""
 
 import json
-from datetime import date
 from pathlib import Path
+from typing import Optional, Tuple
 import numpy as np
 import pandas as pd
 
@@ -21,10 +21,11 @@ def fit_temperature_on_dev(dev_scores_df: pd.DataFrame) -> Tuple[float, dict]:
     """
     scaler = TemperatureScaler()
     y_dev = (dev_scores_df["split"] == "development")  # in practice filtered by caller
-    probs_raw = dev_scores_df["p_tb_raw"].to_numpy()
+    has_logits = "logit_tb" in dev_scores_df.columns
+    probs_raw = dev_scores_df["logit_tb" if has_logits else "p_tb_raw"].to_numpy()
     tb_labels = dev_scores_df["tb_label"].to_numpy() if "tb_label" in dev_scores_df.columns else dev_scores_df["y"].to_numpy()
 
-    t_fitted = scaler.fit_binary(probs_raw, tb_labels, is_prob=True)
+    t_fitted = scaler.fit_binary(probs_raw, tb_labels, is_prob=not has_logits)
 
     d22_record = {
         "decision_id": "D22",
@@ -38,8 +39,8 @@ def fit_temperature_on_dev(dev_scores_df: pd.DataFrame) -> Tuple[float, dict]:
         "data_used": ["development"],
         "reviewed_by": "p2",
         "guide_ack": False,
-        "locked": True,
-        "locked_at": str(date.today()),
+        "locked": False,
+        "locked_at": None,
         "git_sha": get_git_sha(),
     }
 
@@ -50,19 +51,24 @@ def fit_thresholds_on_calibration(
     cal_scores_df: pd.DataFrame,
     temperature: float,
     alpha: float = 0.10,
-    target_precision: float = 0.80
+    target_precision: float = 0.80,
+    min_upper_count: int = 10,
 ) -> Tuple[float, float, dict]:
     """
     Fits conformal lower threshold and precision upper threshold on calibration split.
     """
     scaler = TemperatureScaler(temperature=temperature)
-    raw_probs = cal_scores_df["p_tb_raw"].to_numpy()
-    cal_probs = scaler.calibrate(raw_probs, is_prob=True)
+    has_logits = "logit_tb" in cal_scores_df.columns
+    raw_scores = cal_scores_df["logit_tb" if has_logits else "p_tb_raw"].to_numpy()
+    cal_probs = scaler.calibrate(raw_scores, is_prob=not has_logits)
     tb_labels = cal_scores_df["tb_label"].to_numpy() if "tb_label" in cal_scores_df.columns else cal_scores_df["y"].to_numpy()
 
     tb_scores_cal = cal_probs[tb_labels == 1]
     t_lower = compute_conformal_lower_threshold(tb_scores_cal, alpha=alpha)
-    t_upper, prec = compute_precision_upper_threshold(cal_probs, tb_labels, t_lower, target_precision=target_precision)
+    t_upper, prec = compute_precision_upper_threshold(
+        cal_probs, tb_labels, t_lower, target_precision=target_precision,
+        min_count=min_upper_count,
+    )
 
     d23_record = {
         "decision_id": "D23",
@@ -76,13 +82,14 @@ def fit_thresholds_on_calibration(
             "t_upper": round(float(t_upper), 4),
             "alpha": alpha,
             "target_precision": target_precision,
+            "min_upper_count": min_upper_count,
         },
         "evidence": ["artifacts/p4/triage/operating_curve_calibration_v1.parquet"],
         "data_used": ["calibration"],
         "reviewed_by": "p1",
         "guide_ack": False,
-        "locked": True,
-        "locked_at": str(date.today()),
+        "locked": False,
+        "locked_at": None,
         "git_sha": get_git_sha(),
     }
 
@@ -102,13 +109,14 @@ def build_triage_table(
     """
     scaler = TemperatureScaler(temperature=temperature)
     df = df_scores.copy()
-    raw_probs = df["p_tb_raw"].to_numpy()
-    cal_probs = scaler.calibrate(raw_probs, is_prob=True)
+    has_logits = "logit_tb" in df.columns
+    raw_scores = df["logit_tb" if has_logits else "p_tb_raw"].to_numpy()
+    cal_probs = scaler.calibrate(raw_scores, is_prob=not has_logits)
 
     rows = []
-    for idx, row in df.iterrows():
+    for pos, (_, row) in enumerate(df.iterrows()):
         img_id = str(row["image_id"])
-        p_cal = float(cal_probs[idx])
+        p_cal = float(cal_probs[pos])
         n_les = int(row.get("n_lesions", 0))
         if df_det is not None and img_id in df_det.index:
             n_les = int(df_det.loc[img_id, "n_lesions_above_thr"])

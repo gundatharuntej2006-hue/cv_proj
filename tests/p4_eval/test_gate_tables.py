@@ -9,6 +9,7 @@ from p4_eval.challenge import format_challenge_submission, generate_table_12_8_c
 from p4_eval.comparisons import generate_table_14_comparisons
 from p4_eval.external import run_all_external_evaluations
 from p4_eval.gate import check_all_decisions, issue_token, GateValidationError
+from p4_eval.recalibration import run_external_recalibration
 from p4_eval.tables import export_evaluation_tables
 from tbcore.validators import validate_c18_tables
 
@@ -47,6 +48,13 @@ def test_gate_refuses_unlocked_decision(locked_test_decisions):
     path.write_text(json.dumps(data))
     with pytest.raises(GateValidationError, match="D16.*not locked"):
         check_all_decisions()
+
+
+def test_recalibration_rejects_subsets_without_enough_tb_cases(tmp_path):
+    df = pd.DataFrame({"tb_label": [1] * 20 + [0] * 80,
+                       "p_tb_raw": [0.8] * 20 + [0.2] * 80})
+    with pytest.raises(ValueError, match="only 5 labelled TB cases"):
+        run_external_recalibration(df, subset_sizes=[25], out_dir=tmp_path)
 
 
 def test_table_generation_c18(tmp_path):

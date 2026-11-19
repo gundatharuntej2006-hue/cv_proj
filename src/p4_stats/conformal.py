@@ -28,13 +28,19 @@ def compute_conformal_lower_threshold(
     scores = np.sort(np.asarray(tb_calibration_scores, dtype=float))
     n = len(scores)
 
-    if n == 0:
-        return 0.0
+    if not 0.0 < alpha < 1.0:
+        raise ValueError("alpha must be strictly between 0 and 1")
+    if n == 0 or not np.all(np.isfinite(scores)):
+        raise ValueError("calibration TB scores must be a nonempty finite array")
 
     k = int(np.floor((n + 1) * alpha))
 
     if k <= 0:
-        return float(scores[0])
+        raise ValueError(
+            f"Conformal risk control at alpha={alpha:g} needs at least "
+            f"ceil(1/alpha - 1) labelled TB calibration cases; got {n}. "
+            "No finite-sample guarantee is available for this sample size."
+        )
     elif k > n:
         return float(scores[-1])
     else:

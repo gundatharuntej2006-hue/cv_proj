@@ -14,10 +14,12 @@ The October final verdict and blocker lists are historical.
 Implementation fixes do not constitute trained-model results or clinical validation.
 Verification evidence is in [the fix verification record](p3_fix_verification_20261103.md).
 
-The 19 November automation pass verified synthetic contract exports and local
-checkpoint recovery. An interrupted CPU test process resumed at the expected
-epoch and matched the uninterrupted run's final weights. The Kaggle session and
-Drive recovery check still require an authenticated cloud session.
+The 19 November automation pass passed 69 focused tests and validated synthetic
+C10, C11, and C15 outputs. Both 512 and 640 completed the CPU feasibility smoke
+and separate two-epoch synthetic training runs. A local CPU process killed after
+epoch 1 resumed at epoch 2 and matched the uninterrupted run's final weights.
+The Kaggle T4 and Drive recovery checks still require an authenticated cloud
+session. No CPU smoke results were used to fill the final schedules.
 
 ## Priority order and remaining acceptance evidence
 
