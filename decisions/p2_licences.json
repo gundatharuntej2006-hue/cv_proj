@@ -108,7 +108,7 @@
   "tbx11k_licence_conflict": {
    "flagged": "2026-10-12",
    "website_says": "CC BY 4.0 (mmcheng.net/tb)",
-   "data_files_say": "CC BY-NC-SA 2.0 \u2014 consistent across all 10+ COCO annotation JSONs, url http://creativecommons.org/licenses/by-nc-sa/2.0/",
+   "data_files_say": "CC BY-NC-SA 2.0 — consistent across all 10+ COCO annotation JSONs, url http://creativecommons.org/licenses/by-nc-sa/2.0/",
    "governing": "conservative reading: treat as CC BY-NC-SA 2.0 until resolved",
    "implication": "NonCommercial ok for academic use; ShareAlike affects reuse of derived images in figures. D05 (P1) should cite both and note the conflict.",
    "action": "handed to P1 in Downloads/P2_handoff_for_C01/README_handoff.md"
@@ -121,7 +121,7 @@
  "data_used": [
   "none"
  ],
- "reviewed_by": "p4",
+ "reviewed_by": "",
  "guide_ack": false,
  "locked": false,
  "locked_at": null,

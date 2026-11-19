@@ -11,7 +11,12 @@
   "saturated_frac": 0.5,
   "min_side": 256,
   "max_aspect": 1.6,
-  "reasons_vocabulary": ["blank", "under_exposed", "over_exposed", "heavily_cropped"],
+  "reasons_vocabulary": [
+   "blank",
+   "under_exposed",
+   "over_exposed",
+   "heavily_cropped"
+  ],
   "development_rejection_rate": null
  },
  "rule_notes": {
@@ -24,11 +29,17 @@
   "src/p2_gate/quality.py",
   "tests/p2_gate/test_p2_05_quality.py"
  ],
- "data_used": ["synthetic degradations only; development confirmation still pending"],
- "reviewed_by": "p4",
+ "data_used": [
+  "none"
+ ],
+ "reviewed_by": "",
  "guide_ack": false,
  "locked": false,
  "locked_at": null,
  "git_sha": null,
- "note": "Built and tested 2026-10-06 against synthetic degradations: black, white, under-exposed, over-exposed and 60%-cropped images are each rejected with the correct reason, mild degradations and clean images pass, and every threshold is verified to sit in a genuine gap between the clean and degraded distributions. Lock this after the development confirmation run, recording development_rejection_rate here. The rules supersede the placeholder thresholds in the Week 1 R2 gate stub."
+ "note": "Built and tested 2026-10-06 against synthetic degradations: black, white, under-exposed, over-exposed and 60%-cropped images are each rejected with the correct reason, mild degradations and clean images pass, and every threshold is verified to sit in a genuine gap between the clean and degraded distributions. Lock this after the development confirmation run, recording development_rejection_rate here. The rules supersede the placeholder thresholds in the Week 1 R2 gate stub.",
+ "candidates": [
+  "per-statistic thresholds at the midpoint of the clean/degraded gap (synthetic sweep)",
+  "rule rejected and rethought if the clean and degraded distributions overlap"
+ ]
 }

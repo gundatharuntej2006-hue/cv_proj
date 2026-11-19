@@ -18,8 +18,8 @@ from p2_cls import pipeline as P
 ROOT = Path(__file__).resolve().parents[2]
 BUNDLE = ROOT / "artifacts/p2/bundle"
 needs_bundle = pytest.mark.skipif(
-    not (BUNDLE / "bundle.json").exists(),
-    reason="run scripts/p2_build_demo_bundle.py first")
+    not all((BUNDLE / f).exists() for f in ("bundle.json", "bank.npz", "head.npz")),
+    reason="weights are git-ignored; run scripts/p2_build_demo_bundle.py first")
 
 
 # ---------------------------------------------------------------- triage rule (no bundle)

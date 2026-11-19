@@ -23,7 +23,9 @@ from p2_serve import app as A                        # noqa: E402
 
 BUNDLE_OK = (A.__file__ and
              __import__("pathlib").Path(A.__file__).resolve().parents[2]
-             / "artifacts/p2/bundle/bundle.json").exists()
+             / "artifacts/p2/bundle/bundle.json").exists() and all(
+    (__import__("pathlib").Path(A.__file__).resolve().parents[2] / "artifacts/p2/bundle" / f).exists()
+    for f in ("bank.npz", "head.npz"))
 needs_bundle = pytest.mark.skipif(not BUNDLE_OK, reason="no inference bundle on disk")
 
 

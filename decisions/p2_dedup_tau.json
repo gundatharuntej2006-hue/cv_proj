@@ -40,9 +40,9 @@
   "mock/mock_manifest_p2.json"
  ],
  "data_used": [
-  "tbx11k images only, no labels, purpose=dedup (the single exception to the sealed-split guard, contract rule 4.1)"
+  "images_only_all_splits"
  ],
- "reviewed_by": "p1",
+ "reviewed_by": "",
  "guide_ack": false,
  "locked": false,
  "locked_at": null,
