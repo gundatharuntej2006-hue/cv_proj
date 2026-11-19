@@ -41,20 +41,16 @@ def inspect(root=ROOT, *, check_cuda=True, data_root=None, stage="all"):
         add(name, (data_root / name).is_file(), f"Required P1 input under {data_root}")
     add("original development lesion boxes", (data_root / "data/boxes/v1/coco_development_full.json").is_file(),
         "All original boxes required: cropped annotations omit out-of-crop lesions")
-    names = ["p2_clahe", "p2_crop_margin"]
+    from p3_det.decisions import PREPROCESSING_DECISIONS, reviewed_lock_problem, verify_order
+
+    names = list(PREPROCESSING_DECISIONS)
     if stage in ("runtime", "all"):
         names += ["p3_det_input_size", "p3_det_checkpoint", "p3_det_conf_threshold"]
     if stage == "all":
         names += ["p3_gradcam_config", "p3_licences"]
     for name in names:
-        path = root / "decisions" / f"{name}.json"
-        try:
-            d = json.loads(path.read_text(encoding="utf-8"))
-            add(name, d.get("locked") and bool(d.get("value")),
-                f"{d.get('decision_id')}: measured/approved value and lock required")
-        except (OSError, ValueError, KeyError, TypeError) as exc:
-            add(name, False, type(exc).__name__)
-    from p3_det.decisions import verify_order
+        problem = reviewed_lock_problem(root / "decisions" / f"{name}.json")
+        add(name, problem is None, problem or "Value, lock and provenance fields present")
     for name in ("p3_det_input_size", "p3_det_checkpoint", "p3_det_conf_threshold", "p3_gradcam_config"):
         if stage == "runtime" and name == "p3_gradcam_config":
             continue
@@ -79,7 +75,7 @@ def inspect(root=ROOT, *, check_cuda=True, data_root=None, stage="all"):
             for split in ("train", "development"):
                 name = f"data/boxes/v1/coco_{split}_m{margin:.2f}.json"
                 add(name, (data_root / name).is_file(), "C06 at locked D09 margin")
-    except (OSError, ValueError, KeyError, TypeError) as exc:
+    except (ImportError, OSError, ValueError, KeyError, TypeError) as exc:
         add("C06 paths", False, str(exc))
     if check_cuda:
         try:

@@ -1,14 +1,23 @@
-# Role 3 completion status — 2026-11-18
+# Role 3 completion status — 2026-11-19
 
 P1 has confirmed that definitive C01/C04/C05/C06 do not yet exist. See the
 [18 November dependency update](p3_p1_dependency_update_20261118.md) for the delivery sequence
 and the permitted provisional-development scope under H4.
+Atul reports that he delivered the C17 candidates for C01 v0 to P1. P1-07 duplicate
+review and the definitive split and data handoff are still pending. P4's
+[draft governance PR](https://github.com/gundatharuntej2006-hue/cv_proj/pull/4) keeps sealed
+evaluation on hold while owners review the legacy decision records.
 
 The latest implementation changes, verification and outstanding acceptance inputs are in
 [the 2026-11-17 progress record](p3_implementation_progress_20261117.md).
 The October final verdict and blocker lists are historical.
 Implementation fixes do not constitute trained-model results or clinical validation.
 Verification evidence is in [the fix verification record](p3_fix_verification_20261103.md).
+
+The 19 November automation pass verified synthetic contract exports and local
+checkpoint recovery. An interrupted CPU test process resumed at the expected
+epoch and matched the uninterrupted run's final weights. The Kaggle session and
+Drive recovery check still require an authenticated cloud session.
 
 ## Priority order and remaining acceptance evidence
 
@@ -34,11 +43,12 @@ it must be resolved explicitly before new results can be recorded as pre-registe
 
 - P3 environment reports PyTorch 2.14.1+cpu and CUDA unavailable. `nvidia-smi` is not on PATH.
 - Data splits, processed manifest, lung ROI and original box files are absent from this checkout.
-- D08/D09 files are marked locked; their evidence and definitive split still require team confirmation.
+- D08/D09 carry placeholder provenance. Preflight, the final-training CLI and the Kaggle
+  training notebook now refuse those records. A reviewer, lock timestamp, evidence references,
+  and full commit SHA are checked as record fields. Team approval of the evidence is still required.
 - Training configurations still intentionally contain null epochs/batch size until measured T4 evidence is supplied.
 - D-FINE local checkout was verified at `956d1709314c2c6a4df6f34de232054578a7449f` with no tracked modifications.
-- The existing D-FINE checkout is preserved and is now registered as a pinned submodule.
-  The gitlink and `.gitmodules` are staged; source changes have not been committed/pushed.
+- The D-FINE checkout is registered and published on `ritika` as a pinned submodule.
 - Atul's current branch was fetched for interface inspection; it was not merged into Ritika's branch.
 - The missing frozen methodology/proposal sources were restored byte-for-byte from local baseline `main`
   so existing report citations resolve. Their content was not revised.
@@ -50,13 +60,19 @@ Use a Python environment with base and P3 requirements installed and `PYTHONPATH
 1. Run `python -m p3_ops.preflight`. This is read-only and returns 2 while prerequisites are missing.
 2. Supply P1's definitive C01, C04, C05, C06 and uncropped full-image annotation files in their contract paths.
 3. On Kaggle T4, run `notebooks/p3/p3_01_dfine_feasibility.ipynb`, then the deliberate-kill/resume notebook.
+   Local synthetic checks can run on CPU. Run `python -m p3_det.train --config dfine_512.yaml
+   --smoke --smoke-dir <new-scratch-directory>` and repeat with `dfine_640.yaml` and a different directory.
+   Keep their outputs separate from the T4 feasibility report and final weights.
 4. Save the feasibility JSON; use `python -m p3_det.fill_training_config --json <results.json> --hours-per-session <budget>` to review proposed settings. Add `--write` only with actual measured data.
 5. Train both configurations through `python -m p3_det.train --config dfine_512.yaml` and `dfine_640.yaml` under identical schedules. Follow the existing selection commands in the runbook; retain their pre-registration checks.
 6. Select D16/D17/D18, obtain guide acknowledgement, and have owners lock the decisions. Verify the downloaded checkpoint SHA. Export development/calibration C10.
 7. Integrate with Atul's checkout using `python -m p3_ops.serve_v2 --p2-root <checkout>`. The launcher requires a real locked detector and reuses the P1 ROI/CLAHE functions and P2 segmenter. Optional `--input-provider module:function` must return `(prepared_full512_uint8, locked_crop_box)`.
 8. Agree the regional explainability protocol with P2/P4/guide before replacing the original CLS-based D19. `p3_xai.regional` is an implementation adapter, not an approved protocol change. Do not report its synthetic score tests as real-model reproduction.
 9. After owner approval, reviewed code/decision commits and all gate prerequisites, use `python -m p3_ops.sealed_run --split internal_test --model-id <registered-model>`. This consumes an existing P4 token; it never issues one. A failure permanently reserves that attempt. Challenge export requires the prior P3 internal run to be complete. The runner currently supports TBX11K C01 and the original R3 crop-based explanation path; regional-model sealed explanation needs the approved D19 integration first.
-10. Configure all real R4 stages, then run E6 on 103 development inputs (3 warm-up, 100 timed). The default unconfigured orchestrator is deliberately rejected by the E6 driver.
+10. Configure all real R4 stages, then run E6 on 103 development inputs (3 warm-up, 100 timed).
+    Use `python -m p3_ops.latency --mode cpu --orchestrator-factory <module>:<factory>` and repeat
+    in a fresh process with `--mode gpu`. Supply a reviewed zero-argument factory that returns the
+    configured R4 orchestrator. The driver refuses missing providers before sampling or timing.
 
 The supplied work plan assigns the backup demo recording to P1, not P3. Existing demo-script
 drafts are preserved; they are not counted as a missing P3-17 task.
@@ -77,4 +93,4 @@ The user's request to fix all Role 3 gaps includes the necessary P3 integration 
 `src/p4_pipeline/orchestrator.py`, the legacy demo regression, and isolated P4 gate/C16 validation tests.
 The gate tests now use temporary synthetic decisions and assert refusal of unlocked decisions; no real
 decision locks were changed. These shared changes need Kunal's
-review before merging. No files were committed, pushed, published, or sent to teammates.
+review before merging into `main`.

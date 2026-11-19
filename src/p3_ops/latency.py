@@ -1,7 +1,7 @@
 """P3-16: latency experiment E6 (full pipeline, P4's R4 run_batch) on development images.
 
-    python -m p3_ops.latency --mode gpu       # RTX 4050
-    python -m p3_ops.latency --mode cpu       # CUDA forced off (set before torch is imported)
+    python -m p3_ops.latency --mode gpu --orchestrator-factory module:factory
+    python -m p3_ops.latency --mode cpu --orchestrator-factory module:factory
 
 Protocol (fixed before measuring; nothing is tuned to pass):
 * Images: development split only (C01), readable (C04 decode_status ok), seeded sample (seed 0) of
@@ -30,6 +30,7 @@ import sys
 import time
 from dataclasses import dataclass
 from datetime import date
+from importlib import import_module
 from pathlib import Path
 from typing import Callable, Sequence
 
@@ -225,19 +226,27 @@ def measure(inputs: Sequence[Path], run_batch: Callable, n_warmup: int = N_WARMU
     return out
 
 
-def _p4_run_batch() -> Callable:
-    try:
-        from p4_pipeline.api import run_batch, get_default_orchestrator
-    except ImportError as e:
-        raise RuntimeError("p4_pipeline.api.run_batch (R4, P4) is not available") from e
+def _p4_run_batch(factory: str | None = None) -> Callable:
     if os.environ.get("TB_MOCK") == "1":
         raise RuntimeError("Reported E6 measurements cannot use TB_MOCK=1")
-    orch = get_default_orchestrator()
+    if factory is None:
+        try:
+            from p4_pipeline.api import get_default_orchestrator
+        except ImportError as e:
+            raise RuntimeError("p4_pipeline.api.run_batch (R4, P4) is not available") from e
+        orch = get_default_orchestrator()
+    else:
+        module, _, name = factory.partition(":")
+        if not module or not name:
+            raise ValueError("orchestrator factory must be module:callable")
+        orch = getattr(import_module(module), name)()
     missing = [name for name in ("r1", "r2_cls", "r2_gate", "r3_det", "r3_xai")
                if getattr(orch, name, None) is None]
     if missing:
         raise RuntimeError(f"R4 has unconfigured stages {missing}; refusing to time fallback outputs")
-    return run_batch
+    if not callable(getattr(orch, "process_batch", None)):
+        raise TypeError("R4 orchestrator must expose process_batch")
+    return orch.process_batch
 
 
 def _force_mode(mode: str) -> None:
@@ -270,12 +279,13 @@ def write_outputs(s: Summary, per_image: list[dict], out_dir: Path = OUT_DIR) ->
 
 
 def run(mode: str, *, inputs: Sequence[Path] | None = None, run_batch: Callable | None = None,
-        n_warmup: int = N_WARMUP, out_dir: Path = OUT_DIR) -> Summary:
+        n_warmup: int = N_WARMUP, out_dir: Path = OUT_DIR, orchestrator_factory: str | None = None) -> Summary:
     if mode not in TARGET_MS:
         raise ValueError("mode must be 'gpu' or 'cpu'")
     _force_mode(mode)
+    batch = run_batch if run_batch is not None else _p4_run_batch(orchestrator_factory)
     inputs = list(inputs) if inputs is not None else development_inputs(N_WARMUP + N_MEASURE)
-    per_image = measure(inputs, run_batch or _p4_run_batch(), n_warmup)
+    per_image = measure(inputs, batch, n_warmup)
     s = summarise(mode, per_image, machine_description(mode), git_sha(),
                   peak_rss_gb=peak_rss_gb() if mode == "cpu" else None)
     write_outputs(s, per_image, out_dir)
@@ -285,8 +295,10 @@ def run(mode: str, *, inputs: Sequence[Path] | None = None, run_batch: Callable 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--mode", choices=sorted(TARGET_MS), required=True)
+    ap.add_argument("--orchestrator-factory", metavar="MODULE:CALLABLE",
+                    help="Create the fully configured R4 orchestrator after setting CPU/GPU mode")
     a = ap.parse_args(argv)
-    s = run(a.mode)
+    s = run(a.mode, orchestrator_factory=a.orchestrator_factory)
     print(table_markdown(s))
     return 0
 

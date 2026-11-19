@@ -227,14 +227,32 @@ def main(argv=None) -> int:
     ap.add_argument("--config", required=True, help="dfine_512.yaml / dfine_640.yaml (src/p3_det/configs)")
     ap.add_argument("--device")
     ap.add_argument("--smoke", action="store_true", help="CPU, FAKE P1 data, D-FINE-N, 2 epochs, no download")
+    ap.add_argument("--smoke-dir", type=Path, help="New directory for synthetic smoke outputs")
     args = ap.parse_args(argv)
+    if args.smoke_dir is not None and not args.smoke:
+        ap.error("--smoke-dir requires --smoke")
     warnings.filterwarnings("default", message="PROVISIONAL")
     if not args.smoke:
+        from ..decisions import PREPROCESSING_DECISIONS, reviewed_lock_problem
+
+        if os.environ.get("TB_MOCK") == "1":
+            ap.error("Final training cannot use TB_MOCK=1. Use --smoke for synthetic data.")
+        for name in PREPROCESSING_DECISIONS:
+            problem = reviewed_lock_problem(REPO / "decisions" / f"{name}.json")
+            if problem:
+                ap.error(f"Final training requires reviewed preprocessing. {problem}")
         train(args.config, device=args.device)
         return 0
     import yaml
     from ..data.fake_p1 import make_fake_p1_tree
-    work = Path(tempfile.mkdtemp(prefix="p3_06_smoke_"))
+    if args.smoke_dir is None:
+        work = Path(tempfile.mkdtemp(prefix="p3_06_smoke_"))
+    else:
+        work = args.smoke_dir.resolve()
+        try:
+            work.mkdir(parents=True, exist_ok=False)
+        except FileExistsError:
+            ap.error(f"smoke output directory already exists: {work}")
     cfg = load_run_config(args.config).raw
     cfg["model"].update(variant="n", dfine_config="configs/dfine/custom/dfine_hgnetv2_n_custom.yml", init="none")
     cfg["schedule"].update(epochs=2, batch_size=2, eval_batch_size=4, num_workers=0, amp=False,

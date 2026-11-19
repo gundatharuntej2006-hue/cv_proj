@@ -119,6 +119,20 @@ def test_missing_r4_and_gpu_guard(monkeypatch):
         latency._force_mode("cpu")                                           # torch already imported here
 
 
+def test_e6_factory_connects_configured_r4_and_refuses_missing_stages(monkeypatch):
+    from types import SimpleNamespace
+
+    batch = fake_run_batch()
+    orch = SimpleNamespace(r1=object(), r2_cls=object(), r2_gate=object(), r3_det=object(),
+                           r3_xai=object(), process_batch=batch)
+    monkeypatch.delenv("TB_MOCK", raising=False)
+    monkeypatch.setattr(latency, "import_module", lambda name: SimpleNamespace(build=lambda: orch))
+    assert latency._p4_run_batch("fixture:build") is batch
+    orch.r3_xai = None
+    with pytest.raises(RuntimeError, match="r3_xai"):
+        latency._p4_run_batch("fixture:build")
+
+
 def test_machine_description_and_memory_probe():
     d = latency.machine_description("cpu")
     assert d.startswith("CPU ") and "GPU none (CUDA disabled)" in d

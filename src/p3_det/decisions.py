@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import subprocess
 import sys
 from dataclasses import dataclass
@@ -23,10 +24,28 @@ from datetime import date
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
+PREPROCESSING_DECISIONS = ("p2_clahe", "p2_crop_margin")
 
 
 class Refused(RuntimeError):
     """The tool will not proceed (inputs invalid, rule not committed, lock not allowed, ...)."""
+
+
+def reviewed_lock_problem(path: Path) -> str | None:
+    """Return the first missing C16 lock requirement without modifying the record."""
+    try:
+        record = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return f"{path.name}: missing or unreadable decision"
+    if (not isinstance(record, dict) or record.get("locked") is not True
+            or not isinstance(record.get("value"), dict) or not record["value"]):
+        return f"{path.name}: an approved value and lock are required"
+    sha = record.get("git_sha")
+    if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
+        return f"{path.name}: missing or placeholder git_sha"
+    if not record.get("reviewed_by") or not record.get("locked_at") or not record.get("evidence"):
+        return f"{path.name}: reviewer, lock timestamp and evidence references are required"
+    return None
 
 
 def new_decision(decision_id: str, title: str, criterion: str, candidates: list, data_used: list[str],

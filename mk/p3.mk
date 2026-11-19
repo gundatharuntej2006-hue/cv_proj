@@ -55,10 +55,10 @@ p3-latency-detect:
 p3-latency: p3-latency-gpu p3-latency-cpu
 
 p3-latency-gpu:
-	PYTHONPATH=src $(PYTHON) -m p3_ops.latency --mode gpu
+	PYTHONPATH=src $(PYTHON) -m p3_ops.latency --mode gpu $(P3_LATENCY_ARGS)
 
 p3-latency-cpu:
-	PYTHONPATH=src $(PYTHON) -m p3_ops.latency --mode cpu
+	PYTHONPATH=src $(PYTHON) -m p3_ops.latency --mode cpu $(P3_LATENCY_ARGS)
 
 ## p3-verify: audit all P3 work (tests/p3_verify) -> docs/p3_verification_report.md
 p3-verify:
