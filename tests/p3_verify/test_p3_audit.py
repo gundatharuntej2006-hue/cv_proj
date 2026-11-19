@@ -269,7 +269,7 @@ def test_B7():
     from importlib import metadata
     d = load_json(DECISIONS["D20"])["value"]
     lic = REPO / "third_party/D-FINE/LICENSE"
-    h = hashlib.sha256(lic.read_bytes()).hexdigest()
+    h = hashlib.sha256(lic.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
     ok_dfine = h == d["dfine"]["licence_sha256"] and "Apache License" in lic.read_text() and "Version 2.0" in lic.read_text()
     dist = metadata.distribution("grad-cam")
     gl = next((f for f in dist.files or [] if f.name.upper().startswith("LICENSE")), None)

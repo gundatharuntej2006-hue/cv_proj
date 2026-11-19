@@ -16,7 +16,7 @@ Status: **template, awaiting Kaggle T4 numbers**. D20 (`decisions/p3_licences.js
 
 | Component | Version inspected | Licence (file) | SHA-256 of LICENSE | Verdict |
 |---|---|---|---|---|
-| D-FINE | commit `956d170` | Apache-2.0 (`LICENSE`, Apache License Version 2.0) | `1eb85fc9…a2a761ae9c8c6` | accepted |
+| D-FINE | commit `956d170` | Apache-2.0 (`LICENSE`, Apache License Version 2.0) | `c71d239d…e87dcf35d0ab4` (Git blob, LF) | accepted |
 | pytorch-grad-cam | PyPI `grad-cam==1.5.7` (sdist), cross-checked with GitHub `7043934` | MIT, © 2021 Jacob Gildenblat | `daaa1016…e668abc7403` (sdist, CRLF) | accepted |
 | RT-DETRv2 (extension) | `lyuwenyu/RT-DETR` commit `29320b6`, `rtdetrv2_pytorch/` | Apache-2.0 (root `LICENSE`; no separate licence in subdir) | `1eb85fc9…a2a761ae9c8c6` | accepted |
 

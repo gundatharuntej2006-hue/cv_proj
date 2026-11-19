@@ -16,8 +16,8 @@
       "repo": "https://github.com/Peterande/D-FINE",
       "commit": "956d1709314c2c6a4df6f34de232054578a7449f",
       "licence_file": "third_party/D-FINE/LICENSE",
-      "licence_sha256": "1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6",
-      "notes": "Upstream README (commit 956d170) states that Objects365-trained checkpoints (*_obj365, *_obj2coco) may be subject to Objects365 dataset terms and are not cleared by the code licence. The default custom configs load ImageNet-pretrained PP-HGNetV2 backbone weights from github.com/Peterande/storage. Choice of initial weights is made in P3-06 and its terms are recorded there."
+      "licence_sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+      "notes": "The SHA-256 is for the pinned Git blob (LF line endings). The earlier Windows checkout hash with CRLF was 1eb85fc97224598dad1852b5d6483bbcf0aa8608790dcc657a5a2a761ae9c8c6. Upstream README (commit 956d170) states that Objects365-trained checkpoints (*_obj365, *_obj2coco) may be subject to Objects365 dataset terms and are not cleared by the code licence. The default custom configs load ImageNet-pretrained PP-HGNetV2 backbone weights from github.com/Peterande/storage. Choice of initial weights is made in P3-06 and its terms are recorded there."
     },
     "pytorch_grad_cam": {
       "accepted": true,

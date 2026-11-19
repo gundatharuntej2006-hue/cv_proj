@@ -54,5 +54,7 @@ def test_dfine_licence_hash_matches_checkout(d20):
     lic = REPO / "third_party" / "D-FINE" / "LICENSE"
     if not lic.exists():
         pytest.skip("D-FINE submodule not checked out")
-    assert hashlib.sha256(lic.read_bytes()).hexdigest() == d20["value"]["dfine"]["licence_sha256"]
+    # Git may materialize the pinned LF blob as CRLF on Windows.
+    licence_bytes = lic.read_bytes().replace(b"\r\n", b"\n")
+    assert hashlib.sha256(licence_bytes).hexdigest() == d20["value"]["dfine"]["licence_sha256"]
     assert "Apache License" in lic.read_text() and "Version 2.0" in lic.read_text()
