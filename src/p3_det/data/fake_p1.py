@@ -47,7 +47,8 @@ def _image(r, lung, lesions) -> np.ndarray:
     return arr.clip(0, 255).astype(np.uint8)
 
 
-def make_fake_p1_tree(root: str | Path, n_per_split: int = 12, seed: int = 0) -> Path:
+def make_fake_p1_tree(root: str | Path, n_per_split: int = 12, seed: int = 0, *,
+                      full_annotations: bool = False) -> Path:
     import pyarrow as pa
     import pyarrow.parquet as pq
 
@@ -56,6 +57,8 @@ def make_fake_p1_tree(root: str | Path, n_per_split: int = 12, seed: int = 0) ->
     c01, manifest, roi = [], [], []
     coco = {(s, m): {"images": [], "annotations": [], "categories": [{"id": 1, "name": "tb_lesion"}]}
             for s in SPLITS for m in MARGINS}
+    full = ({s: {"images": [], "annotations": [], "categories": [{"id": 1, "name": "tb_lesion"}]}
+             for s in ("train", "development")} if full_annotations else {})
     ann_id = 1
     kinds = ["tb", "tb", "h", "s", "tb_nobox"]          # mix incl. TB without boxes
     for si, split in enumerate(SPLITS):
@@ -74,6 +77,15 @@ def make_fake_p1_tree(root: str | Path, n_per_split: int = 12, seed: int = 0) ->
                         bx, by = r.uniform(lung[0], lung[2] - w), r.uniform(lung[1], lung[3] - h)
                     lesions.append([float(max(0, bx)), float(by), float(bx + w), float(by + h)])
             img = _image(r, lung, lesions)
+            if split in full:
+                doc = full[split]
+                img_id = len(doc["images"]) + 1
+                doc["images"].append({"id": img_id, "file_name": iid, "width": 512, "height": 512})
+                for x0, y0, x1, y1 in lesions:
+                    doc["annotations"].append({"id": len(doc["annotations"]) + 1, "image_id": img_id,
+                                               "category_id": 1, "bbox": [x0, y0, x1 - x0, y1 - y0],
+                                               "area": (x1 - x0) * (y1 - y0), "iscrowd": 0,
+                                               "tb_subtype": "active"})
             rel = f"data/processed/v1/tbx11k/img512/{iid}.png"
             rel_c = f"data/processed/v1/tbx11k/img512_clahe/{iid}.png"
             for rp, a in ((rel, img), (rel_c, np.clip((img.astype(np.float32) - 128) * 1.3 + 128, 0, 255))):
@@ -124,4 +136,6 @@ def make_fake_p1_tree(root: str | Path, n_per_split: int = 12, seed: int = 0) ->
     (root / "data/boxes/v1").mkdir(parents=True, exist_ok=True)
     for (split, m), doc in coco.items():
         (root / f"data/boxes/v1/coco_{split}_m{m:.2f}.json").write_text(json.dumps(doc))
+    for split, doc in full.items():
+        (root / f"data/boxes/v1/coco_{split}_full.json").write_text(json.dumps(doc))
     return root

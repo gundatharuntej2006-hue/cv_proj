@@ -1,8 +1,7 @@
-"""P3-04: data paths, locked preprocessing (D08 CLAHE, D09 margin) and the sealed-split guard.
+"""P3-04: data paths, detector preprocessing candidates and the sealed-split guard.
 
-Until P2 locks D08/D09 the adapter runs on PROVISIONAL settings (margin 0.10, CLAHE off, H4).
-Once the decision files are locked, their values are used and a conflicting explicit argument
-is an error.
+The legacy loader still reads D08/D09 for existing callers. Explicit detector
+study candidates use independent settings and never count as approved.
 
 Paths follow README 4.2. ``TB_MOCK=1`` reads the same relative paths under ``mock/`` (the
 tbcore.paths switch, re-implemented here until tbcore exists).
@@ -28,6 +27,20 @@ NEVER_SPLITS = ("excluded_duplicate",)
 
 class SealedSplitError(PermissionError):
     """Raised when a sealed split is requested without the gate's unlock token."""
+
+
+@dataclass(frozen=True)
+class DetectorPreprocessing:
+    """An explicit provisional candidate. A missing margin means full image."""
+
+    margin: float | None
+    clahe: bool
+
+    def __post_init__(self) -> None:
+        if self.margin is not None and (isinstance(self.margin, bool) or self.margin not in MARGINS):
+            raise ValueError(f"lung crop margin must be one of {MARGINS}")
+        if not isinstance(self.clahe, bool):
+            raise ValueError("candidate CLAHE must be true or false")
 
 
 def check_split(split: str, dataset: str = "tbx11k") -> None:

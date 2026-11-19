@@ -24,11 +24,20 @@ from datetime import date
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[2]
-PREPROCESSING_DECISIONS = ("p2_clahe", "p2_crop_margin")
+PREPROCESSING_ABLATION = "detector_preprocessing_ablation"
+DETECTOR_PROTOCOL_PENDING = (
+    "Final training requires an agreed detector preprocessing protocol. "
+    "P2 D08/D09 apply to classification."
+)
 
 
 class Refused(RuntimeError):
     """The tool will not proceed (inputs invalid, rule not committed, lock not allowed, ...)."""
+
+
+def refuse_preprocessing_ablation(meta: dict) -> None:
+    if meta.get("purpose") == PREPROCESSING_ABLATION:
+        raise Refused("A provisional preprocessing ablation cannot supply D16–D18 results")
 
 
 def reviewed_lock_problem(path: Path) -> str | None:

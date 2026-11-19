@@ -72,6 +72,7 @@ def load_run(run_dir: Path) -> dict:
     if missing:
         raise Refused(f"{run_dir}: missing {missing}")
     meta = json.loads((run_dir / "run_meta.json").read_text())
+    dec.refuse_preprocessing_ablation(meta)
     with open(run_dir / "train_log.csv", newline="") as f:
         log = list(csv.DictReader(f))
     gt_doc = json.loads((run_dir / "dev_ground_truth.json").read_text())

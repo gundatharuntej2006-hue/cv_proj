@@ -15,11 +15,13 @@ import numpy as np
 from .config import MARGINS, DataPaths
 
 
-def original_boxes(paths: DataPaths, split: str) -> dict[str, dict]:
+def original_boxes(paths: DataPaths, split: str, *, required: bool = False) -> dict[str, dict]:
     """{image_id: {"boxes": float [k, 4] xyxy (512 coords), "subtypes": [str | None, ...]}}"""
     full = paths.root / f"data/boxes/v1/coco_{split}_full.json"
     if full.exists():
         src = full
+    elif required:
+        raise FileNotFoundError(f"{full}: original full-image annotations are required")
     else:
         src = paths.coco(split, max(MARGINS))
         warnings.warn(f"no {full.name}; using {src.name}: boxes fully outside the widest crop are missing",

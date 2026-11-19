@@ -8,6 +8,33 @@ review and the definitive split and data handoff are still pending. P4's
 [draft governance PR](https://github.com/gundatharuntej2006-hue/cv_proj/pull/4) keeps sealed
 evaluation on hold while owners review the legacy decision records.
 
+## Detector preprocessing study
+
+[P2's D08/D09 sweep](https://github.com/gundatharuntej2006-hue/cv_proj/blob/atul/docs/p2_d08_d09_recommendation.md)
+used the classifier on the previous split. Its provisional recommendation is
+CLAHE off and full-image classification input. P3's final training entry points
+remain on hold until the team agrees how to approve detector preprocessing.
+
+P3 can run a provisional detector comparison with explicit full-image or lung
+crop input and CLAHE on or off. With the project dependencies installed and
+`PYTHONPATH=src`, these commands exercise the workflow with synthetic data.
+The study candidates still require team agreement.
+
+```sh
+python -m p3_det.train --config dfine_512.yaml --smoke --smoke-dir scratch/full-off --ablation-view full --ablation-clahe off
+python -m p3_det.train --config dfine_512.yaml --smoke --smoke-dir scratch/lung-off --ablation-view lung --ablation-margin 0.10 --ablation-clahe off
+```
+
+For a reviewed study, set `TB_DATA_ROOT` to the authorized P1 data, use a measured
+schedule, replace the smoke flags with `--ablation-dir <experiment-directory>`,
+and keep the configuration and seed fixed across candidates. Full-frame training
+requires the original train annotations. Lung-crop candidates require C05 and
+the C06 files for the requested margin. Every candidate uses the original
+development annotations for scoring, including lesions outside the crop.
+Output includes candidate settings, cohort counts, input hashes, and detections.
+The tool refuses checkpoint resume if the input contracts change. It does not
+choose a winner. D16–D18 tools reject these experimental runs.
+
 The latest implementation changes, verification and outstanding acceptance inputs are in
 [the 2026-11-17 progress record](p3_implementation_progress_20261117.md).
 The October final verdict and blocker lists are historical.
@@ -45,9 +72,9 @@ it must be resolved explicitly before new results can be recorded as pre-registe
 
 - P3 environment reports PyTorch 2.14.1+cpu and CUDA unavailable. `nvidia-smi` is not on PATH.
 - Data splits, processed manifest, lung ROI and original box files are absent from this checkout.
-- D08/D09 carry placeholder provenance. Preflight, the final-training CLI and the Kaggle
-  training notebook now refuse those records. A reviewer, lock timestamp, evidence references,
-  and full commit SHA are checked as record fields. Team approval of the evidence is still required.
+- D08/D09 are provisional classifier decisions. Preflight reports the independent
+  detector protocol as pending. The final-training CLI and Kaggle notebook stay
+  blocked until the agreed detector protocol is wired through.
 - Training configurations still intentionally contain null epochs/batch size until measured T4 evidence is supplied.
 - D-FINE local checkout was verified at `956d1709314c2c6a4df6f34de232054578a7449f` with no tracked modifications.
 - The D-FINE checkout is registered and published on `ritika` as a pinned submodule.
@@ -61,12 +88,14 @@ Use a Python environment with base and P3 requirements installed and `PYTHONPATH
 
 1. Run `python -m p3_ops.preflight`. This is read-only and returns 2 while prerequisites are missing.
 2. Supply P1's definitive C01, C04, C05, C06 and uncropped full-image annotation files in their contract paths.
+   Agree in writing on the detector candidate settings, comparison rule, and where the decision will be recorded.
 3. On Kaggle T4, run `notebooks/p3/p3_01_dfine_feasibility.ipynb`, then the deliberate-kill/resume notebook.
    Local synthetic checks can run on CPU. Run `python -m p3_det.train --config dfine_512.yaml
    --smoke --smoke-dir <new-scratch-directory>` and repeat with `dfine_640.yaml` and a different directory.
    Keep their outputs separate from the T4 feasibility report and final weights.
 4. Save the feasibility JSON; use `python -m p3_det.fill_training_config --json <results.json> --hours-per-session <budget>` to review proposed settings. Add `--write` only with actual measured data.
-5. Train both configurations through `python -m p3_det.train --config dfine_512.yaml` and `dfine_640.yaml` under identical schedules. Follow the existing selection commands in the runbook; retain their pre-registration checks.
+5. After the detector protocol is approved and integrated, train both sizes under identical schedules.
+   Follow the selection commands in the runbook with their pre-registration checks.
 6. Select D16/D17/D18, obtain guide acknowledgement, and have owners lock the decisions. Verify the downloaded checkpoint SHA. Export development/calibration C10.
 7. Integrate with Atul's checkout using `python -m p3_ops.serve_v2 --p2-root <checkout>`. The launcher requires a real locked detector and reuses the P1 ROI/CLAHE functions and P2 segmenter. Optional `--input-provider module:function` must return `(prepared_full512_uint8, locked_crop_box)`.
 8. Agree the regional explainability protocol with P2/P4/guide before replacing the original CLS-based D19. `p3_xai.regional` is an implementation adapter, not an approved protocol change. Do not report its synthetic score tests as real-model reproduction.

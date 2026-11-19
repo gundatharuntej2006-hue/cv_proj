@@ -119,6 +119,24 @@ def _d18(env, **kw):
     return d18.result(env["run"], path=env["d18"], d17_path=env["d17"], **kw)
 
 
+def test_decision_tools_refuse_detector_ablation_runs(env):
+    from p3_det import select_size
+
+    run = env["run"]
+    path = run / "run_meta.json"
+    doc = json.loads(path.read_text())
+    path.write_text(json.dumps({**doc, "purpose": dec.PREPROCESSING_ABLATION}))
+    (run / "dev_detections_last.json").write_bytes((run / "dev_detections_best.json").read_bytes())
+    dec.write_criterion(env["d17"], d17.criterion_template())
+    dec.write_criterion(env["d18"], d18.criterion_template())
+    with pytest.raises(dec.Refused, match="cannot supply D16–D18 results"):
+        select_size.load_run(run)
+    with pytest.raises(dec.Refused, match="cannot supply D16–D18 results"):
+        _d17(env, dry_run=True)
+    with pytest.raises(dec.Refused, match="cannot supply D16–D18 results"):
+        _d18(env, dry_run=True)
+
+
 # --- D17 ---------------------------------------------------------------------------------------------
 
 def test_d17_best_epoch_earliest_tie_and_sha(env):

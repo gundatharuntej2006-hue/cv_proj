@@ -19,6 +19,7 @@ from p3_det.data import (  # noqa: E402
     AugmentConfig, DataPaths, DetDataConfig, SealedSplitError, TBDetectionDataset, augment, check_split,
     det_to_full512, full512_to_crop, full512_to_det, make_dataloader)
 from p3_det.data.dataset import crop_and_resize  # noqa: E402
+from p3_det.data.config import DetectorPreprocessing  # noqa: E402
 from p3_det.data.fake_p1 import make_fake_p1_tree  # noqa: E402
 
 
@@ -93,6 +94,42 @@ def test_c06_inconsistency_is_caught(root, no_decisions, tmp_path):
     p.write_text(json.dumps(doc))
     with pytest.raises(ValueError, match="disagrees"):
         ds(bad, no_decisions)
+
+
+def test_detector_candidates_share_original_development_annotations(tmp_path):
+    data = make_fake_p1_tree(tmp_path / "study", n_per_split=6, full_annotations=True)
+    decisions = tmp_path / "decisions"
+    decisions.mkdir()
+    (decisions / "p2_clahe.json").write_text('{"locked": true, "value": {"clahe": true}}')
+    (decisions / "p2_crop_margin.json").write_text('{"locked": true, "value": {"margin": 0.0}}')
+    annotations = data / "data/boxes/v1/coco_development_full.json"
+    doc = json.loads(annotations.read_text())
+    doc["annotations"].append({**doc["annotations"][0], "id": len(doc["annotations"]) + 1, "bbox": [0, 0, 12, 12]})
+    annotations.write_text(json.dumps(doc))
+
+    full = ds(data, decisions, "development", candidate=DetectorPreprocessing(None, False))
+    lung = ds(data, decisions, "development", candidate=DetectorPreprocessing(0.10, True))
+    assert (full.margin, full.clahe, full.provisional) == (None, False, True)
+    assert (lung.margin, lung.clahe, lung.provisional) == (0.10, True, True)
+    assert [s.image_id for s in full.samples] == [s.image_id for s in lung.samples]
+    for f, c in zip(full.samples, lung.samples):
+        assert f.crop_box == (0, 0, 512, 512)
+        np.testing.assert_array_equal(f.boxes_full512, c.boxes_full512)
+    assert (full.samples[0].boxes_full512[-1] == [0, 0, 12, 12]).all()
+    assert not any(np.array_equal(box, [0, 0, 12, 12]) for box in lung.load(0)[1])
+    assert len(full.load(0)[1]) > len(lung.load(0)[1])
+
+    (data / "data/processed/v1/lung_roi.parquet").unlink()
+    (data / "data/boxes/v1/coco_train_m0.10.json").unlink()
+    assert len(ds(data, decisions, candidate=DetectorPreprocessing(None, False))) > 0
+
+
+def test_detector_candidates_refuse_sealed_splits_and_missing_original_boxes(root, no_decisions):
+    candidate = DetectorPreprocessing(None, False)
+    with pytest.raises(ValueError, match="train/development only"):
+        ds(root, no_decisions, "internal_test", candidate=candidate)
+    with pytest.raises(FileNotFoundError, match="original full-image annotations"):
+        ds(root, no_decisions, candidate=candidate)
 
 
 # --- sealed splits -------------------------------------------------------------------------------

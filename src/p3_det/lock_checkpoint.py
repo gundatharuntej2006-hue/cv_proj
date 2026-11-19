@@ -88,6 +88,7 @@ def result(run_dir: Path, *, checkpoint: Path | None = None, lock: bool = False,
     if missing:
         raise Refused(f"{run_dir}: missing {missing}")
     meta = json.loads((run_dir / "run_meta.json").read_text())
+    dec.refuse_preprocessing_ablation(meta)
     with open(run_dir / "train_log.csv", newline="") as f:
         log = list(csv.DictReader(f))
     epochs = int(meta["config"]["schedule"]["epochs"])

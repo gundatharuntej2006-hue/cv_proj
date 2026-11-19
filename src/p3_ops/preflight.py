@@ -41,9 +41,10 @@ def inspect(root=ROOT, *, check_cuda=True, data_root=None, stage="all"):
         add(name, (data_root / name).is_file(), f"Required P1 input under {data_root}")
     add("original development lesion boxes", (data_root / "data/boxes/v1/coco_development_full.json").is_file(),
         "All original boxes required: cropped annotations omit out-of-crop lesions")
-    from p3_det.decisions import PREPROCESSING_DECISIONS, reviewed_lock_problem, verify_order
+    from p3_det.decisions import DETECTOR_PROTOCOL_PENDING, reviewed_lock_problem, verify_order
 
-    names = list(PREPROCESSING_DECISIONS)
+    add("detector preprocessing protocol", False, DETECTOR_PROTOCOL_PENDING)
+    names = []
     if stage in ("runtime", "all"):
         names += ["p3_det_input_size", "p3_det_checkpoint", "p3_det_conf_threshold"]
     if stage == "all":
@@ -65,18 +66,6 @@ def inspect(root=ROOT, *, check_cuda=True, data_root=None, stage="all"):
                 "Fill from measured T4 feasibility; do not guess these values")
         except (OSError, ValueError, KeyError) as exc:
             add(f"training schedule {size}", False, str(exc))
-    try:
-        from p3_det.data.config import resolve_preprocessing
-        import warnings
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            margin, _, provisional = resolve_preprocessing(decisions_dir=root / "decisions")
-        if not provisional:
-            for split in ("train", "development"):
-                name = f"data/boxes/v1/coco_{split}_m{margin:.2f}.json"
-                add(name, (data_root / name).is_file(), "C06 at locked D09 margin")
-    except (ImportError, OSError, ValueError, KeyError, TypeError) as exc:
-        add("C06 paths", False, str(exc))
     if check_cuda:
         try:
             import torch

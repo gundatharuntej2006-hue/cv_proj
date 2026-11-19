@@ -28,7 +28,8 @@ from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 
 from .augment import AugmentConfig, augment
-from .config import INPUT_SIZES, DataPaths, check_split, resolve_preprocessing
+from .boxes import original_boxes
+from .config import INPUT_SIZES, DataPaths, DetectorPreprocessing, check_split, resolve_preprocessing
 from .geometry import check_crop_box, clip_boxes, full512_to_crop, full512_to_det, xywh_to_xyxy
 
 LABEL = 0
@@ -46,6 +47,7 @@ class DetDataConfig:
     min_box_size: float = 2.0          # px in detector space
     dataset: str = "tbx11k"
     eval_mode: bool = False            # keep TB images whose boxes are too small to train on (they are GT)
+    candidate: DetectorPreprocessing | None = None
 
 
 @dataclass
@@ -72,12 +74,21 @@ def crop_and_resize(img512: np.ndarray, crop_box, input_size: int) -> np.ndarray
 
 class TBDetectionDataset(Dataset):
     def __init__(self, cfg: DetDataConfig, paths: DataPaths | None = None, decisions_dir: Path | None = None):
+        if cfg.candidate is not None:
+            if cfg.split not in ("train", "development"):
+                raise ValueError("Detector preprocessing comparisons use train/development only")
+            if cfg.margin is not None or cfg.clahe is not None:
+                raise ValueError("Supply either a detector candidate or legacy preprocessing settings")
         check_split(cfg.split, cfg.dataset)                   # before any file is opened
         if cfg.input_size not in INPUT_SIZES:
             raise ValueError(f"input_size must be one of {INPUT_SIZES}")
         self.cfg = cfg
         self.paths = paths or DataPaths.default()
-        self.margin, self.clahe, self.provisional = resolve_preprocessing(cfg.margin, cfg.clahe, decisions_dir)
+        self.eval_mode = cfg.eval_mode or (cfg.candidate is not None and cfg.split == "development")
+        if cfg.candidate is None:
+            self.margin, self.clahe, self.provisional = resolve_preprocessing(cfg.margin, cfg.clahe, decisions_dir)
+        else:
+            self.margin, self.clahe, self.provisional = cfg.candidate.margin, cfg.candidate.clahe, True
         self.do_augment = (cfg.split == "train") if cfg.augment is None else cfg.augment
         self.epoch = 0
         self.stats: Counter = Counter()
@@ -89,18 +100,23 @@ class TBDetectionDataset(Dataset):
         with open(p.splits, newline="") as f:
             rows = [r for r in csv.DictReader(f) if r["split"] == cfg.split]
         manifest = {r["image_id"]: r for r in _read_parquet(p.manifest) if r["dataset"] == cfg.dataset}
-        roi = {r["image_id"]: r for r in _read_parquet(p.lung_roi) if abs(r["margin"] - self.margin) < 1e-6}
-        coco = json.loads(p.coco(cfg.split, self.margin).read_text())
-        coco_img = {im["id"]: im for im in coco["images"]}
+        full_frame = self.margin is None
+        roi = {}
         anns: dict[str, list[dict]] = {}
-        for a in coco["annotations"]:
-            anns.setdefault(coco_img[a["image_id"]]["file_name"], []).append(a)
-        coco_crop = {im["file_name"]: im.get("crop_box") for im in coco["images"]}
+        coco_crop = {}
+        if not full_frame:
+            roi = {r["image_id"]: r for r in _read_parquet(p.lung_roi) if abs(r["margin"] - self.margin) < 1e-6}
+            coco = json.loads(p.coco(cfg.split, self.margin).read_text())
+            coco_img = {im["id"]: im for im in coco["images"]}
+            for a in coco["annotations"]:
+                anns.setdefault(coco_img[a["image_id"]]["file_name"], []).append(a)
+            coco_crop = {im["file_name"]: im.get("crop_box") for im in coco["images"]}
         full_gt = None
-        if cfg.eval_mode:
+        if full_frame or (cfg.candidate is not None and cfg.split == "development"):
+            full_gt = original_boxes(p, cfg.split, required=True)
+        elif self.eval_mode:
             full_path = p.root / f"data/boxes/v1/coco_{cfg.split}_full.json"
             if full_path.is_file():
-                from .boxes import original_boxes
                 full_gt = original_boxes(p, cfg.split)
             elif not self.provisional:
                 raise FileNotFoundError(f"{full_path}: locked evaluation requires all original boxes")
@@ -121,10 +137,13 @@ class TBDetectionDataset(Dataset):
             if m is None or m["decode_status"] != "ok":
                 self.stats["skipped_unreadable_or_missing"] += 1
                 continue
-            if iid not in roi:
-                raise KeyError(f"{iid}: no C05 row for margin {self.margin}")
-            ro = roi[iid]
-            crop = check_crop_box((ro["crop_x0"], ro["crop_y0"], ro["crop_x1"], ro["crop_y1"]))
+            if full_frame:
+                crop = (0, 0, 512, 512)
+            else:
+                if iid not in roi:
+                    raise KeyError(f"{iid}: no C05 row for margin {self.margin}")
+                ro = roi[iid]
+                crop = check_crop_box((ro["crop_x0"], ro["crop_y0"], ro["crop_x1"], ro["crop_y1"]))
             if coco_crop.get(iid) is not None and tuple(coco_crop[iid]) != crop:
                 raise ValueError(f"{iid}: C06 crop_box {coco_crop[iid]} != C05 crop {crop}")
             a = anns.get(iid, [])
@@ -147,12 +166,15 @@ class TBDetectionDataset(Dataset):
                 if tb == 1 and not len(boxes):
                     raise ValueError(f"{iid}: C01 has_boxes but full-image annotations are empty")
             det, _ = full512_to_det(boxes, crop, cfg.input_size, min_size=0.0)
-            if tb == 1 and not cfg.eval_mode and not len(
+            if tb == 1 and not self.eval_mode and not len(
                     clip_boxes(det, cfg.input_size, cfg.input_size, cfg.min_box_size)[0]):
                 # would silently become a false negative
                 self.stats["skipped_tb_boxes_too_small_after_crop"] += 1
                 continue
-            rel =m["path_img512_clahe"] if self.clahe else m["path_img512"]
+            image_key = "path_img512_clahe" if self.clahe else "path_img512"
+            rel = m.get(image_key)
+            if not rel:
+                raise ValueError(f"{iid}: C04 has no {image_key}")
             samples.append(Sample(iid, self._resolve(rel), crop, boxes, tb, subtypes))
             self.stats["positives" if tb else "negatives"] += 1
         return samples

@@ -34,6 +34,8 @@ from p3_ops.cloud import CheckpointStore, resume_if_exists, save_checkpoint
 from p3_ops.seed import set_seed
 
 from ..data import DataPaths, DetDataConfig, TBDetectionDataset
+from ..data.config import MARGINS, DetectorPreprocessing
+from ..decisions import DETECTOR_PROTOCOL_PENDING, PREPROCESSING_ABLATION
 from ..metrics import ImageGT, ap50
 from . import dfine_bridge as bridge
 from .config import DFINE_DIR, REPO, RunConfig, load_run_config, require_trainable
@@ -103,13 +105,17 @@ def _append_csv(path: Path, row: dict) -> None:
         os.fsync(f.fileno())
 
 
-def run_dir_name(cfg: RunConfig, margin: float, clahe: bool, provisional: bool) -> str:
-    return f"{cfg.run_name}_m{margin:.2f}_clahe{int(clahe)}" + ("_PROVISIONAL" if provisional else "")
+def run_dir_name(cfg: RunConfig, margin: float | None, clahe: bool, provisional: bool) -> str:
+    view = "full" if margin is None else f"m{margin:.2f}"
+    return f"{cfg.run_name}_{view}_clahe{int(clahe)}" + ("_PROVISIONAL" if provisional else "")
 
 
 def train(config: str | Path, *, device: str | None = None, data_root: Path | None = None,
           ckpt_root: Path | None = None, weights_cache: Path | None = None,
-          max_epochs: int | None = None, decisions_dir: Path | None = None) -> Path:
+          max_epochs: int | None = None, decisions_dir: Path | None = None,
+          candidate: DetectorPreprocessing | None = None) -> Path:
+    if candidate is not None and ckpt_root is None:
+        raise ValueError("Detector preprocessing comparisons require a separate local output directory")
     cfg = load_run_config(config)
     require_trainable(cfg)                     # epochs / batch_size must be set (P3-01)
     s = cfg.schedule
@@ -118,13 +124,19 @@ def train(config: str | Path, *, device: str | None = None, data_root: Path | No
     amp = bool(s["amp"]) and device.startswith("cuda")
     paths = DataPaths(data_root) if data_root else DataPaths.default()
 
-    common = dict(input_size=cfg.input_size, margin=cfg.data["margin"], clahe=cfg.data["clahe"], seed=cfg.seed)
+    common = dict(input_size=cfg.input_size, seed=cfg.seed)
+    if candidate is None:
+        common.update(margin=cfg.data["margin"], clahe=cfg.data["clahe"])
+    else:
+        common["candidate"] = candidate
     train_ds = TBDetectionDataset(DetDataConfig(TRAIN_SPLIT, aug=cfg.augment, **common), paths, decisions_dir)
     dev_ds = TBDetectionDataset(DetDataConfig(EVAL_SPLIT, augment=False, eval_mode=True, **common), paths,
                                 decisions_dir)
     prep = {"margin": train_ds.margin, "clahe": train_ds.clahe, "provisional": train_ds.provisional}
 
     name = run_dir_name(cfg, **prep)
+    if candidate is not None:
+        name = f"ablation_{name}"
     if ckpt_root:
         store = CheckpointStore(dir=Path(ckpt_root) / name, env="local")
         store.dir.mkdir(parents=True, exist_ok=True)
@@ -145,14 +157,27 @@ def train(config: str | Path, *, device: str | None = None, data_root: Path | No
         "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None,
         "platform": platform.platform(), "device": device, "amp": amp,
     }
+    if candidate is not None:
+        meta["purpose"] = PREPROCESSING_ABLATION
+        files = [paths.splits, paths.manifest, paths.root / "data/boxes/v1/coco_development_full.json"]
+        if candidate.margin is None:
+            files.append(paths.root / "data/boxes/v1/coco_train_full.json")
+        else:
+            files += [paths.lung_roi, paths.coco(TRAIN_SPLIT, candidate.margin), paths.coco(EVAL_SPLIT, candidate.margin)]
+        meta["input_sha256"] = {p.relative_to(paths.root).as_posix(): bridge.sha256_file(p) for p in files}
     if meta_path.exists():
         old = json.loads(meta_path.read_text())
         for k in ("schedule_hash", "input_size", "seed", "preprocessing"):
             if old[k] != meta[k]:
                 raise RuntimeError(f"existing run in {rd} has a different {k} ({old[k]} != {meta[k]}); "
                                    "use a new run_name instead of resuming")
+        if candidate is not None and (old.get("purpose") != meta["purpose"]
+                                      or old.get("input_sha256") != meta["input_sha256"]):
+            raise RuntimeError(f"ablation inputs in {rd} have changed; use a new output directory")
         meta = {**old, "resumed_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
     else:
+        if candidate is not None and any(rd.glob("ckpt_*.pt")):
+            raise RuntimeError(f"ablation checkpoints in {rd} have no run metadata; use a new output directory")
         meta["started_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
 
     gt = dev_ground_truth(dev_ds)
@@ -200,7 +225,7 @@ def train(config: str | Path, *, device: str | None = None, data_root: Path | No
         r = ap50(dets, gt, ci=False)
         is_best = r.value > best
         best = max(best, r.value)
-        doc = detections_doc(cfg.run_name, cfg.input_size, epoch, dets)
+        doc = detections_doc(name if candidate is not None else cfg.run_name, cfg.input_size, epoch, dets)
         _atomic_json(rd / "dev_detections_last.json", doc)
         if is_best:
             _atomic_json(rd / "dev_detections_best.json", doc)
@@ -228,20 +253,33 @@ def main(argv=None) -> int:
     ap.add_argument("--device")
     ap.add_argument("--smoke", action="store_true", help="CPU, FAKE P1 data, D-FINE-N, 2 epochs, no download")
     ap.add_argument("--smoke-dir", type=Path, help="New directory for synthetic smoke outputs")
+    ap.add_argument("--ablation-view", choices=("full", "lung"), help="Run one provisional detector candidate")
+    ap.add_argument("--ablation-margin", type=float, choices=MARGINS, help="Required for the lung view")
+    ap.add_argument("--ablation-clahe", choices=("off", "on"), help="Required for an ablation")
+    ap.add_argument("--ablation-dir", type=Path, help="Separate local output directory for the ablation")
     args = ap.parse_args(argv)
     if args.smoke_dir is not None and not args.smoke:
         ap.error("--smoke-dir requires --smoke")
+    candidate = None
+    if args.ablation_view is not None:
+        if (args.ablation_view == "lung") != (args.ablation_margin is not None):
+            ap.error("--ablation-margin is required for lung and cannot be used for full")
+        if args.ablation_clahe is None:
+            ap.error("--ablation-clahe is required for an ablation")
+        candidate = DetectorPreprocessing(args.ablation_margin, args.ablation_clahe == "on")
+    elif any(value is not None for value in (args.ablation_margin, args.ablation_clahe, args.ablation_dir)):
+        ap.error("ablation options require --ablation-view")
+    if args.smoke and args.ablation_dir is not None:
+        ap.error("use --smoke-dir for synthetic ablation output")
     warnings.filterwarnings("default", message="PROVISIONAL")
     if not args.smoke:
-        from ..decisions import PREPROCESSING_DECISIONS, reviewed_lock_problem
-
+        if candidate is None:
+            ap.error(DETECTOR_PROTOCOL_PENDING)
         if os.environ.get("TB_MOCK") == "1":
-            ap.error("Final training cannot use TB_MOCK=1. Use --smoke for synthetic data.")
-        for name in PREPROCESSING_DECISIONS:
-            problem = reviewed_lock_problem(REPO / "decisions" / f"{name}.json")
-            if problem:
-                ap.error(f"Final training requires reviewed preprocessing. {problem}")
-        train(args.config, device=args.device)
+            ap.error("Use --smoke for synthetic data.")
+        if args.ablation_dir is None:
+            ap.error("--ablation-dir is required for an ablation")
+        train(args.config, device=args.device, ckpt_root=args.ablation_dir, candidate=candidate)
         return 0
     import yaml
     from ..data.fake_p1 import make_fake_p1_tree
@@ -259,8 +297,9 @@ def main(argv=None) -> int:
                            multiscale_stop_epoch=1)
     smoke_cfg = work / Path(args.config).name
     smoke_cfg.write_text(yaml.safe_dump(cfg))
-    rd = train(smoke_cfg, device="cpu", data_root=make_fake_p1_tree(work / "p1", n_per_split=6),
-               ckpt_root=work / "ckpt", decisions_dir=work / "no_decisions")
+    rd = train(smoke_cfg, device="cpu",
+               data_root=make_fake_p1_tree(work / "p1", n_per_split=6, full_annotations=candidate is not None),
+               ckpt_root=work / "ckpt", decisions_dir=work / "no_decisions", candidate=candidate)
     print(f"[p3-06] smoke run ok: {rd}", file=sys.stderr)
     return 0
 

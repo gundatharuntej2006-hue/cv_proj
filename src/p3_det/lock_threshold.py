@@ -77,12 +77,15 @@ def result(run_dir: Path, *, lock: bool = False, dry_run: bool = False, path: Pa
         raise Refused("the D18 rule is not committed yet: commit decisions/p3_det_conf_threshold.json first")
 
     run_dir = Path(run_dir)
+    meta_path = run_dir / "run_meta.json"
+    meta = json.loads(meta_path.read_text()) if meta_path.exists() else {}
+    dec.refuse_preprocessing_ablation(meta)
     d17 = json.loads(d17_path.read_text()) if d17_path.exists() else {}
     det_doc = json.loads((run_dir / "dev_detections_best.json").read_text())
     if not dry_run:
         if not d17.get("locked"):
             raise Refused("D17 (checkpoint) must be locked before D18")
-        if d17["value"]["run_dir"] != json.loads((run_dir / "run_meta.json").read_text())["run_dir"]:
+        if d17["value"]["run_dir"] != meta.get("run_dir"):
             raise Refused("this run is not the D17 run")
         if det_doc.get("epoch") != d17["value"]["epoch"]:
             raise Refused(f"detections are from epoch {det_doc.get('epoch')}, D17 chose {d17['value']['epoch']}")
