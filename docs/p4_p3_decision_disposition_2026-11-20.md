@@ -22,6 +22,14 @@ Use `5b94a1b` (2026-11-19, provisional D-FINE preprocessing separated from P2 de
 
 Until that protocol commit exists and inputs are verified, report new runs as exploratory. Do not reuse the old AP50 0.421, checkpoint, confidence threshold or Grad-CAM setting as measured P3 results. D16–D19 remain unlocked; D20 remains unlocked until its own evidence review. P3 owns the replacement records, and a new decision ID or shared contract change needs the team's change-control approval.
 
+## P4 confirmation of detector preprocessing selection rule
+
+P4 accepts the proposed **0.01 absolute development AP50 margin and paired 95% bootstrap CI as joint requirements** for promoting a more complex preprocessing candidate. A lead alone, or a CI that includes zero, is insufficient. The simpler incumbent remains selected in either case. This is a prospective selection rule, not a result or a claim of statistical superiority.
+
+For a reproducible paired CI, keep the same eligible development image IDs, original boxes, detector evaluation code and fixed training schedule for all four candidates. For each of 2,000 replicates with a recorded seed (proposed `42`, subject to D21 approval), resample development **images** with replacement within TB and non-TB strata; apply the same sampled IDs and multiplicities to both candidates, recompute each AP50, and save the paired difference `AP50(challenger) - AP50(incumbent)`. Use the 2.5th and 97.5th percentiles. Promotion requires a point difference `>= 0.01` **and** a lower CI endpoint `> 0`.
+
+Proposed simplicity order, from first incumbent to last challenger: **full image + CLAHE off; full image + CLAHE on; 0.10 lung crop + CLAHE off; 0.10 lung crop + CLAHE on**. Process candidates in that order, comparing each challenger against the currently selected incumbent. Promote only when both conditions above hold. Record all four AP50 values, pairwise differences actually tested, CIs, sample sizes, bootstrap seed, and the final selection. This order must be copied into and approved in the P3-owned versioned protocol before comparisons start; it is not inferred after results.
+
 ## PR #4 review requested from P3
 
 Ritika should check that the gate rejects the placeholder D16–D20 records and duplicate decision IDs, and that the audit describes P3 history accurately. Please identify any P3 evidence that exists outside this repository with an accessible path and hash, and confirm or correct the starting protocol boundary above. A green CI run tests code behavior; it does not certify the historical decisions.
