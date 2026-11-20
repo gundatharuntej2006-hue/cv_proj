@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -47,40 +48,39 @@ class GateValidationError(Exception):
 
 def check_all_decisions(dec_dir: Optional[Path] = None) -> Dict[str, DecisionRecord]:
     """
-    Validates all 23 decision files (D01-D23) against schema, locked status,
-    and allowed data_used rules.
+    Validates all 23 decision files against locks, provenance, evidence, and
+    allowed data_used rules before sealed-data access.
     """
+    custom_dec_dir = dec_dir is not None
     if dec_dir is None:
         dec_dir = get_decisions_dir()
 
     decisions: Dict[str, DecisionRecord] = {}
     missing = []
     invalid = []
+    evidence_root = dec_dir.parent if custom_dec_dir else get_repo_root()
+
+    # Read each file once so duplicate IDs cannot silently shadow one another.
+    by_id: Dict[str, list[tuple[Path, dict]]] = {}
+    for jf in sorted(dec_dir.glob("*.json")):
+        try:
+            data = json.loads(jf.read_text(encoding="utf-8"))
+            by_id.setdefault(data["decision_id"], []).append((jf, data))
+        except (OSError, ValueError, KeyError, TypeError) as e:
+            invalid.append(f"{jf.name}: unreadable decision record: {e}")
 
     for i in range(1, 24):
         d_id = f"D{i:02d}"
-        matching_files = list(dec_dir.glob(f"*_{d_id.lower()}*.json")) + list(dec_dir.glob(f"{d_id.lower()}*.json"))
-        # Also check files named like decisions/p1_splits.json matching D01
-        if not matching_files:
-            # Look inside files for decision_id
-            for jf in dec_dir.glob("*.json"):
-                try:
-                    with open(jf, "r", encoding="utf-8") as f:
-                        data = json.load(f)
-                    if data.get("decision_id") == d_id:
-                        matching_files = [jf]
-                        break
-                except Exception:
-                    pass
-
-        if not matching_files:
+        matches = by_id.get(d_id, [])
+        if not matches:
             missing.append(d_id)
             continue
+        if len(matches) != 1:
+            invalid.append(f"{d_id}: duplicate records: {', '.join(p.name for p, _ in matches)}")
+            continue
 
-        jf = matching_files[0]
+        jf, data = matches[0]
         try:
-            with open(jf, "r", encoding="utf-8") as f:
-                data = json.load(f)
             rec = validate_c16_decision(data)
         except Exception as e:
             invalid.append(f"{d_id} ({jf.name}): {e}")
@@ -88,6 +88,18 @@ def check_all_decisions(dec_dir: Optional[Path] = None) -> Dict[str, DecisionRec
 
         if not rec.locked:
             invalid.append(f"{d_id} ({jf.name}) is not locked (locked=false)")
+        if rec.locked and not rec.locked_at:
+            invalid.append(f"{d_id} ({jf.name}) has no locked_at timestamp")
+        if not rec.git_sha or not re.fullmatch(r"[0-9a-f]{40}", rec.git_sha):
+            invalid.append(f"{d_id} ({jf.name}) has missing or placeholder git_sha")
+        if not rec.reviewed_by:
+            invalid.append(f"{d_id} ({jf.name}) has no reviewer")
+        if not rec.evidence:
+            invalid.append(f"{d_id} ({jf.name}) has no evidence")
+        for reference in rec.evidence:
+            path = (evidence_root / reference.split("#", 1)[0]).resolve()
+            if not path.is_relative_to(evidence_root.resolve()) or not path.is_file():
+                invalid.append(f"{d_id} ({jf.name}) cites missing evidence: {reference}")
 
         # Verify allowed data_used
         expected_data = ALLOWED_DATA_USED.get(d_id, [])
@@ -100,7 +112,7 @@ def check_all_decisions(dec_dir: Optional[Path] = None) -> Dict[str, DecisionRec
         decisions[d_id] = rec
 
     if missing:
-        raise GateValidationError(f"Missing decision files for: {', '.join(missing)}")
+        invalid.append(f"Missing decision files for: {', '.join(missing)}")
     if invalid:
         raise GateValidationError(f"Invalid decision files:\n" + "\n".join(invalid))
 
@@ -132,10 +144,10 @@ def issue_token(split_name: str, out_dir: Optional[Path] = None) -> Path:
     if token_file.exists():
         with open(token_file, "r", encoding="utf-8") as f:
             existing = json.load(f)
-        if existing.get("consumed", False):
-            raise GateValidationError(
-                f"A token for '{split_name}' was already issued and consumed at {existing.get('consumed_at')}."
-            )
+        raise GateValidationError(
+            f"A token for '{split_name}' already exists at {token_file}; "
+            "reissuing would overwrite the single-use record."
+        )
 
     token_data = {
         "token_id": f"tok_{split_name}_{get_git_sha()}_{int(datetime.now(timezone.utc).timestamp())}",

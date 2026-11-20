@@ -1,5 +1,8 @@
 # Comparative Experiments Summary (Section 14, Table 14)
 
+> **Governance status (2026-11-19):** Figures and decision values in this section are unverified legacy examples, not approved sealed-evaluation results. See `docs/p4_governance_review_2026-11-19.md`.
+
+
 **Author:** Person 4 (`@tb-p4`)  
 **Artifacts:** `artifacts/p4/tables/t14_comparisons.csv`
 

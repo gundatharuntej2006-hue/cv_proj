@@ -11,8 +11,8 @@
   "value": {
     "t_lower": 0.18,
     "t_upper": 0.83,
-    "alpha_target": 0.10,
-    "target_precision": 0.80,
+    "alpha_target": 0.1,
+    "target_precision": 0.8,
     "conformal_method": "inductive_split_conformal",
     "link_rule_enabled": true
   },
@@ -23,9 +23,9 @@
   "data_used": [
     "calibration"
   ],
-  "reviewed_by": "p1",
+  "reviewed_by": "",
   "guide_ack": false,
-  "locked": true,
-  "locked_at": "2026-10-24",
-  "git_sha": "c0ffee1"
+  "locked": false,
+  "locked_at": null,
+  "git_sha": null
 }

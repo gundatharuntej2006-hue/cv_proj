@@ -1,7 +1,7 @@
 # Decisions Registry (D01–D23)
 
 **Steward:** Person 4 (`@tb-p4`)  
-**Governance:** Every decision is formally recorded in a versioned JSON file (Schema C16) and locked before evaluating sealed test sets.
+**Governance:** Every decision is formally recorded in a versioned JSON file (Schema C16) and must be reviewed with real evidence before locking or evaluating sealed test sets. The legacy locked flags and `c0ffee1` hashes on this branch are not proof of review; the gate currently fails closed.
 
 ---
 
@@ -29,6 +29,6 @@
 | **D18** | `p3_det_conf_threshold.json` | P3 | Detector Confidence Threshold | Lowest thr with <=5% non-TB dev images with boxes | development | LOCKED |
 | **D19** | `p3_gradcam_config.json` | P3 | Grad-CAM ViT Layer & Transform | Last block attention, patch reshape, crop mapping | development | LOCKED |
 | **D20** | `p3_licences.json` | P3 | Detector & XAI Licences (P3) | D-FINE Apache-2.0, pytorch-grad-cam MIT | none | LOCKED |
-| **D21** | `p4_analysis_plan.json` | P4 | Statistical Analysis Protocol | Alpha=0.10, PPV=80%, Wilson & Bootstrap CIs, Section 4.6 | none | LOCKED |
-| **D22** | `p4_temperature.json` | P4 | Temperature Scaling Parameter | Minimise NLL on dev split (T=1.37) | development | LOCKED |
-| **D23** | `p4_triage_thresholds.json` | P4 | Triage Decision Thresholds | Conformal lower (t=0.18) & Precision upper (t=0.83) on cal | calibration | LOCKED |
+| **D21** | `p4_analysis_plan.json` | P4 | Statistical Analysis Protocol | Alpha=0.10, PPV=80%, Wilson & Bootstrap CIs, Section 4.6 | none | DRAFT — evidence/review pending |
+| **D22** | `p4_temperature.json` | P4 | Temperature Scaling Parameter | Minimise NLL on dev split (T=1.37) | development | DRAFT — fit evidence/review pending |
+| **D23** | `p4_triage_thresholds.json` | P4 | Triage Decision Thresholds | Conformal lower (t=0.18) & Precision upper (t=0.83) on cal | calibration | DRAFT — calibration evidence/review pending |
