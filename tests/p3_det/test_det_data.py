@@ -132,6 +132,36 @@ def test_detector_candidates_refuse_sealed_splits_and_missing_original_boxes(roo
         ds(root, no_decisions, candidate=candidate)
 
 
+def test_ablation_cli_uses_the_verified_c01_snapshot(tmp_path, monkeypatch, capsys):
+    from hashlib import sha256
+
+    from p3_det.train import run as training
+
+    split = tmp_path / "tbx11k_splits_v0.csv"
+    original = b"image_id,split\r\nexample,development\r\n"
+    split.write_bytes(original)
+    args = ["--config", "dfine_512.yaml", "--ablation-view", "full", "--ablation-clahe", "off",
+            "--ablation-dir", str(tmp_path / "out"), "--splits", str(split)]
+    calls = []
+    monkeypatch.delenv("TB_MOCK", raising=False)
+    monkeypatch.setattr(training, "train", lambda *args, **kwargs: calls.append(kwargs))
+    with pytest.raises(SystemExit) as exc:
+        training.main(args)
+    assert exc.value.code == 2 and "--c01-sha256" in capsys.readouterr().err
+    with pytest.raises(SystemExit) as exc:
+        training.main([*args, "--c01-sha256", "0" * 64])
+    assert exc.value.code == 2 and "C01 SHA-256 mismatch" in capsys.readouterr().err
+    assert not calls
+
+    digest = sha256(original).hexdigest()
+    assert training.main([*args, "--c01-sha256", digest.upper()]) == 0
+    snapshot = calls[0]["c01"]
+    assert snapshot.sha256 == digest
+    split.write_bytes(b"image_id,split\r\nmutated,internal_test\r\n")
+    with DataPaths(tmp_path, c01=snapshot).open_splits() as stream:
+        assert stream.read() == original.decode()
+
+
 # --- sealed splits -------------------------------------------------------------------------------
 
 @pytest.mark.parametrize("split", ["internal_test", "challenge_test", "external_test", "excluded_duplicate"])

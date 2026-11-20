@@ -1,24 +1,36 @@
-# Role 3 completion status — 2026-11-19
+# Role 3 completion status — 2026-11-20
 
-P1 has confirmed that definitive C01/C04/C05/C06 do not yet exist. See the
-[18 November dependency update](p3_p1_dependency_update_20261118.md) for the delivery sequence
-and the permitted provisional-development scope under H4.
-Atul reports that he delivered the C17 candidates for C01 v0 to P1. P1-07 duplicate
-review and the definitive split and data handoff are still pending. P4's
+Tharun confirmed receipt of Atul's C17 v1 candidates for C01 v0. He reports
+that the ledgers and evidence for 72 cross-split candidates and 88 within-split
+pairs were independently validated and committed. Visual review of all 160
+pairs is pending, along with duplicate verdicts and the C01 v1 split.
+
+Tharun reports that C01 v0 and the C04 v0 baseline of 8,400 processed
+512 × 512 images and its manifest are prepared. The private handoff path is
+pending. P1 is still checking C05, C06 and the original full-image lesion
+annotations. See the [18 November dependency update](p3_p1_dependency_update_20261118.md)
+for the provisional-development scope under H4. P4's
 [draft governance PR](https://github.com/gundatharuntej2006-hue/cv_proj/pull/4) keeps sealed
 evaluation on hold while owners review the legacy decision records.
 
 ## Detector preprocessing study
 
-[P2's D08/D09 sweep](https://github.com/gundatharuntej2006-hue/cv_proj/blob/atul/docs/p2_d08_d09_recommendation.md)
-used the classifier on the previous split. Its provisional recommendation is
-CLAHE off and full-image classification input. P3's final training entry points
-remain on hold until the team agrees how to approve detector preprocessing.
+[Draft P3 Detector Preprocessing Protocol](p3_detector_preprocessing_protocol.md)
+records Tharun's offer of the C01 v0 and non-CLAHE C04 v0 baseline and the
+selection rule and simplicity order confirmed by P4. P4's proposed 2,000
+replicates and seed 42 await D21 approval. The private handoff path and the
+original annotation inventory are pending.
+
+[P2's original D08/D09 sweep note](https://github.com/gundatharuntej2006-hue/cv_proj/blob/atul/docs/p2_d08_d09_recommendation.md)
+covers the previous split. Atul reports that the C01 v0 development rerun
+proposes CLAHE off and a 0.00 lung-crop margin for classification, pending
+review. The frozen P2 serving bundles still use full images. P3's final
+training remains on hold until the team approves the independent detector protocol.
 
 P3 can run a provisional detector comparison with explicit full-image or lung
 crop input and CLAHE on or off. With the project dependencies installed and
 `PYTHONPATH=src`, these commands exercise the workflow with synthetic data.
-The study candidates still require team agreement.
+The real comparison still requires the verified P1 handoff and D21 approval.
 
 ```sh
 python -m p3_det.train --config dfine_512.yaml --smoke --smoke-dir scratch/full-off --ablation-view full --ablation-clahe off
@@ -27,13 +39,16 @@ python -m p3_det.train --config dfine_512.yaml --smoke --smoke-dir scratch/lung-
 
 For a reviewed study, set `TB_DATA_ROOT` to the authorized P1 data, use a measured
 schedule, replace the smoke flags with `--ablation-dir <experiment-directory>`,
-and keep the configuration and seed fixed across candidates. Full-frame training
+and pass `--splits <reviewed-C01.csv> --c01-sha256 <P1-published-SHA-256>`.
+Keep the configuration, seed, and verified split fixed across candidates. Full-frame training
 requires the original train annotations. Lung-crop candidates require C05 and
 the C06 files for the requested margin. Every candidate uses the original
 development annotations for scoring, including lesions outside the crop.
 Output includes candidate settings, cohort counts, input hashes, and detections.
-The tool refuses checkpoint resume if the input contracts change. It does not
-choose a winner. D16–D18 tools reject these experimental runs.
+The tool refuses checkpoint resume if the input contracts or artifact format
+change. `python -m p3_det.compare_preprocessing` reports paired development
+AP50 and confidence intervals from completed, comparable runs. D16–D18 tools
+reject these experimental runs.
 
 The latest implementation changes, verification and outstanding acceptance inputs are in
 [the 2026-11-17 progress record](p3_implementation_progress_20261117.md).
@@ -55,7 +70,7 @@ session. No CPU smoke results were used to fill the final schedules.
 | 1 | Training prerequisites | Read-only `python -m p3_ops.preflight`; reproducible pinned checkout via `python -m p3_det.setup --fetch`; existing feasibility/config-fill/training tools retained | P1 C01/C04/C05/C06 files and original full-image boxes; measured Kaggle T4 feasibility; actual 512/640 training runs |
 | 2 | Detector selection | Existing D16/D17/D18 pre-registered rules retained; real loader still verifies locks and checkpoint SHA | Measured AP50 comparison, checkpoint, threshold results, guide acknowledgement, owner locks |
 | 3 | Runtime integration | Fixed full512 input, separate box/score arrays, locked threshold, missing-detector handling, saved heatmaps and case-specific overlays in P4 orchestration | Real checkpoint and real model/data smoke run; team review of shared P4 changes |
-| 4 | P2 v2 bridge | Opt-in lesion evidence and overlays, additive referral flag, existing P1 preprocessing functions reused, no classifier-score changes | Run with Atul's merged checkout and frozen bundle; verify D08/D09 input equivalence on real images |
+| 4 | P2 v2 bridge | Opt-in lesion evidence and overlays, additive referral flag, existing P1 preprocessing functions reused, no classifier-score changes | Run with Atul's merged checkout and frozen bundle. Verify served classifier preprocessing and approved detector preprocessing independently on real images. |
 | 5 | Explainability | Frozen encoders now support input gradients; differentiable regional v2/v3 adapter reproduces mean-of-seed-max score algebra and float16 feature rounding in tests | Revised D19 approval for regional model, actual score reproduction, randomisation sanity, VRAM, localisation tables, guide review |
 | 6 | Shared contracts | Adapter supports actual P4 names; C10/C15 validated by P4, C11 by strict producer validator with explicit provenance | Real dataset/model exports |
 | 7 | PDF/logging | C14 Pydantic objects supported; current shared disclaimer used; unavailable detector described honestly; synthetic legacy exporter produces an actual PDF | Real end-to-end case reports/logs and dashboard visual review |

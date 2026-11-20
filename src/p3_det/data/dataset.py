@@ -97,7 +97,7 @@ class TBDetectionDataset(Dataset):
     # --- index -------------------------------------------------------------------------------
     def _build_index(self) -> list[Sample]:
         cfg, p = self.cfg, self.paths
-        with open(p.splits, newline="") as f:
+        with p.open_splits() as f:
             rows = [r for r in csv.DictReader(f) if r["split"] == cfg.split]
         manifest = {r["image_id"]: r for r in _read_parquet(p.manifest) if r["dataset"] == cfg.dataset}
         full_frame = self.margin is None

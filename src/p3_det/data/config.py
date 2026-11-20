@@ -8,10 +8,13 @@ tbcore.paths switch, re-implemented here until tbcore exists).
 """
 from __future__ import annotations
 
+import hashlib
+import io
 import json
 import os
+import re
 import warnings
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[3]
@@ -61,17 +64,44 @@ def check_split(split: str, dataset: str = "tbx11k") -> None:
 
 
 @dataclass(frozen=True)
-class DataPaths:
-    root: Path
+class C01Snapshot:
+    """The exact split CSV bytes checked against P1's published digest."""
+
+    path: Path
+    sha256: str
+    content: bytes = field(repr=False)
 
     @classmethod
-    def default(cls) -> "DataPaths":
+    def verify(cls, path: Path, expected: str) -> "C01Snapshot":
+        if not re.fullmatch(r"[0-9a-fA-F]{64}", expected):
+            raise ValueError("C01 SHA-256 must contain exactly 64 hexadecimal characters")
+        content = path.read_bytes()
+        digest = hashlib.sha256(content).hexdigest()
+        if digest != expected.lower():
+            raise ValueError(f"C01 SHA-256 mismatch: expected {expected.lower()}, found {digest}")
+        return cls(path, digest, content)
+
+
+@dataclass(frozen=True)
+class DataPaths:
+    root: Path
+    c01: C01Snapshot | None = None
+
+    @classmethod
+    def default(cls, *, c01: C01Snapshot | None = None) -> "DataPaths":
         base = Path(os.environ.get("TB_DATA_ROOT", REPO))
-        return cls(base / "mock" if os.environ.get("TB_MOCK") == "1" else base)
+        return cls(base / "mock" if os.environ.get("TB_MOCK") == "1" else base, c01)
 
     @property
     def splits(self) -> Path:
+        if self.c01 is not None:
+            return self.c01.path
         return self.root / "data/splits/tbx11k_splits_v1.csv"
+
+    def open_splits(self):
+        if self.c01 is not None:
+            return io.StringIO(self.c01.content.decode("utf-8-sig"), newline="")
+        return self.splits.open(newline="")
 
     @property
     def manifest(self) -> Path:

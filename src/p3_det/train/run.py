@@ -34,7 +34,7 @@ from p3_ops.cloud import CheckpointStore, resume_if_exists, save_checkpoint
 from p3_ops.seed import set_seed
 
 from ..data import DataPaths, DetDataConfig, TBDetectionDataset
-from ..data.config import MARGINS, DetectorPreprocessing
+from ..data.config import MARGINS, C01Snapshot, DetectorPreprocessing
 from ..decisions import DETECTOR_PROTOCOL_PENDING, PREPROCESSING_ABLATION
 from ..metrics import ImageGT, ap50
 from . import dfine_bridge as bridge
@@ -76,10 +76,12 @@ def dev_ground_truth(ds: TBDetectionDataset) -> dict[str, ImageGT]:
             for s in ds.samples}
 
 
-def detections_doc(run_name: str, input_size: int, epoch: int, dets: dict[str, np.ndarray]) -> dict:
+def detections_doc(run_name: str, input_size: int, epoch: int, dets: dict[str, np.ndarray], *,
+                   precise: bool = False, min_score: float = 0.01) -> dict:
     return {"format": FORMAT, "model_id": run_name, "input_size": input_size, "coords": "full512",
-            "epoch": epoch, "min_score": 0.01,
-            "images": [{"image_id": k, "boxes": np.round(v, 3).tolist()} for k, v in sorted(dets.items())]}
+            "epoch": epoch, "min_score": min_score,
+            "images": [{"image_id": k, "boxes": (v if precise else np.round(v, 3)).tolist()}
+                       for k, v in sorted(dets.items())]}
 
 
 def _rewrite_csv(path: Path, keep_before_epoch: int) -> None:
@@ -113,7 +115,7 @@ def run_dir_name(cfg: RunConfig, margin: float | None, clahe: bool, provisional:
 def train(config: str | Path, *, device: str | None = None, data_root: Path | None = None,
           ckpt_root: Path | None = None, weights_cache: Path | None = None,
           max_epochs: int | None = None, decisions_dir: Path | None = None,
-          candidate: DetectorPreprocessing | None = None) -> Path:
+          candidate: DetectorPreprocessing | None = None, c01: C01Snapshot | None = None) -> Path:
     if candidate is not None and ckpt_root is None:
         raise ValueError("Detector preprocessing comparisons require a separate local output directory")
     cfg = load_run_config(config)
@@ -122,7 +124,7 @@ def train(config: str | Path, *, device: str | None = None, data_root: Path | No
     seed_util = set_seed(cfg.seed)
     device = device or ("cuda" if torch.cuda.is_available() else "cpu")
     amp = bool(s["amp"]) and device.startswith("cuda")
-    paths = DataPaths(data_root) if data_root else DataPaths.default()
+    paths = DataPaths(data_root, c01) if data_root else DataPaths.default(c01=c01)
 
     common = dict(input_size=cfg.input_size, seed=cfg.seed)
     if candidate is None:
@@ -159,12 +161,17 @@ def train(config: str | Path, *, device: str | None = None, data_root: Path | No
     }
     if candidate is not None:
         meta["purpose"] = PREPROCESSING_ABLATION
-        files = [paths.splits, paths.manifest, paths.root / "data/boxes/v1/coco_development_full.json"]
+        meta["development_artifact_precision"] = "native"
+        files = [paths.manifest, paths.root / "data/boxes/v1/coco_development_full.json"]
+        if c01 is None:
+            files.insert(0, paths.splits)
         if candidate.margin is None:
             files.append(paths.root / "data/boxes/v1/coco_train_full.json")
         else:
             files += [paths.lung_roi, paths.coco(TRAIN_SPLIT, candidate.margin), paths.coco(EVAL_SPLIT, candidate.margin)]
         meta["input_sha256"] = {p.relative_to(paths.root).as_posix(): bridge.sha256_file(p) for p in files}
+        if c01 is not None:
+            meta["input_sha256"]["c01_split"] = c01.sha256
     if meta_path.exists():
         old = json.loads(meta_path.read_text())
         for k in ("schedule_hash", "input_size", "seed", "preprocessing"):
@@ -172,8 +179,10 @@ def train(config: str | Path, *, device: str | None = None, data_root: Path | No
                 raise RuntimeError(f"existing run in {rd} has a different {k} ({old[k]} != {meta[k]}); "
                                    "use a new run_name instead of resuming")
         if candidate is not None and (old.get("purpose") != meta["purpose"]
+                                      or old.get("development_artifact_precision")
+                                      != meta["development_artifact_precision"]
                                       or old.get("input_sha256") != meta["input_sha256"]):
-            raise RuntimeError(f"ablation inputs in {rd} have changed; use a new output directory")
+            raise RuntimeError(f"ablation inputs or artifact format in {rd} have changed; use a new output directory")
         meta = {**old, "resumed_at": datetime.now(timezone.utc).isoformat(timespec="seconds")}
     else:
         if candidate is not None and any(rd.glob("ckpt_*.pt")):
@@ -183,7 +192,8 @@ def train(config: str | Path, *, device: str | None = None, data_root: Path | No
     gt = dev_ground_truth(dev_ds)
     _atomic_json(rd / "dev_ground_truth.json", {
         "split": EVAL_SPLIT, "coords": "full512", "preprocessing": prep,
-        "images": {k: {"boxes": v.boxes.round(3).tolist(), "subtype": v.subtype} for k, v in sorted(gt.items())},
+        "images": {k: {"boxes": (v.boxes if candidate is not None else v.boxes.round(3)).tolist(),
+                       "subtype": v.subtype} for k, v in sorted(gt.items())},
         "excluded": {k: v for k, v in dev_ds.stats.items() if k.startswith("skipped")}})
 
     c = bridge.build(cfg, device, amp)
@@ -225,7 +235,8 @@ def train(config: str | Path, *, device: str | None = None, data_root: Path | No
         r = ap50(dets, gt, ci=False)
         is_best = r.value > best
         best = max(best, r.value)
-        doc = detections_doc(name if candidate is not None else cfg.run_name, cfg.input_size, epoch, dets)
+        doc = detections_doc(name if candidate is not None else cfg.run_name, cfg.input_size, epoch, dets,
+                             precise=candidate is not None, min_score=cfg.eval["min_score"])
         _atomic_json(rd / "dev_detections_last.json", doc)
         if is_best:
             _atomic_json(rd / "dev_detections_best.json", doc)
@@ -257,6 +268,8 @@ def main(argv=None) -> int:
     ap.add_argument("--ablation-margin", type=float, choices=MARGINS, help="Required for the lung view")
     ap.add_argument("--ablation-clahe", choices=("off", "on"), help="Required for an ablation")
     ap.add_argument("--ablation-dir", type=Path, help="Separate local output directory for the ablation")
+    ap.add_argument("--splits", type=Path, help="Reviewed C01 split CSV for a non-synthetic ablation")
+    ap.add_argument("--c01-sha256", help="Expected SHA-256 supplied by P1 for that C01 file")
     args = ap.parse_args(argv)
     if args.smoke_dir is not None and not args.smoke:
         ap.error("--smoke-dir requires --smoke")
@@ -271,6 +284,8 @@ def main(argv=None) -> int:
         ap.error("ablation options require --ablation-view")
     if args.smoke and args.ablation_dir is not None:
         ap.error("use --smoke-dir for synthetic ablation output")
+    if args.smoke and (args.splits is not None or args.c01_sha256 is not None):
+        ap.error("--smoke uses synthetic split data and cannot take C01 inputs")
     warnings.filterwarnings("default", message="PROVISIONAL")
     if not args.smoke:
         if candidate is None:
@@ -279,7 +294,13 @@ def main(argv=None) -> int:
             ap.error("Use --smoke for synthetic data.")
         if args.ablation_dir is None:
             ap.error("--ablation-dir is required for an ablation")
-        train(args.config, device=args.device, ckpt_root=args.ablation_dir, candidate=candidate)
+        if args.splits is None or args.c01_sha256 is None:
+            ap.error("--splits and --c01-sha256 are required for a non-synthetic ablation")
+        try:
+            c01 = C01Snapshot.verify(args.splits, args.c01_sha256)
+        except (OSError, ValueError) as exc:
+            ap.error(str(exc))
+        train(args.config, device=args.device, ckpt_root=args.ablation_dir, candidate=candidate, c01=c01)
         return 0
     import yaml
     from ..data.fake_p1 import make_fake_p1_tree

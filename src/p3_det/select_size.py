@@ -65,14 +65,17 @@ def criterion_commit(path: Path = D16_PATH) -> str | None:
 
 # --- step 2: compare -------------------------------------------------------------------------------
 
-def load_run(run_dir: Path) -> dict:
+def load_run(run_dir: Path, *, expected_purpose: str | None = None) -> dict:
     run_dir = Path(run_dir)
     need = ["run_meta.json", "train_log.csv", "dev_ground_truth.json", "dev_detections_last.json"]
     missing = [n for n in need if not (run_dir / n).exists()]
     if missing:
         raise Refused(f"{run_dir}: missing {missing}")
     meta = json.loads((run_dir / "run_meta.json").read_text())
-    dec.refuse_preprocessing_ablation(meta)
+    if expected_purpose is None:
+        dec.refuse_preprocessing_ablation(meta)
+    elif meta.get("purpose") != expected_purpose:
+        raise Refused(f"{run_dir.name}: expected a {expected_purpose} run")
     with open(run_dir / "train_log.csv", newline="") as f:
         log = list(csv.DictReader(f))
     gt_doc = json.loads((run_dir / "dev_ground_truth.json").read_text())
@@ -82,7 +85,7 @@ def load_run(run_dir: Path) -> dict:
         raise Refused(f"{run_dir.name}: run not finished (needs epochs 0..{epochs - 1} in the log and "
                       f"final-epoch detections; detections are from epoch {det_doc.get('epoch')})")
     gt = {k: ImageGT(v["boxes"], v["subtype"]) for k, v in gt_doc["images"].items()}
-    return {"dir": run_dir, "meta": meta, "log": log, "gt": gt, "gt_doc": gt_doc,
+    return {"dir": run_dir, "meta": meta, "log": log, "gt": gt, "gt_doc": gt_doc, "det_doc": det_doc,
             "dets": detections_from_c10(det_doc)}
 
 
