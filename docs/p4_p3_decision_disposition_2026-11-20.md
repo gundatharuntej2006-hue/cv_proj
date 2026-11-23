@@ -30,6 +30,14 @@ For a reproducible paired CI, keep the same eligible development image IDs, orig
 
 Proposed simplicity order, from first incumbent to last challenger: **full image + CLAHE off; full image + CLAHE on; 0.10 lung crop + CLAHE off; 0.10 lung crop + CLAHE on**. Process candidates in that order, comparing each challenger against the currently selected incumbent. Promote only when both conditions above hold. Record all four AP50 values, pairwise differences actually tested, CIs, sample sizes, bootstrap seed, and the final selection. This order must be copied into and approved in the P3-owned versioned protocol before comparisons start; it is not inferred after results.
 
+## Review of P3 update `1ee6322` (23 November)
+
+P4 confirms the four candidates, fixed D-FINE-S 512 configuration for the preprocessing study, development AP50 selection, joint 0.01 margin and positive paired-CI requirement, and the simplicity order in `docs/p3_detector_preprocessing_protocol.md`. The preprocessing choice is made first; D16's distinct 512-versus-640 comparison follows on that selected preprocessing. The old D16–D19 record history remains visible and is not validated by this confirmation.
+
+For a separate P3-owned C16 decision, P4 proposes `decisions/p3_detector_preprocessing.json` with ID **D24**. This is a proposed location, not a locked record. P3 should own its draft and include the approved protocol commit/version, C01 and C04 checksums, original-box coverage, four run IDs, paired comparison output, and reviewer fields. Because the present registry and gate cover D01–D23, adding D24 to the registry and gate is a governance change requiring team approval before it becomes an authoritative lock. D16 should later reference the approved D24/protocol version and be updated through the same versioned review process; do not replace its historical criterion silently.
+
+The real run remains blocked on a concrete input mismatch: the P1 handoff describes `data/processed/v0/manifest.parquet`, while `p3_det.data.config.DataPaths.manifest` and `p3_det.compare_preprocessing.SHARED_INPUTS` at `1ee6322` require `data/processed/v1/manifest.parquet`. P3 must parameterize and hash the actual C04 v0 manifest (or receive an approved C04 v1) consistently in training and comparison metadata. C01 v0 is also not yet in the fetched remote, and P1 has not confirmed original annotation coverage and integrity. The protocol remains draft until those inputs and the bootstrap seed/count are approved.
+
 ## PR #4 review requested from P3
 
 Ritika should check that the gate rejects the placeholder D16–D20 records and duplicate decision IDs, and that the audit describes P3 history accurately. Please identify any P3 evidence that exists outside this repository with an accessible path and hash, and confirm or correct the starting protocol boundary above. A green CI run tests code behavior; it does not certify the historical decisions.
