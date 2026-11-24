@@ -2,8 +2,8 @@
   "decision_id": "D21",
   "owner": "p4",
   "title": "Statistical Analysis Protocol and Governance Plan",
-  "criterion_preregistered": "Pre-registered analysis parameters: alpha=0.10, target precision=80%, Wilson CI for binomial proportions, stratified bootstrap (B=2000, fixed seed=42) for ROC-AUC/ECE, 10 equal-width ECE bins, RAD-DINO fixed as primary backbone, challenge submission mapping per Section 4.6, detector fallback rule if AP50 < 0.05",
-  "preregistered_at": "2026-09-21",
+  "criterion_preregistered": "Prospective P4 draft: paired image-level stratified bootstrap with B=2000 and seed=42 for the four-candidate P3 detector preprocessing comparison; other legacy analysis settings remain proposals pending evidence and review",
+  "preregistered_at": "2026-11-24",
   "candidates": [
     "Primary backbone: RAD-DINO (frozen)",
     "Alpha risk bound: 0.10 (>=90% sensitivity target)",
@@ -24,8 +24,7 @@
     "detector_contingency_min_ap50": 0.05
   },
   "evidence": [
-    "docs/methodology.md#section-9",
-    "docs/methodology.md#section-12"
+    "docs/p4_statistical_protocol_draft_2026-11-24.md"
   ],
   "data_used": [
     "none"
@@ -34,5 +33,6 @@
   "guide_ack": false,
   "locked": false,
   "locked_at": null,
-  "git_sha": null
+  "git_sha": null,
+  "note": "Replaces the unsupported 2026-09-21 preregistration claim. D21 remains unlocked; the linked 2026-11-24 addendum is a prospective draft, not evidence of completed review or sealed evaluation."
 }
