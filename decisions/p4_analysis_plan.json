@@ -18,6 +18,7 @@
     "bootstrap_replicates": 2000,
     "seed": 42,
     "ece_bins": 10,
+    "ece_binning": "equal_width",
     "primary_backbone": "RAD-DINO",
     "detection_eval_coords": "full512",
     "challenge_box_category": 1,
@@ -34,5 +35,5 @@
   "locked": false,
   "locked_at": null,
   "git_sha": null,
-  "note": "Replaces the unsupported 2026-09-21 preregistration claim. D21 remains unlocked; the linked 2026-11-24 addendum is a prospective draft, not evidence of completed review or sealed evaluation."
+  "note": "Replaces the unsupported 2026-09-21 preregistration claim. ECE here uses 10 equal-width probability bins; P2's earlier A1 audit used 10 equal-mass bins and is not relabelled. Earlier P2 D08/D09/A1 bootstraps used their own seeds and predate this draft. D21 remains unlocked; the linked 2026-11-24 addendum is a prospective draft, not evidence of completed review or sealed evaluation."
 }

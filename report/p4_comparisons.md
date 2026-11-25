@@ -1,23 +1,15 @@
 # Comparative Experiments Summary (Section 14, Table 14)
 
-> **Governance status (2026-11-19):** Figures and decision values in this section are unverified legacy examples, not approved sealed-evaluation results. See `docs/p4_governance_review_2026-11-19.md`.
+**Status:** Pending measured, provenance-backed results and approved decisions.
 
+The prior version of this section contained illustrative figures presented under a
+"Sealed Test Result" heading. Those figures were not supported by run artifacts and
+have been withdrawn. `p4_eval.comparisons.generate_table_14_comparisons` now refuses
+to write Table 14 until a generator is connected to verified inputs.
 
-**Author:** Person 4 (`@tb-p4`)  
-**Artifacts:** `artifacts/p4/tables/t14_comparisons.csv`
-
----
-
-## 1. Summary of 9 Core Scientific Questions
-
-| Question | Options Compared | Deciding Metric | Choice Locked | Sealed Test Result (95% CI) |
-|---|---|---|---|---|
-| 1. Backbone | RAD-DINO vs EfficientNet-B3 | ROC-AUC | RAD-DINO (D11/D14) | 0.942 [0.915, 0.968] vs 0.912 [0.880, 0.941] |
-| 2. Output Head | Binary vs 3-Class | Sens @ 70% Spec | Binary (D11) | 0.920 [0.850, 0.958] vs 0.895 [0.820, 0.940] |
-| 3. Lung Cropping | Crop (margin 0.10) vs Full | ROC-AUC | Crop m=0.10 (D09) | 0.942 [0.915, 0.968] vs 0.921 [0.889, 0.949] |
-| 4. CLAHE | Off vs On | Sens @ 70% Spec | CLAHE Off (D08) | 0.920 [0.850, 0.958] vs 0.905 [0.832, 0.947] |
-| 5. Calibration | Uncalibrated vs Scaled | ECE (10 bins) | $T=1.37$ (D22) | 0.034 [0.018, 0.056] vs 0.089 [0.062, 0.118] |
-| 6. Triage Lower | Conformal vs ROC Youden | Sensitivity | Conformal (D23) | 0.920 [0.850, 0.958] vs 0.890 [0.814, 0.938] |
-| 7. Link Rule | With vs Without Link | Sens / Refer Rate | Link Enabled (D23) | Sens +1.0% (93.0%), Refer +2.4% |
-| 8. OOD Gate | $k=5$ vs $k=1$ | OOD Rejection | $k=5$ (D13) | 96.2% [94.2%, 97.6%] vs 93.4% [91.1%, 95.2%] |
-| 9. Detector Size | 512 vs 640 | AP@0.50 | 512x512 (D16) | 0.421 [0.365, 0.482] (512 chosen for latency/VRAM) |
+The planned comparisons cover backbone, output head, lung crop, CLAHE,
+calibration, triage threshold, detector link rule, OOD gate, and detector input
+size. Each result must cite the input manifest and decision versions, run ID,
+metric definition, sample counts, interval method and parameters, and output
+artifact hash. Sealed results require a valid one-time gate token and must be
+reported only after the approved protocol is complete.

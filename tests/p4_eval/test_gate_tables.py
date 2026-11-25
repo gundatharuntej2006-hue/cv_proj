@@ -73,9 +73,9 @@ def test_table_generation_c18(tmp_path):
 
 
 def test_comparisons_and_external_tables(tmp_path):
-    t14 = generate_table_14_comparisons(out_dir=tmp_path)
-    assert len(t14) >= 9
-    validate_c18_tables(tmp_path / "t14_comparisons.csv")
+    with pytest.raises(RuntimeError, match="no verified comparison artifacts"):
+        generate_table_14_comparisons(out_dir=tmp_path)
+    assert not (tmp_path / "t14_comparisons.csv").exists()
 
     t13 = run_all_external_evaluations(out_dir=tmp_path)
     assert len(t13) >= 4
