@@ -2,37 +2,45 @@
   "decision_id": "D21",
   "owner": "p4",
   "title": "Statistical Analysis Protocol and Governance Plan",
-  "criterion_preregistered": "Pre-registered analysis parameters: alpha=0.10, target precision=80%, Wilson CI for binomial proportions, stratified bootstrap (B=2000, fixed seed=42) for ROC-AUC/ECE, 10 equal-width ECE bins, RAD-DINO fixed as primary backbone, challenge submission mapping per Section 4.6, detector fallback rule if AP50 < 0.05",
-  "preregistered_at": "2026-09-21",
+  "criterion_preregistered": "Prospective P4 draft: paired image-level stratified percentile bootstrap with B=2000, master seed 42 and a derived per-analysis seed for the four-candidate P3 detector preprocessing comparison; other legacy analysis settings remain proposals pending evidence and review",
+  "preregistered_at": "2026-11-24",
   "candidates": [
     "Primary backbone: RAD-DINO (frozen)",
     "Alpha risk bound: 0.10 (>=90% sensitivity target)",
     "Target precision: 0.80 (>=80% PPV for TB triage)",
-    "Bootstrap: B=2000, stratified, seed=42",
+    "Bootstrap: B=2000, stratified, master seed=42, derived analysis seed",
     "Challenge mapping: Section 4.6 ActiveTuberculosis only",
     "Detector contingency: if AP50 < 0.05, link rule disabled and reported as honest negative result"
   ],
   "value": {
-    "alpha": 0.10,
-    "target_precision": 0.80,
+    "alpha": 0.1,
+    "target_precision": 0.8,
     "bootstrap_replicates": 2000,
     "seed": 42,
+    "seed_role": "master",
+    "bootstrap_analysis_id": "p3_detector_preprocessing_v1",
+    "bootstrap_seed_derivation": "uint32_be(SHA256(UTF8('D21:v1|42|p3_detector_preprocessing_v1'))[0:4])",
+    "bootstrap_rng": "numpy.Generator(PCG64(derived_seed))",
+    "bootstrap_ci_method": "paired_stratified_percentile",
+    "ci_level": 0.95,
+    "nonfinite_policy": "fail_entire_comparison_and_rerun_after_fix",
     "ece_bins": 10,
+    "ece_binning": "equal_width",
     "primary_backbone": "RAD-DINO",
     "detection_eval_coords": "full512",
     "challenge_box_category": 1,
     "detector_contingency_min_ap50": 0.05
   },
   "evidence": [
-    "docs/methodology.md#section-9",
-    "docs/methodology.md#section-12"
+    "docs/p4_statistical_protocol_draft_2026-11-24.md"
   ],
   "data_used": [
     "none"
   ],
-  "reviewed_by": "p1",
-  "guide_ack": true,
-  "locked": true,
-  "locked_at": "2026-09-28",
-  "git_sha": "c0ffee1"
+  "reviewed_by": "",
+  "guide_ack": false,
+  "locked": false,
+  "locked_at": null,
+  "git_sha": null,
+  "note": "Replaces the unsupported 2026-09-21 preregistration claim. ECE here uses 10 equal-width probability bins; P2's earlier A1 audit used 10 equal-mass bins and is not relabelled. Earlier P2 D08/D09/A1 bootstraps used their own seeds and predate this draft. D21 remains unlocked; the linked 2026-11-24 addendum is a prospective draft, not evidence of completed review or sealed evaluation."
 }

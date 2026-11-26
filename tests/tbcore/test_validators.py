@@ -45,7 +45,6 @@ def test_validate_c16_all_decisions():
     for df in dec_files:
         rec = validate_c16_decision(df)
         assert isinstance(rec, DecisionRecord)
-        assert rec.locked is True
         assert rec.decision_id.startswith("D")
 
 
