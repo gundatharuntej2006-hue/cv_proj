@@ -7,10 +7,10 @@
 | Item | P4 recommendation | Concern or dependency |
 | --- | --- | --- |
 | TA-24 | B=2,000 for each prospective paired comparison; report the number of finite replicates and Monte Carlo uncertainty for interval endpoints. | Guide review before D21 lock. Earlier P2 runs keep their original settings. |
-| TA-25 | Master seed 42. Derive a distinct seed for each named analysis from a documented stable hash of the master seed and analysis ID; paired candidates use the same saved resampling indices and publish their hash. | P3's reader currently expects `value.bootstrap.{B, seed}` and defaults to 0; align the interface and remove the fallback before real runs. The D-FINE training seed is separate. |
+| TA-25 | Master seed 42 with the exact SHA-256-derived per-analysis seed and shared canonical CSV draw file specified in the D21 addendum. All three ordered candidate comparisons use the same file and report its SHA-256. | P3's reader currently expects `value.bootstrap.{B, seed}` and defaults to 0; align the interface and remove the fallback before real runs. The D-FINE training seed is separate. |
 | TA-26 | Percentile interval for the paired AP50 difference, matching the prospective detector rule. | Record the method and its limitations; do not silently switch to BCa after seeing results. |
 | TA-27 | Explicit `ci_level=0.95`, independent of D21's conformal `alpha=0.10`. | Guide review before lock. |
-| TA-28 | A non-finite point estimate or replicate invalidates the comparison; fix the input or metric and rerun the complete preregistered analysis. Report the failure count. | Do not quietly drop replicates or choose a threshold after seeing results. |
+| TA-28 | A non-finite point estimate or replicate invalidates the comparison; record affected replicate IDs, fix the input or metric, and rerun the complete preregistered analysis. | Do not quietly drop replicates or choose a threshold after seeing results. |
 | TA-33 | If the team approves a separate D24, allow only `train` and `development` in its `data_used`, as for D16/D17. | Extend the decision registry and gate together after TA-31; until then D24 is a P3 draft outside the locked registry. |
 | TA-36 | Put file SHA-256, canonical manifest content hash, and pixel digest definitions in `tbcore`, with versioned definitions and cross-workstream tests against C04 v0 values. | P1 and P3 must agree on the canonicalization and supply the accessible C04 manifest/images before a reference-value test can run. |
 
